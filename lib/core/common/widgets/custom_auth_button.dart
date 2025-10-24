@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hr_app/core/theme/app_colors.dart';
-import 'package:shgrade/core/themes/app_colors.dart';
-import 'package:shgrade/core/themes/text_styles.dart';
 
 class CustomAuthButton extends StatelessWidget {
   final VoidCallback onTap;

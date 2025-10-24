@@ -1,5 +1,5 @@
-import '../../../../core/cache/hive_service.dart';
-import '../models/response/user_model.dart';
+import 'package:hr_app/core/cache/hive_service.dart';
+import 'package:hr_app/features/auth/data/models/response/user_model.dart';
 
 abstract class AuthLocalDataSource {
   Future<void> saveUser(UserModel user);

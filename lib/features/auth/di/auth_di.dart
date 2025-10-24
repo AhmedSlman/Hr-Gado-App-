@@ -1,3 +1,5 @@
+import 'package:hr_app/core/network/api_consumer.dart';
+
 import '../data/data_source/local/auth_local_data_source.dart';
 import '../data/data_source/remote/auth_remote_data_source.dart';
 import '../data/repository/auth_repository.dart';
