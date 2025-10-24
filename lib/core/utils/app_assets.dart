@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 
 /// نظام إدارة الأصول البسيط - Simple Assets Management
 /// استدعي الصور والـ SVG بسهولة
@@ -15,6 +17,7 @@ class AppAssets {
   static const String error = 'assets/images/error.png';
   static const String success = 'assets/images/success.png';
   static const String loading = 'assets/images/loading.png';
+  static const String profile = "assets/images/profile.png";
 
   /// صور الخلفيات
   static const String background1 = 'assets/images/background_1.png';
@@ -29,7 +32,7 @@ class AppAssets {
 
   /// الأيقونات الأساسية
   static const String home = 'assets/icons/home.svg';
-  static const String profile = 'assets/icons/profile.svg';
+  // static const String profile = 'assets/icons/profile.svg';
   static const String settings = 'assets/icons/settings.svg';
   static const String search = 'assets/icons/search.svg';
   static const String notification = 'assets/icons/notification.svg';
@@ -79,6 +82,62 @@ class AppAssets {
     );
   }
 
+  /// إنشاء صورة من الإنترنت مع التخزين المؤقت والـ Shimmer
+  static Widget imageNetwork(
+    String path, {
+    double? width,
+    double? height,
+    BoxFit? fit,
+    Color? color,
+    Widget? placeholder,
+    Widget? errorWidget,
+    Duration fadeInDuration = const Duration(milliseconds: 300),
+  }) {
+    return CachedNetworkImage(
+      imageUrl: path,
+      width: width,
+      height: height,
+      fit: fit,
+      color: color,
+      fadeInDuration: fadeInDuration,
+      placeholder: (context, url) =>
+          placeholder ?? _buildShimmerPlaceholder(width, height),
+      errorWidget: (context, url, error) =>
+          errorWidget ?? _buildErrorWidget(width, height),
+      memCacheWidth: width?.toInt(),
+      memCacheHeight: height?.toInt(),
+    );
+  }
+
+  /// بناء Shimmer placeholder
+  static Widget _buildShimmerPlaceholder(double? width, double? height) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: Colors.grey[300],
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    );
+  }
+
+  /// بناء Error widget
+  static Widget _buildErrorWidget(double? width, double? height) {
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: Colors.grey[300],
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: const Icon(Icons.error_outline, color: Colors.grey, size: 32),
+    );
+  }
+
   /// إنشاء SVG
   static Widget svg(
     String path, {
@@ -124,12 +183,12 @@ abstract class ImagesAssets {
   static const String error = AppAssets.error;
   static const String success = AppAssets.success;
   static const String loading = AppAssets.loading;
+  static const String profile = AppAssets.profile;
 }
 
 /// الوصول السريع للأيقونات
 abstract class IconsAssets {
   static const String home = AppAssets.home;
-  static const String profile = AppAssets.profile;
   static const String settings = AppAssets.settings;
   static const String search = AppAssets.search;
   static const String notification = AppAssets.notification;

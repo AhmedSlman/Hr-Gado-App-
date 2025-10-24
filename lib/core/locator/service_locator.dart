@@ -4,6 +4,7 @@ import '../network/network_config.dart';
 import '../network/api_consumer.dart';
 import '../cache/hive_service.dart';
 import '../cache/init_hive.dart';
+import '../utils/user_helper.dart';
 
 // Import feature DI setups
 import '../../features/auth/di/auth_di.dart';
@@ -17,6 +18,9 @@ class ServiceLocator {
   static Future<void> init() async {
     // Initialize Hive first
     await HiveInit.init();
+
+    // Initialize UserHelper
+    await UserHelper.initialize();
 
     // Register core services
     sl.registerLazySingleton<HiveService>(() => HiveService());
