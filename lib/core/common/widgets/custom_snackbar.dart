@@ -44,9 +44,9 @@ class CustomSnackBar {
     _show(
       context,
       message: message,
-      backgroundColor: AppColors.primary(context),
+      backgroundColor: AppColors.primary,
       icon: Icons.info_rounded,
-      iconColor: AppColors.primary(context),
+      iconColor: AppColors.primary,
       duration: duration,
     );
   }

@@ -1,27 +1,35 @@
 class UserModel {
-  final String id;
-  final String email;
-  final String name;
-  final String? avatar;
+  final int id;
+  final String role;
+  final String job;
+  final String jobType;
+  final String image;
+  final String token;
 
   const UserModel({
     required this.id,
-    required this.email,
-    required this.name,
-    this.avatar,
+    required this.role,
+    required this.job,
+    required this.jobType,
+    required this.image,
+    required this.token,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-    id: json['id'] ?? '',
-    email: json['email'] ?? '',
-    name: json['name'] ?? '',
-    avatar: json['avatar'],
+    id: json['id'] ?? 0,
+    role: json['role'] ?? '',
+    job: json['job'] ?? '',
+    jobType: json['job_type'] ?? '',
+    image: json['image'] ?? '',
+    token: json['token'] ?? '',
   );
 
   Map<String, dynamic> toJson() => {
     'id': id,
-    'email': email,
-    'name': name,
-    'avatar': avatar,
+    'role': role,
+    'job': job,
+    'job_type': jobType,
+    'image': image,
+    'token': token,
   };
 }

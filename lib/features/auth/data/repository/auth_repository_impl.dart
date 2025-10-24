@@ -1,4 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:hr_app/features/auth/data/repository/auth_repository_impl.dart'
+    as remoteDataSource;
 
 import '../data_source/local/auth_local_data_source.dart';
 import '../data_source/remote/auth_remote_data_source.dart';
@@ -37,78 +39,14 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Result<UserModel>> register(LoginRequest request) async {
+  Future<Result<void>> forgotPassword(String username) async {
     try {
-      final result = await remoteDataSource.register(request);
-
-      return result.fold((failure) => Left(failure), (user) async {
-        await localDataSource.saveUser(user);
-        return Right(user);
-      });
-    } catch (e) {
-      return Left(
-        UnknownFailure(
-          message: 'Failed to register: ${e.toString()}',
-          originalError: e,
-        ),
-      );
-    }
-  }
-
-  @override
-  Future<Result<void>> forgotPassword(String email) async {
-    try {
-      final result = await remoteDataSource.forgotPassword(email);
+      final result = await remoteDataSource.forgotPassword(username);
       return result;
     } catch (e) {
       return Left(
         UnknownFailure(
-          message: 'Failed to send reset password email: ${e.toString()}',
-          originalError: e,
-        ),
-      );
-    }
-  }
-
-  @override
-  Future<Result<void>> resetPassword(String code, String newPassword) async {
-    try {
-      final result = await remoteDataSource.resetPassword(code, newPassword);
-      return result;
-    } catch (e) {
-      return Left(
-        UnknownFailure(
-          message: 'Failed to reset password: ${e.toString()}',
-          originalError: e,
-        ),
-      );
-    }
-  }
-
-  @override
-  Future<Result<UserModel?>> getCurrentUser() async {
-    try {
-      final user = await localDataSource.getCurrentUser();
-      return Right(user);
-    } catch (e) {
-      return Left(
-        UnknownFailure(
-          message: 'Failed to get current user: ${e.toString()}',
-          originalError: e,
-        ),
-      );
-    }
-  }
-
-  @override
-  Future<Result<void>> logout() async {
-    try {
-      await localDataSource.clearUser();
-      return const Right(null);
-    } catch (e) {
-      return Left(
-        UnknownFailure(
-          message: 'Failed to logout: ${e.toString()}',
+          message: 'فشل في إرسال رابط إعادة تعيين كلمة المرور: ${e.toString()}',
           originalError: e,
         ),
       );

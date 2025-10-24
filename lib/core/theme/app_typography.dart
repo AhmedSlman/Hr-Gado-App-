@@ -7,18 +7,18 @@ class AppStyles {
   // ==================== FONT FAMILIES ====================
 
   /// الخط الأساسي للإنجليزية
-  static const String primaryFont = 'Roboto';
+  static const String primaryFont = 'Rubik';
 
   /// الخط الأساسي للعربية
-  static const String arabicFont = 'Cairo';
+  static const String arabicFont = 'Rubik';
 
   /// الخط الافتراضي (يتم اختياره حسب اللغة)
   static String get defaultFont => _isArabic ? arabicFont : primaryFont;
 
   /// تحديد ما إذا كانت اللغة عربية
   static bool get _isArabic {
-    // يمكن تحسين هذا لاحقاً ليعتمد على Localization
-    return false; // افتراضي للإنجليزية
+    // التطبيق عربي فقط
+    return true;
   }
 
   // ==================== FONT WEIGHTS ====================
@@ -218,6 +218,8 @@ class AppStyles {
 
   // Overline
   static TextStyle get overline => s10Medium;
+
+  static get s14Regular => null;
 
   // ==================== HELPER METHODS ====================
 
