@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+
 import 'regx.dart';
 
 /// نظام التحقق من صحة البيانات

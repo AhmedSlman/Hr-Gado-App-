@@ -22,7 +22,7 @@ class CustomAuthButton extends StatelessWidget {
         width: double.infinity,
         height: 50.h,
         decoration: BoxDecoration(
-          color: AppColors.primary(context),
+          color: AppColors.primary,
           borderRadius: BorderRadius.circular(10.r),
         ),
         child: Center(

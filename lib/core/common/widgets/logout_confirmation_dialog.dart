@@ -42,13 +42,13 @@ class LogoutConfirmationDialog extends StatelessWidget {
               width: 60.w,
               height: 60.h,
               decoration: BoxDecoration(
-                color: AppColors.error,
+                color: AppColors.redFavColor,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.logout_rounded,
                 size: 30.r,
-                color: AppColors.error,
+                color: AppColors.redFavColor,
               ),
             ),
             SizedBox(height: 16.h),
@@ -68,7 +68,7 @@ class LogoutConfirmationDialog extends StatelessWidget {
             Text(
               'logout_confirm_message'.tr(),
               style: AppStyles.s14.copyWith(
-                color: AppColors.grey100,
+                color: AppColors.grey,
                 fontWeight: FontWeight.w400,
               ),
               textAlign: TextAlign.center,
@@ -88,10 +88,7 @@ class LogoutConfirmationDialog extends StatelessWidget {
                       child: Container(
                         padding: EdgeInsets.symmetric(vertical: 12.h),
                         decoration: BoxDecoration(
-                          border: Border.all(
-                            color: AppColors.grey200,
-                            width: 1,
-                          ),
+                          border: Border.all(color: AppColors.grey, width: 1),
                           borderRadius: BorderRadius.circular(12.r),
                         ),
                         child: Text(
@@ -117,7 +114,7 @@ class LogoutConfirmationDialog extends StatelessWidget {
                       child: Container(
                         padding: EdgeInsets.symmetric(vertical: 12.h),
                         decoration: BoxDecoration(
-                          color: AppColors.error,
+                          color: AppColors.redFavColor,
                           borderRadius: BorderRadius.circular(12.r),
                         ),
                         child: Text(

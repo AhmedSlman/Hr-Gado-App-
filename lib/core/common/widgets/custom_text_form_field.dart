@@ -46,11 +46,10 @@ class CustomTextFormField extends StatelessWidget {
           hintStyle: TextStyle(
             color: Colors.grey,
             fontSize: 14.sp,
-            fontFamily: "Almarai",
+            fontFamily: "Rubik",
             fontWeight: FontWeight.w400,
           ),
-          filled: true,
-          fillColor: fillColor ?? AppColors.grey400,
+          filled: false,
           suffixIcon: suffixIcon,
           prefixIcon: prefixIcon,
           prefixIconConstraints: BoxConstraints(
@@ -59,15 +58,15 @@ class CustomTextFormField extends StatelessWidget {
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.r),
-            borderSide: BorderSide.none,
+            borderSide: BorderSide(color: AppColors.primary),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.r),
-            borderSide: BorderSide.none,
+            borderSide: BorderSide(color: AppColors.primary),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.r),
-            borderSide: BorderSide(color: AppColors.black, width: 1.5.w),
+            borderSide: BorderSide(color: AppColors.primary, width: 1.5.w),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.r),

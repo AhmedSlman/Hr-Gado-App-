@@ -58,6 +58,8 @@ class AppAssets {
   static const String message = 'assets/icons/message.svg';
   static const String location = 'assets/icons/location.svg';
 
+  static const String correctIcon = "assets/icons/correct_icon.svg";
+
   // ==================== HELPER METHODS ====================
 
   /// إنشاء صورة
@@ -112,28 +114,28 @@ class AppAssets {
   }
 
   // ==================== QUICK ACCESS ====================
-
-
-
-
 }
-  /// الوصول السريع للصور
-  abstract class ImagesAssets {
-    static const String logo = AppAssets.logo;
-    static const String logoDark = AppAssets.logoDark;
-    static const String placeholder = AppAssets.placeholder;
-    static const String error = AppAssets.error;
-    static const String success = AppAssets.success;
-    static const String loading = AppAssets.loading;
-  }  /// الوصول السريع للأيقونات
-  abstract class IconsAssets {
-    static const String home = AppAssets.home;
-    static const String profile = AppAssets.profile;
-    static const String settings = AppAssets.settings;
-    static const String search = AppAssets.search;
-    static const String notification = AppAssets.notification;
-    static const String back = AppAssets.back;
-    static const String forward = AppAssets.forward;
-    static const String close = AppAssets.close;
-    static const String menu = AppAssets.menu;
-  }
+
+/// الوصول السريع للصور
+abstract class ImagesAssets {
+  static const String logo = AppAssets.logo;
+  static const String logoDark = AppAssets.logoDark;
+  static const String placeholder = AppAssets.placeholder;
+  static const String error = AppAssets.error;
+  static const String success = AppAssets.success;
+  static const String loading = AppAssets.loading;
+}
+
+/// الوصول السريع للأيقونات
+abstract class IconsAssets {
+  static const String home = AppAssets.home;
+  static const String profile = AppAssets.profile;
+  static const String settings = AppAssets.settings;
+  static const String search = AppAssets.search;
+  static const String notification = AppAssets.notification;
+  static const String back = AppAssets.back;
+  static const String forward = AppAssets.forward;
+  static const String close = AppAssets.close;
+  static const String menu = AppAssets.menu;
+  static const String correctIcon = AppAssets.correctIcon;
+}
