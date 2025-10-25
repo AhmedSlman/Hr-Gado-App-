@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hr_app/core/utils/app_assets.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -11,11 +10,7 @@ class OnboardingScreen extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AppAssets.svg(IconsAssets.profile),
-            SizedBox(height: 20),
-            Text('Welcome to the App!'),
-          ],
+          children: [SizedBox(height: 20), Text('Welcome to the App!')],
         ),
       ),
     );

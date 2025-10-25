@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hr_app/core/theme/app_colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// مدير الثيمات البسيط
@@ -14,12 +15,18 @@ class AppThemeManager {
   );
 
   /// الثيم الفاتح
-  static ThemeData get lightTheme =>
-      ThemeData(useMaterial3: true, brightness: Brightness.light);
+  static ThemeData get lightTheme => ThemeData(
+    useMaterial3: true,
+    brightness: Brightness.light,
+    scaffoldBackgroundColor: AppColors.white, // لون ثابت للـ Scaffold
+  );
 
   /// الثيم الداكن
-  static ThemeData get darkTheme =>
-      ThemeData(useMaterial3: true, brightness: Brightness.dark);
+  static ThemeData get darkTheme => ThemeData(
+    useMaterial3: true,
+    brightness: Brightness.dark,
+    scaffoldBackgroundColor: const Color(0xFF121212), // لون ثابت للـ Scaffold
+  );
 
   /// تهيئة مدير الثيمات
   Future<void> initialize() async {
