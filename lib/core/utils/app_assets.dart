@@ -63,6 +63,17 @@ class AppAssets {
 
   static const String correctIcon = "assets/icons/correct_icon.svg";
 
+  /// أيقونات الموارد البشرية
+  static const String cat1 = "assets/images/cat1.png";
+  static const String cat2 = 'assets/images/cat2.png';
+  static const String cat3 = 'assets/images/cat3.png';
+  static const String cat4 = 'assets/images/cat4.png';
+  static const String cat5 = 'assets/images/cat5.png';
+  static const String cat6 = 'assets/images/cat6.png';
+  static const String cat7 = 'assets/images/cat7.png';
+  static const String cat8 = 'assets/images/cat8.png';
+  static const String cat9 = 'assets/images/cat9.png';
+
   // ==================== HELPER METHODS ====================
 
   /// إنشاء صورة
@@ -197,4 +208,15 @@ abstract class IconsAssets {
   static const String close = AppAssets.close;
   static const String menu = AppAssets.menu;
   static const String correctIcon = AppAssets.correctIcon;
+
+  /// أيقونات الموارد البشرية
+  static const String cat1 = AppAssets.cat1;
+  static const String cat2 = AppAssets.cat2;
+  static const String cat3 = AppAssets.cat3;
+  static const String cat4 = AppAssets.cat4;
+  static const String cat5 = AppAssets.cat5;
+  static const String cat6 = AppAssets.cat6;
+  static const String cat7 = AppAssets.cat7;
+  static const String cat8 = AppAssets.cat8;
+  static const String cat9 = AppAssets.cat9;
 }

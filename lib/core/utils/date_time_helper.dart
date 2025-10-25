@@ -1,0 +1,151 @@
+/// مساعد التاريخ والوقت - Date Time Helper
+/// يحتوي على جميع الدوال المتعلقة بالتاريخ والوقت
+class DateTimeHelper {
+  DateTimeHelper._();
+
+  /// الحصول على التاريخ الحالي باللغة العربية
+  static String getCurrentDate() {
+    final now = DateTime.now();
+    final weekdays = [
+      'الاثنين',
+      'الثلاثاء',
+      'الأربعاء',
+      'الخميس',
+      'الجمعة',
+      'السبت',
+      'الأحد',
+    ];
+    final months = [
+      'يناير',
+      'فبراير',
+      'مارس',
+      'أبريل',
+      'مايو',
+      'يونيو',
+      'يوليو',
+      'أغسطس',
+      'سبتمبر',
+      'أكتوبر',
+      'نوفمبر',
+      'ديسمبر',
+    ];
+
+    return '${weekdays[now.weekday - 1]} ${now.day} ${months[now.month - 1]}';
+  }
+
+  /// الحصول على الوقت الحالي بصيغة 12 ساعة
+  static String getCurrentTime() {
+    final now = DateTime.now();
+    final hour = now.hour;
+    final minute = now.minute.toString().padLeft(2, '0');
+    final period = hour >= 12 ? 'م' : 'ص';
+    final displayHour = hour > 12 ? hour - 12 : hour;
+
+    return '$displayHour:$minute $period';
+  }
+
+  /// الحصول على التاريخ والوقت معاً
+  static String getCurrentDateTime() {
+    return '${getCurrentDate()} - ${getCurrentTime()}';
+  }
+
+  /// تحويل الوقت من 24 ساعة إلى 12 ساعة
+  static String convertTo12Hour(String time24) {
+    try {
+      final parts = time24.split(':');
+      final hour = int.parse(parts[0]);
+      final minute = parts[1];
+
+      final period = hour >= 12 ? 'م' : 'ص';
+      final displayHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
+
+      return '$displayHour:$minute $period';
+    } catch (e) {
+      return time24; // إرجاع الوقت الأصلي في حالة الخطأ
+    }
+  }
+
+  /// تحويل الوقت من 12 ساعة إلى 24 ساعة
+  static String convertTo24Hour(String time12) {
+    try {
+      final parts = time12.split(' ');
+      final timePart = parts[0];
+      final period = parts[1];
+
+      final timeParts = timePart.split(':');
+      var hour = int.parse(timeParts[0]);
+      final minute = timeParts[1];
+
+      if (period == 'م' && hour != 12) {
+        hour += 12;
+      } else if (period == 'ص' && hour == 12) {
+        hour = 0;
+      }
+
+      return '${hour.toString().padLeft(2, '0')}:$minute';
+    } catch (e) {
+      return time12; // إرجاع الوقت الأصلي في حالة الخطأ
+    }
+  }
+
+  /// التحقق من أن الوقت الحالي قبل وقت معين
+  static bool isBeforeTime(String targetTime) {
+    final currentTime = getCurrentTime();
+
+    // مقارنة بسيطة - يمكن تحسينها لاحقاً
+    return currentTime.compareTo(targetTime) < 0;
+  }
+
+  /// التحقق من أن الوقت الحالي بعد وقت معين
+  static bool isAfterTime(String targetTime) {
+    final currentTime = getCurrentTime();
+
+    // مقارنة بسيطة - يمكن تحسينها لاحقاً
+    return currentTime.compareTo(targetTime) > 0;
+  }
+
+  /// الحصول على اليوم من الأسبوع
+  static String getWeekday() {
+    final now = DateTime.now();
+    final weekdays = [
+      'الاثنين',
+      'الثلاثاء',
+      'الأربعاء',
+      'الخميس',
+      'الجمعة',
+      'السبت',
+      'الأحد',
+    ];
+    return weekdays[now.weekday - 1];
+  }
+
+  /// الحصول على الشهر
+  static String getMonth() {
+    final now = DateTime.now();
+    final months = [
+      'يناير',
+      'فبراير',
+      'مارس',
+      'أبريل',
+      'مايو',
+      'يونيو',
+      'يوليو',
+      'أغسطس',
+      'سبتمبر',
+      'أكتوبر',
+      'نوفمبر',
+      'ديسمبر',
+    ];
+    return months[now.month - 1];
+  }
+
+  /// الحصول على السنة
+  static int getYear() {
+    return DateTime.now().year;
+  }
+
+  /// الحصول على اليوم من الشهر
+  static int getDay() {
+    return DateTime.now().day;
+  }
+}

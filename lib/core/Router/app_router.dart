@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:hr_app/core/common/widgets/custom_error_page.dart';
 import 'package:hr_app/core/utils/user_helper.dart';
 import 'package:hr_app/features/auth/router/auth_names.dart';
+import 'package:hr_app/features/categories/router/categories_names.dart';
+import 'package:hr_app/features/categories/router/categories_router.dart';
 import 'package:hr_app/features/home/router/home_names.dart';
 import 'package:hr_app/features/home/router/home_router.dart';
 import '../../features/auth/router/auth_router.dart';
@@ -10,7 +12,7 @@ import '../../features/splash/router/splash_router.dart';
 
 /// GoRouter configuration
 class AppRouter {
-  static String initialRoute = AuthRoutes.login;
+  static String initialRoute = CategoriesRoutes.categories;
 
   static final GoRouter router = GoRouter(
     initialLocation: _getInitialRoute(),
@@ -34,6 +36,7 @@ class AppRouter {
       ...SplashRouter.routes,
       ...AuthRouter.routes,
       ...HomeRouter.routes,
+      ...CategoriesRouter.routes,
     ],
 
     errorPageBuilder: (context, state) =>
@@ -44,7 +47,7 @@ class AppRouter {
     UserHelper.initialize();
 
     if (UserHelper.isLoggedIn) {
-      return HomeRoutes.home;
+      return CategoriesRoutes.categories;
     } else {
       return AuthRoutes.login;
     }
