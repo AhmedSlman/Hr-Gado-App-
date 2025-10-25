@@ -14,8 +14,8 @@ class CategoryCard extends StatelessWidget {
     return Column(
       children: [
         Container(
-          width: 100.w,
-          height: 90.h,
+          width: 90.w,
+          height: 80.h,
           decoration: BoxDecoration(
             color: AppColors.white,
             borderRadius: BorderRadius.circular(4.r),
@@ -23,7 +23,7 @@ class CategoryCard extends StatelessWidget {
               BoxShadow(
                 color: Colors.grey.withOpacity(0.3),
                 spreadRadius: 0,
-                blurRadius: 8,
+                blurRadius: 10,
                 offset: Offset(1, 1),
               ),
             ],

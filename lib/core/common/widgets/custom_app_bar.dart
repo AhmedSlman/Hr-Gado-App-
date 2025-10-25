@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hr_app/core/theme/app_colors.dart';
 import 'package:hr_app/core/theme/app_typography.dart';
 
@@ -11,7 +12,9 @@ class CustomAppBar extends StatelessWidget {
     return Row(
       children: [
         IconButton(
-          onPressed: () {},
+          onPressed: () {
+            context.pop();
+          },
           icon: Icon(Icons.arrow_back_ios, color: AppColors.primary),
         ),
         Text(

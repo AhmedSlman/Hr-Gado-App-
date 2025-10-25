@@ -47,7 +47,7 @@ class AppRouter {
     UserHelper.initialize();
 
     if (UserHelper.isLoggedIn) {
-      return CategoriesRoutes.categories;
+      return HomeRoutes.home;
     } else {
       return AuthRoutes.login;
     }
