@@ -5,7 +5,7 @@ import 'package:hr_app/core/theme/app_typography.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final Color? backgroundColor;
   final Color? borderColor;
   final double? height;
@@ -15,11 +15,12 @@ class CustomButton extends StatelessWidget {
   final Widget? leadingIcon;
   final Widget? trailingIcon;
   final EdgeInsetsGeometry? padding;
+  final bool isLoading;
 
   const CustomButton({
     super.key,
     required this.text,
-    required this.onPressed,
+    this.onPressed,
     this.backgroundColor,
     this.height,
     this.width,
@@ -29,28 +30,45 @@ class CustomButton extends StatelessWidget {
     this.trailingIcon,
     this.padding,
     this.borderColor,
+    this.isLoading = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    print('🔍 CustomButton - Building with isLoading: $isLoading');
     return Padding(
       padding: padding ?? EdgeInsets.only(top: 16.h),
       child: GestureDetector(
-        onTap: onPressed,
+        onTap: isLoading ? null : onPressed,
         child: Container(
           height: height ?? 50.h,
           width: width ?? 360.w,
           decoration: BoxDecoration(
-            color: backgroundColor ?? AppColors.primary,
+            color: (isLoading || onPressed == null)
+                ? (backgroundColor ?? AppColors.primary).withOpacity(0.6)
+                : backgroundColor ?? AppColors.primary,
             borderRadius: borderRadius ?? BorderRadius.circular(4.r),
             border: Border.all(color: borderColor ?? Colors.transparent),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (leadingIcon != null) ...[leadingIcon!, SizedBox(width: 8.w)],
+              if (isLoading) ...[
+                SizedBox(
+                  width: 20.w,
+                  height: 20.h,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.white),
+                  ),
+                ),
+                SizedBox(width: 8.w),
+              ] else if (leadingIcon != null) ...[
+                leadingIcon!,
+                SizedBox(width: 8.w),
+              ],
               Text(
-                text,
+                isLoading ? "جاري التحميل..." : text,
                 style:
                     textStyle ??
                     AppStyles.s16.copyWith(
@@ -58,7 +76,7 @@ class CustomButton extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     ),
               ),
-              if (trailingIcon != null) ...[
+              if (!isLoading && trailingIcon != null) ...[
                 SizedBox(width: 8.w),
                 trailingIcon!,
               ],

@@ -11,6 +11,7 @@ class CustomSnackBar {
     required String message,
     Duration duration = const Duration(seconds: 3),
   }) {
+    print('🔍 CustomSnackBar - Showing Success: $message');
     _show(
       context,
       message: message,
@@ -26,6 +27,7 @@ class CustomSnackBar {
     required String message,
     Duration duration = const Duration(seconds: 3),
   }) {
+    print('🔍 CustomSnackBar - Showing Error: $message');
     _show(
       context,
       message: message,
@@ -94,12 +96,13 @@ class CustomSnackBar {
     String? actionLabel,
     VoidCallback? onAction,
   }) {
+    print('🔍 CustomSnackBar - _show called with message: $message');
     Flushbar(
       flushbarPosition: FlushbarPosition.TOP,
       backgroundColor: backgroundColor,
       margin: EdgeInsets.only(top: 32.h, left: 16.w, right: 16.w),
-      padding: EdgeInsets.symmetric(horizontal: 21.w, vertical: 18.h),
-      borderRadius: BorderRadius.circular(18.r),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      borderRadius: BorderRadius.circular(12.r),
       boxShadows: [
         BoxShadow(
           color: Colors.black.withOpacity(0.10),
@@ -119,18 +122,17 @@ class CustomSnackBar {
             ),
           ],
         ),
-        padding: EdgeInsets.all(10.w),
-        child: Icon(icon, color: iconColor, size: 22.sp),
+        padding: EdgeInsets.all(8.w),
+        child: Icon(icon, color: iconColor, size: 20.sp),
       ),
       messageText: Text(
         message,
-        maxLines: 1,
+        maxLines: 3,
         overflow: TextOverflow.ellipsis,
-        style: AppStyles.s16.copyWith(
+        style: AppStyles.s14.copyWith(
           color: Colors.white,
-          fontWeight: FontWeight.bold,
-          height: 1,
-          fontSize: 14.sp,
+          fontWeight: FontWeight.w600,
+          height: 1.2,
         ),
       ),
       duration: duration,
@@ -145,10 +147,11 @@ class CustomSnackBar {
               },
               child: Text(
                 actionLabel,
-                style: AppStyles.s14.copyWith(color: Colors.white),
+                style: AppStyles.s12.copyWith(color: Colors.white),
               ),
             )
           : null,
     ).show(context);
+    print('🔍 CustomSnackBar - Flushbar.show() called');
   }
 }

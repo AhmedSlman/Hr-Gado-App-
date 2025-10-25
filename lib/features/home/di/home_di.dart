@@ -16,9 +16,9 @@ class HomeDI {
       () => HomeRemoteDataSourceImpl(sl<ApiConsumer>()),
     );
 
-    sl.registerLazySingleton<HomeLocalDataSource>(
-      () => HomeLocalDataSourceImpl(),
-    );
+    // sl.registerLazySingleton<HomeLocalDataSource>(
+    //   () => HomeLocalDataSourceImpl(),
+    // );
 
     // Repository
     sl.registerLazySingleton<HomeRepository>(
@@ -26,6 +26,6 @@ class HomeDI {
     );
 
     // Cubit
-    sl.registerFactory<HomeCubit>(() => HomeCubit(sl<HomeRepository>()));
+    sl.registerLazySingleton<HomeCubit>(() => HomeCubit(sl<HomeRepository>()));
   }
 }

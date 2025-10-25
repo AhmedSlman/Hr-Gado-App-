@@ -1,6 +1,6 @@
-class HomeRequest {
+class NewsRequest {
   // Add request fields here
-  const HomeRequest();
+  const NewsRequest();
 
   Map<String, dynamic> toJson() {
     return {

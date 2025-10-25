@@ -64,12 +64,17 @@ class ErrorHandler {
     final statusCode = error.response?.statusCode;
     final data = error.response?.data;
 
+    // Debug print for response data
+    print('🔍 ErrorHandler - Status Code: $statusCode');
+    print('🔍 ErrorHandler - Response Data: $data');
+
     // Extract message from response
     String? message;
     Map<String, List<String>>? validationErrors;
 
     if (data is Map<String, dynamic>) {
       message = data['message'] ?? data['error'] ?? data['msg'];
+      print('🔍 ErrorHandler - Extracted Message: $message');
 
       // Extract validation errors
       if (data['errors'] is Map) {

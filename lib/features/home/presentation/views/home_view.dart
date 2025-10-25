@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hr_app/core/theme/app_colors.dart';
 import 'package:hr_app/core/theme/app_typography.dart';
-import 'package:hr_app/features/categories/data/categories_data.dart';
-import 'package:hr_app/features/categories/presentation/components/categories_section.dart';
 import 'package:hr_app/features/categories/router/categories_names.dart';
 import 'package:hr_app/features/home/presentation/components/attendance_section.dart';
 import 'package:hr_app/features/home/presentation/components/categories_list_view.dart';

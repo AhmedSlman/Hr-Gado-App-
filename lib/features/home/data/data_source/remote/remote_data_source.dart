@@ -1,13 +1,20 @@
 import 'package:dartz/dartz.dart';
+import 'package:hr_app/features/home/data/models/request/attendance_requset_model.dart';
 
 import '../../../../../core/network/api_consumer.dart';
 import '../../../../../core/error/result_extensions.dart';
-import '../../models/request/home_request.dart';
-import '../../models/response/home_model.dart';
+import '../../models/response/attendance_model.dart';
+import '../../models/response/home_screen_model.dart';
 import '../local/endpoints.dart';
 
 abstract class HomeRemoteDataSource {
-  Future<Result<List<HomeModel>>> fetchItems(HomeRequest request);
+  Future<Result<AttendanceResponseModel>> checkIn(
+    AttendanceRequestModel request,
+  );
+  Future<Result<AttendanceResponseModel>> checkOut(
+    AttendanceRequestModel request,
+  );
+  Future<Result<HomeScreenModel>> getHomeScreen();
 }
 
 class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
@@ -15,13 +22,42 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
   HomeRemoteDataSourceImpl(this._apiConsumer);
 
   @override
-  Future<Result<List<HomeModel>>> fetchItems(HomeRequest request) async {
-    final result = await _apiConsumer.get<List<HomeModel>>(
-      path: HomeEndpoints.baseUrl,
+  Future<Result<AttendanceResponseModel>> checkIn(
+    AttendanceRequestModel request,
+  ) async {
+    final result = await _apiConsumer.post<AttendanceResponseModel>(
+      path: HomeEndpoints.attendance,
       queryParameters: request.toJson(),
-      parser: (json) => (json['data'] as List)
-          .map((item) => HomeModel.fromJson(item))
-          .toList(),
+      parser: (json) => AttendanceResponseModel.fromJson(json),
+    );
+
+    return result.fold(
+      onSuccess: (data) => Right(data),
+      onFailure: (failure) => Left(failure),
+    );
+  }
+
+  @override
+  Future<Result<AttendanceResponseModel>> checkOut(
+    AttendanceRequestModel request,
+  ) async {
+    final result = await _apiConsumer.post<AttendanceResponseModel>(
+      path: HomeEndpoints.attendance,
+      queryParameters: request.toJson(),
+      parser: (json) => AttendanceResponseModel.fromJson(json),
+    );
+
+    return result.fold(
+      onSuccess: (data) => Right(data),
+      onFailure: (failure) => Left(failure),
+    );
+  }
+
+  @override
+  Future<Result<HomeScreenModel>> getHomeScreen() async {
+    final result = await _apiConsumer.get<HomeScreenModel>(
+      path: HomeEndpoints.homeScreen,
+      parser: (json) => HomeScreenModel.fromJson(json),
     );
 
     return result.fold(

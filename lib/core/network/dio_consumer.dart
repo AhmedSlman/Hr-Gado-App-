@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
@@ -8,6 +7,7 @@ import 'network_config.dart';
 import '../error/error_handler.dart';
 import '../error/failures.dart';
 import '../utils/utils.dart';
+import '../utils/user_helper.dart';
 
 /// Comprehensive Dio implementation of ApiConsumer
 class DioConsumer implements ApiConsumer {
@@ -59,9 +59,17 @@ class DioConsumer implements ApiConsumer {
 
   void _updateHeaders({required String method, bool isFile = false}) {
     final defaultHeaders = _getDefaultHeaders();
+    final token = UserHelper.currentToken ?? '';
+
+    // Debug print for token
+    if (kDebugMode) {
+      print('🔑 Current Token: $token');
+      print('🔑 Token Length: ${token.length}');
+    }
+
     _dio.options.headers = {
       ...defaultHeaders,
-      if (Utils.token.isNotEmpty) "Authorization": 'Bearer ${Utils.token}',
+      if (token.isNotEmpty) "Authorization": 'Bearer $token',
     };
 
     // Avoid adding Content-Type for GET requests

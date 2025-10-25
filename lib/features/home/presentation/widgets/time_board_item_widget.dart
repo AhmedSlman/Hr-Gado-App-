@@ -8,11 +8,13 @@ class TimeBoardWidget extends StatelessWidget {
     required this.title,
     required this.time,
     required this.subtitle,
+    this.isCompleted = false,
   });
 
   final String title;
   final String time;
   final String subtitle;
+  final bool isCompleted;
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +46,33 @@ class TimeBoardWidget extends StatelessWidget {
               style: AppStyles.s20Medium.copyWith(color: AppColors.primary),
             ),
             const SizedBox(height: 8),
-            Text(
-              subtitle,
-              style: AppStyles.s10Medium.copyWith(color: AppColors.greyIcon),
-            ),
+            isCompleted
+                ? Align(
+                    alignment: AlignmentGeometry.centerRight,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        'ف الموعد',
+                        style: AppStyles.s10Medium.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  )
+                : Text(
+                    subtitle,
+                    style: AppStyles.s10Medium.copyWith(
+                      color: AppColors.greyIcon,
+                    ),
+                  ),
           ],
         ),
       ),

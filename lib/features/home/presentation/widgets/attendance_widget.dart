@@ -15,6 +15,11 @@ class AttendanceWidget extends StatelessWidget {
     this.onCheckOut,
     this.checkInTime = '',
     this.checkOutTime = '',
+    this.showCompleted = false,
+    this.isLoading = false,
+    this.workStartTime = '09:00 ص',
+    this.workEndTime = '05:00 م',
+    this.lastTimeBeforeDeduction = '09:30 ص',
   });
   final String date;
   final String workHours;
@@ -24,6 +29,11 @@ class AttendanceWidget extends StatelessWidget {
   final VoidCallback? onCheckOut;
   final String checkInTime;
   final String checkOutTime;
+  final bool showCompleted;
+  final bool isLoading;
+  final String workStartTime;
+  final String workEndTime;
+  final String lastTimeBeforeDeduction;
 
   @override
   Widget build(BuildContext context) {
@@ -42,11 +52,16 @@ class AttendanceWidget extends StatelessWidget {
             isCheckedIn: isCheckedIn,
             checkInTime: checkInTime,
             checkOutTime: checkOutTime,
+            showCompleted: showCompleted,
+            workStartTime: workStartTime,
+            workEndTime: workEndTime,
+            lastTimeBeforeDeduction: lastTimeBeforeDeduction,
           ),
           SizedBox(height: 6.h),
           CustomButton(
             text: _getButtonText(),
-            onPressed: isCheckedOut ? () {} : _handleButtonPress,
+            onPressed: (isCheckedOut || isLoading) ? null : _handleButtonPress,
+            isLoading: isLoading,
           ),
         ],
       ),

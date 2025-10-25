@@ -8,11 +8,19 @@ class TimeBoardRowWidget extends StatelessWidget {
     this.isCheckedIn = false,
     this.checkInTime = '',
     this.checkOutTime = '',
+    this.showCompleted = false,
+    this.workStartTime = '09:00 ص',
+    this.workEndTime = '05:00 م',
+    this.lastTimeBeforeDeduction = '09:30 ص',
   });
 
   final bool isCheckedIn;
   final String checkInTime;
   final String checkOutTime;
+  final bool showCompleted;
+  final String workStartTime;
+  final String workEndTime;
+  final String lastTimeBeforeDeduction;
 
   @override
   Widget build(BuildContext context) {
@@ -20,16 +28,20 @@ class TimeBoardRowWidget extends StatelessWidget {
       children: [
         TimeBoardWidget(
           title: isCheckedIn ? "موعد الغلق" : "موعد العمل",
-          time: isCheckedIn ? "05:00 م" : "09:00 ص",
+          time: isCheckedIn ? workEndTime : workStartTime,
           subtitle: isCheckedIn
-              ? "آخر موعد للانصراف 5:30"
-              : "آخر موعد للتأخير 9:30",
+              ? "آخر موعد للانصراف $workEndTime"
+              : "آخر موعد للتأخير $lastTimeBeforeDeduction",
+          isCompleted: false,
         ),
         SizedBox(width: 16.w),
         TimeBoardWidget(
           title: isCheckedIn ? "موعد الانصراف" : "موعد الحضور",
-          time: isCheckedIn ? "05:00 م" : "09:00 ص",
+          time: isCheckedIn
+              ? (checkOutTime.isNotEmpty ? checkOutTime : workEndTime)
+              : (checkInTime.isNotEmpty ? checkInTime : "00:00"),
           subtitle: isCheckedIn ? "يمكنك الانصراف الآن" : "يمكنك تسجيل الحضور",
+          isCompleted: showCompleted,
         ),
       ],
     );

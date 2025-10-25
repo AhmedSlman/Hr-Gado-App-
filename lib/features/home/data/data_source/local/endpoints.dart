@@ -1,3 +1,7 @@
 class HomeEndpoints {
-  static const String baseUrl = "https://jsonplaceholder.typicode.com";
+  // Attendance endpoints
+  static const String attendance = "/employee/attendance";
+
+  // Home screen endpoints
+  static const String homeScreen = "/employee/home-screen";
 }

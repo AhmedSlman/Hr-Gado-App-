@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hr_app/core/common/widgets/custom_button.dart';
 import 'package:hr_app/core/common/widgets/custom_snackbar.dart';
+import 'package:hr_app/core/utils/user_helper.dart';
 import 'package:hr_app/features/auth/presentation/widgets/auth_text_form_field.dart';
 import 'package:hr_app/features/auth/presentation/widgets/forget_password_text.dart';
 import 'package:hr_app/features/auth/logic/auth_cubit.dart';
@@ -27,11 +28,18 @@ class _LoginSectionState extends State<LoginSection> {
     return BlocConsumer<AuthCubit, AuthStates>(
       listener: (context, state) {
         if (state is AuthSuccess) {
+          // Save user data to UserHelper
+          UserHelper.saveUser(state.user);
+
           // Clear text fields after successful login
           userNameController.clear();
           passwordController.clear();
+
           // Show success message
           CustomSnackBar.showSuccess(context, message: "تم تسجيل الدخول بنجاح");
+
+          // Navigate to home
+          context.go('/home');
         } else if (state is AuthError) {
           CustomSnackBar.showError(context, message: state.message);
         }
