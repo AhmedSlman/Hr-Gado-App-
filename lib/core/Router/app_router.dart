@@ -7,12 +7,14 @@ import 'package:hr_app/features/categories/router/categories_names.dart';
 import 'package:hr_app/features/categories/router/categories_router.dart';
 import 'package:hr_app/features/home/router/home_names.dart';
 import 'package:hr_app/features/home/router/home_router.dart';
+import 'package:hr_app/features/time_sheet/router/time_sheet_names.dart';
+import 'package:hr_app/features/time_sheet/router/time_sheet_router.dart';
 import '../../features/auth/router/auth_router.dart';
 import '../../features/splash/router/splash_router.dart';
 
 /// GoRouter configuration
 class AppRouter {
-  static String initialRoute = CategoriesRoutes.categories;
+  static String initialRoute = TimeSheetRoutes.timeSheet;
 
   static final GoRouter router = GoRouter(
     initialLocation: _getInitialRoute(),
@@ -37,6 +39,7 @@ class AppRouter {
       ...AuthRouter.routes,
       ...HomeRouter.routes,
       ...CategoriesRouter.routes,
+      ...TimeSheetRouter.routes,
     ],
 
     errorPageBuilder: (context, state) =>
@@ -47,7 +50,7 @@ class AppRouter {
     UserHelper.initialize();
 
     if (UserHelper.isLoggedIn) {
-      return HomeRoutes.home;
+      return TimeSheetRoutes.timeSheet;
     } else {
       return AuthRoutes.login;
     }
