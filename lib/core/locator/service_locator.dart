@@ -1,14 +1,15 @@
 import 'package:get_it/get_it.dart';
-import '../network/dio_consumer.dart';
-import '../network/network_config.dart';
-import '../network/api_consumer.dart';
-import '../cache/hive_service.dart';
-import '../cache/init_hive.dart';
-import '../utils/user_helper.dart';
 
 // Import feature DI setups
 import '../../features/auth/di/auth_di.dart';
 import '../../features/home/di/home_di.dart';
+import '../../features/salary/di/salary_di.dart';
+import '../cache/hive_service.dart';
+import '../cache/init_hive.dart';
+import '../network/api_consumer.dart';
+import '../network/dio_consumer.dart';
+import '../network/network_config.dart';
+import '../utils/user_helper.dart';
 
 /// Global service locator instance
 final GetIt sl = GetIt.instance;
@@ -40,5 +41,6 @@ class ServiceLocator {
     // Register feature services
     AuthDI.setup();
     HomeDI.setup();
+    SalaryDI.setup();
   }
 }

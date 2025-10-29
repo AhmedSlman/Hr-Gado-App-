@@ -3,12 +3,14 @@ import 'package:go_router/go_router.dart';
 import 'package:hr_app/core/common/widgets/custom_error_page.dart';
 import 'package:hr_app/core/utils/user_helper.dart';
 import 'package:hr_app/features/auth/router/auth_names.dart';
-import 'package:hr_app/features/categories/router/categories_names.dart';
 import 'package:hr_app/features/categories/router/categories_router.dart';
 import 'package:hr_app/features/home/router/home_names.dart';
 import 'package:hr_app/features/home/router/home_router.dart';
+import 'package:hr_app/features/salary/router/salary_names.dart';
+import 'package:hr_app/features/salary/router/salary_router.dart';
 import 'package:hr_app/features/time_sheet/router/time_sheet_names.dart';
 import 'package:hr_app/features/time_sheet/router/time_sheet_router.dart';
+
 import '../../features/auth/router/auth_router.dart';
 import '../../features/splash/router/splash_router.dart';
 
@@ -40,6 +42,7 @@ class AppRouter {
       ...HomeRouter.routes,
       ...CategoriesRouter.routes,
       ...TimeSheetRouter.routes,
+      ...SalaryRouter.routes,
     ],
 
     errorPageBuilder: (context, state) =>
@@ -50,7 +53,7 @@ class AppRouter {
     UserHelper.initialize();
 
     if (UserHelper.isLoggedIn) {
-      return TimeSheetRoutes.timeSheet;
+      return SalaryRoutes.salary;
     } else {
       return AuthRoutes.login;
     }
