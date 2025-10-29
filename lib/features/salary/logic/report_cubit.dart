@@ -8,9 +8,7 @@ class ReportCubit extends Cubit<ReportState> {
 
   ReportCubit({required this.salaryRepository}) : super(ReportInitial());
 
-  Future<void> getReportDetails(
-    int reportId,
-  ) async {
+  Future<void> getReportDetails(int reportId) async {
     emit(ReportLoading());
 
     final result = await salaryRepository.getReportDetails(reportId);
@@ -20,12 +18,7 @@ class ReportCubit extends Cubit<ReportState> {
         emit(ReportError(message: failure.message));
       },
       (reportResponse) {
-        emit(
-          ReportLoaded(
-            reportData: reportResponse.data,
-           
-          ),
-        );
+        emit(ReportLoaded(reportData: reportResponse.data));
       },
     );
   }

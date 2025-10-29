@@ -16,10 +16,10 @@ class ReportLoading extends ReportState {}
 class ReportLoaded extends ReportState {
   final ReportData reportData;
 
-  const ReportLoaded({required this.reportData, });
+  const ReportLoaded({required this.reportData});
 
   @override
-  List<Object?> get props => [reportData, ];
+  List<Object?> get props => [reportData];
 }
 
 class ReportError extends ReportState {
