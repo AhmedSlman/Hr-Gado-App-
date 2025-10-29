@@ -1,14 +1,14 @@
 import 'package:dartz/dartz.dart';
 
-import '../../../../../core/network/api_consumer.dart';
-import '../../../../../core/error/failures.dart';
 import '../../../../../core/error/result_extensions.dart';
-import '../../models/request/salary_request.dart';
+import '../../../../../core/network/api_consumer.dart';
+import '../../models/response/report_model.dart';
 import '../../models/response/salary_model.dart';
 import '../../repository/endpoints.dart';
 
 abstract class SalaryRemoteDataSource {
-  Future<Result<List<SalaryModel>>> fetchItems(SalaryRequest request);
+  Future<Result<SalarySummaryResponse>> getMySalarySummary();
+  Future<Result<ReportResponse>> getReportDetails(int reportId);
 }
 
 class SalaryRemoteDataSourceImpl implements SalaryRemoteDataSource {
@@ -16,13 +16,23 @@ class SalaryRemoteDataSourceImpl implements SalaryRemoteDataSource {
   SalaryRemoteDataSourceImpl(this._apiConsumer);
 
   @override
-  Future<Result<List<SalaryModel>>> fetchItems(SalaryRequest request) async {
-    final result = await _apiConsumer.get<List<SalaryModel>>(
-      path: SalaryEndpoints.baseUrl,
-      queryParameters: request.toJson(),
-      parser: (json) => (json['data'] as List)
-          .map((item) => SalaryModel.fromJson(item))
-          .toList(),
+  Future<Result<SalarySummaryResponse>> getMySalarySummary() async {
+    final result = await _apiConsumer.get<SalarySummaryResponse>(
+      path: SalaryEndpoints.mySalarySummary,
+      parser: (json) => SalarySummaryResponse.fromJson(json),
+    );
+
+    return result.fold(
+      onSuccess: (data) => Right(data),
+      onFailure: (failure) => Left(failure),
+    );
+  }
+
+  @override
+  Future<Result<ReportResponse>> getReportDetails(int reportId) async {
+    final result = await _apiConsumer.get<ReportResponse>(
+      path: '${SalaryEndpoints.reportDetails}/$reportId',
+      parser: (json) => ReportResponse.fromJson(json),
     );
 
     return result.fold(
