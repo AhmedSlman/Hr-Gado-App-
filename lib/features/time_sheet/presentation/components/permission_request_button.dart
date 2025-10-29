@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hr_app/core/common/widgets/custom_button.dart';
-import 'package:hr_app/core/common/widgets/success_dialog_widget.dart';
 import 'package:hr_app/core/theme/app_colors.dart';
 import 'package:hr_app/features/time_sheet/presentation/components/permission_request_dialog_section.dart';
+import 'package:hr_app/core/common/widgets/success_dialog_widget.dart';
 
 class PermissionRequestButton extends StatelessWidget {
   PermissionRequestButton({super.key});

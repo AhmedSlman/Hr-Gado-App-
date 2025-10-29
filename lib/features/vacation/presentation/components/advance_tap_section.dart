@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hr_app/core/common/widgets/custom_button.dart';
-import 'package:hr_app/core/common/widgets/success_dialog_widget.dart';
 import 'package:hr_app/features/vacation/presentation/components/advance_requests_list_section.dart';
 import 'package:hr_app/features/vacation/presentation/widgets/advance_type_radio_row_widget.dart';
 import 'package:hr_app/features/vacation/presentation/widgets/advance_normal_widget.dart';
 import 'package:hr_app/features/vacation/presentation/widgets/advance_long_widget.dart';
 import 'package:hr_app/features/vacation/presentation/widgets/advance_amount_field_widget.dart';
+import 'package:hr_app/core/common/widgets/success_dialog_widget.dart';
 
 class AdvanceTapSection extends StatefulWidget {
   const AdvanceTapSection({super.key});
@@ -66,9 +66,7 @@ class _AdvanceTapSectionState extends State<AdvanceTapSection> {
             onChanged: (v) => setState(() => _selectedType = v),
           ),
           SizedBox(height: 16.h),
-          // محتوى حسب النوع
           if (_selectedType == AdvanceType.normal) ...[
-            // إحصائيات السلفة السابقة ثم حقل المبلغ
             SizedBox(height: 16.h),
             AdvanceNormalWidget(
               lastAdvanceDate: _lastAdvanceDate,
@@ -78,7 +76,6 @@ class _AdvanceTapSectionState extends State<AdvanceTapSection> {
             SizedBox(height: 16.h),
             AdvanceAmountFieldWidget(controller: _amountController),
           ] else ...[
-            // في الطويلة الأمد: حقل المبلغ ثم اختيار وقت السداد
             SizedBox(height: 16.h),
             AdvanceAmountFieldWidget(controller: _amountController),
             SizedBox(height: 16.h),
