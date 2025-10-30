@@ -1,0 +1,76 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hr_app/core/utils/user_helper.dart';
+import 'package:hr_app/features/meetings/logic/meetings_cubit.dart';
+import 'package:hr_app/features/meetings/logic/meetings_states.dart';
+import 'package:hr_app/features/meetings/presentation/components/meetings_list.dart';
+import 'package:hr_app/features/meetings/presentation/widgets/add_meeting_button.dart';
+import 'package:hr_app/features/meetings/presentation/widgets/empty_meetings_state.dart';
+
+class MeetingsBodySection extends StatelessWidget {
+  const MeetingsBodySection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<MeetingsCubit, MeetingsStates>(
+      builder: (context, state) {
+        if (state is MeetingsLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (state is MeetingsError) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'حدث خطأ: ${state.message}',
+                  style: const TextStyle(color: Colors.red),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    MeetingsCubit.get(context).getMyMeetings();
+                  },
+                  child: const Text('إعادة المحاولة'),
+                ),
+              ],
+            ),
+          );
+        }
+
+        if (state is MeetingsSuccess) {
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 16),
+                  // const AddMeetingButton(),
+
+                 
+                  UserHelper.userRole == 'Manager'
+                      ? const AddMeetingButton()
+                      : const SizedBox.shrink(),
+                  const SizedBox(height: 24),
+
+                  // Meetings List or Empty State
+                  if (state.meetingsResponse.data.isEmpty)
+                    const EmptyMeetingsState()
+                  else
+                    MeetingsList(meetings: state.meetingsResponse.data),
+
+                  const SizedBox(height: 24),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return const SizedBox.shrink();
+      },
+    );
+  }
+}

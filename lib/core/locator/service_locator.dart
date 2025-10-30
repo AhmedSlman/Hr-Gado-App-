@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:hr_app/features/meetings/di/meetings_di.dart';
 
 // Import feature DI setups
 import '../../features/auth/di/auth_di.dart';
@@ -42,5 +43,6 @@ class ServiceLocator {
     AuthDI.setup();
     HomeDI.setup();
     SalaryDI.setup();
+    MeetingsDI.setup();
   }
 }

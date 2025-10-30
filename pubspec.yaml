@@ -89,6 +89,7 @@ dependencies:
   dartz: ^0.10.1
   another_flushbar: ^1.12.32
   easy_localization: ^3.0.8
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   flutter_test:
