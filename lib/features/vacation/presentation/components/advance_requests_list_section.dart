@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hr_app/core/theme/app_colors.dart';
 import 'package:hr_app/core/theme/app_typography.dart';
 import 'package:hr_app/features/vacation/presentation/widgets/advance_request_value_list_item_widget.dart';
 import 'package:hr_app/features/vacation/presentation/views/advance_requests_view.dart';
+import 'package:hr_app/features/vacation/logic/vacation_cubit.dart';
+import 'package:hr_app/features/vacation/logic/vacation_states.dart';
 
 class AdvanceRequestsListSection extends StatelessWidget {
   const AdvanceRequestsListSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final items = [
-      (title: 'الأحد، ١٢ يناير', amount: '١٠٠٠', status: 'مقبولة'),
-      (title: 'السبت، ٤ أكتوبر', amount: '٧٥٠', status: 'مرفوضة'),
-      (title: 'الجمعة، ٢٥ سبتمبر', amount: '٥٠٠', status: 'مقبولة'),
-    ];
+    String _statusText(String label) => label;
+    Color _statusColor(String hex) {
+      if (hex.isEmpty) return AppColors.grayText;
+      final value = int.tryParse(hex.replaceFirst('#', '0xff'));
+      return value != null ? Color(value) : AppColors.grayText;
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -46,17 +50,26 @@ class AdvanceRequestsListSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        ListView.builder(
-          padding: const EdgeInsets.all(0),
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: items.length > 2 ? 2 : items.length,
-          itemBuilder: (context, index) {
-            final it = items[index];
-            return AdvanceRequestValueListItemWidget(
-              titleDateText: it.title,
-              amountText: it.amount,
-              statusText: it.status,
+        BlocConsumer<VacationCubit, VacationStates>(
+          listener: (context, state) {},
+          builder: (context, state) {
+            final advances = state is AdvanceLoadSuccess
+                ? state.response.advances
+                : <dynamic>[];
+            final count = advances.length > 2 ? 2 : advances.length;
+            return ListView.builder(
+              padding: const EdgeInsets.all(0),
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: count,
+              itemBuilder: (context, index) {
+                final it = advances[index];
+                return AdvanceRequestValueListItemWidget(
+                  titleDateText: it.date,
+                  amountText: it.amount.toString(),
+                  statusText: _statusText(it.statusLabel),
+                );
+              },
             );
           },
         ),

@@ -1,48 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hr_app/core/theme/app_colors.dart';
 import 'package:hr_app/features/vacation/presentation/widgets/vacation_request_list_item_widget.dart';
+import 'package:hr_app/features/vacation/logic/vacation_cubit.dart';
+import 'package:hr_app/features/vacation/logic/vacation_states.dart';
 
 class VacationListViewSection extends StatelessWidget {
-  VacationListViewSection({super.key});
-
-  final items = [
-    (
-      title: '10-2025',
-      days: '3 أيام',
-      range: '2025-10-10 → 2025-10-12',
-      status: 'مقبولة',
-      color: AppColors.deepGreenColor,
-    ),
-    (
-      title: '09-2025',
-      days: '1 يوم',
-      range: '2025-09-05 → 2025-09-05',
-      status: 'مرفوضة',
-      color: AppColors.redFavColor,
-    ),
-    (
-      title: '08-2025',
-      days: '2 يومين',
-      range: '2025-08-20 → 2025-08-21',
-      status: 'مقبولة',
-      color: AppColors.deepGreenColor,
-    ),
-  ];
+  const VacationListViewSection({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Color _parseColor(String hex) {
+      if (hex.isEmpty) return AppColors.grayText;
+      final value = int.tryParse(hex.replaceFirst('#', '0xff'));
+      return value != null ? Color(value) : AppColors.grayText;
+    }
+
     return Expanded(
-      child: ListView.builder(
-        padding: const EdgeInsets.only(top: 12),
-        itemCount: items.length,
-        itemBuilder: (context, index) {
-          final it = items[index];
-          return VacationRequestListItemWidget(
-            titleDateText: it.title,
-            daysCountText: it.days,
-            rangeDateText: it.range,
-            statusText: it.status,
-            statusColor: it.color,
+      child: BlocConsumer<VacationCubit, VacationStates>(
+        listener: (context, state) {
+          if (state is VacationLoadError) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
+          }
+        },
+        builder: (context, state) {
+          final response = state is VacationLoadSuccess ? state.response : null;
+          final leaves = response?.leaves ?? [];
+          return ListView.builder(
+            padding: const EdgeInsets.only(top: 12),
+            itemCount: leaves.length,
+            itemBuilder: (context, index) {
+              final it = leaves[index];
+              return VacationRequestListItemWidget(
+                titleDateText: it.date,
+                daysCountText: it.numOfDays,
+                rangeDateText: it.from,
+                statusText: it.statusLabel,
+                statusColor: _parseColor(it.statusColor),
+              );
+            },
           );
         },
       ),

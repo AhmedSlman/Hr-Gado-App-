@@ -1,31 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hr_app/core/theme/app_colors.dart';
 import 'package:hr_app/core/theme/app_typography.dart';
-import 'package:hr_app/features/vacation/presentation/views/vacation_requests_view.dart';
 import 'package:hr_app/features/vacation/presentation/widgets/vacation_request_list_item_widget.dart';
+import 'package:hr_app/features/vacation/router/vacation_names.dart';
+import 'package:hr_app/features/vacation/logic/vacation_cubit.dart';
+import 'package:hr_app/features/vacation/logic/vacation_states.dart';
 
 class VacationRequestsListSection extends StatelessWidget {
   const VacationRequestsListSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // بيانات افتراضية مؤقتة
-    final items = [
-      (
-        title: 'السبت، ٤ أكتوبر ',
-        days: '3 أيام',
-        range: '١٢ يناير',
-        status: 'مقبولة',
-        color: AppColors.deepGreenColor,
-      ),
-      (
-        title: 'السبت، ٤ أكتوبر ',
-        days: '3 أيام',
-        range: '١٢ يناير',
-        status: 'مقبولة',
-        color: AppColors.deepGreenColor,
-      ),
-    ];
+    Color _parseColor(String hex) {
+      if (hex.isEmpty) return AppColors.grayText;
+      final value = int.tryParse(hex.replaceFirst('#', '0xff'));
+      return value != null ? Color(value) : AppColors.grayText;
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -41,22 +33,7 @@ class VacationRequestsListSection extends StatelessWidget {
               const Spacer(),
               InkWell(
                 onTap: () {
-                  // Prefer app router navigation if available
-                  try {
-                    // go_router
-                    // context.go(VacationRoutes.vacationRequests);
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const VacationRequestsView(),
-                      ),
-                    );
-                  } catch (_) {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const VacationRequestsView(),
-                      ),
-                    );
-                  }
+                  context.go(VacationRoutes.vacationRequests);
                 },
                 child: Text(
                   'عرض الكل',
@@ -71,18 +48,34 @@ class VacationRequestsListSection extends StatelessWidget {
         const SizedBox(height: 12),
         SizedBox(
           height: 200,
-          child: ListView.builder(
-            padding: const EdgeInsets.all(0),
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: items.length > 2 ? 2 : items.length,
-            itemBuilder: (context, index) {
-              final it = items[index];
-              return VacationRequestListItemWidget(
-                titleDateText: it.title,
-                daysCountText: it.days,
-                rangeDateText: it.range,
-                statusText: it.status,
-                statusColor: it.color,
+          child: BlocConsumer<VacationCubit, VacationStates>(
+            listener: (context, state) {
+              if (state is VacationLoadError) {
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(state.message)));
+              }
+            },
+            builder: (context, state) {
+              final response = state is VacationLoadSuccess
+                  ? state.response
+                  : null;
+              final leaves = response?.leaves ?? [];
+              final count = leaves.length > 2 ? 2 : leaves.length;
+              return ListView.builder(
+                padding: const EdgeInsets.all(0),
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: count,
+                itemBuilder: (context, index) {
+                  final it = leaves[index];
+                  return VacationRequestListItemWidget(
+                    titleDateText: it.date,
+                    daysCountText: it.numOfDays,
+                    rangeDateText: it.from,
+                    statusText: it.statusLabel,
+                    statusColor: _parseColor(it.statusColor),
+                  );
+                },
               );
             },
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hr_app/features/vacation/data/models/vacation_type.dart';
 import 'package:hr_app/features/vacation/presentation/widgets/days_required_widget.dart';
@@ -9,6 +10,11 @@ import 'package:hr_app/features/vacation/presentation/widgets/normal_vacation_wi
 import 'package:hr_app/core/common/widgets/themed_date_picker.dart';
 import 'package:hr_app/core/common/widgets/custom_button.dart';
 import 'package:hr_app/features/vacation/presentation/components/vacation_requests_list_section.dart';
+import 'package:hr_app/features/vacation/logic/vacation_cubit.dart';
+import 'package:hr_app/features/vacation/logic/vacation_states.dart';
+import 'package:hr_app/features/vacation/data/models/request/vacation_submit_request.dart';
+import 'package:hr_app/core/common/widgets/success_dialog_widget.dart';
+import 'package:hr_app/core/locator/service_locator.dart';
 
 class VacationTapSection extends StatefulWidget {
   const VacationTapSection({super.key});
@@ -82,54 +88,89 @@ class _VacationTapSectionState extends State<VacationTapSection> {
       context.showSnack('يرجى استكمال البيانات المطلوبة');
       return;
     }
-    // TODO: ربط API لاحقاً
-    context.showSnack('تم إرسال الطلب بنجاح');
+
+    final type = _selectedType == VacationType.normal ? 'normal' : 'long_term';
+    final from = _formatDate(_startDate);
+    final to = _formatDate(_endDate);
+    final req = VacationSubmitRequest(
+      type: type,
+      fromDate: from,
+      toDate: to,
+      reason: _selectedType == VacationType.longTerm
+          ? _reasonController.text.trim()
+          : null,
+    );
+
+    sl<VacationCubit>().submit(req);
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          VacationTypeRadioRowWidget(
-            selectedType: _selectedType,
-            onChanged: (v) => setState(() => _selectedType = v),
-          ),
-          if (_selectedType == VacationType.normal) ...[
-            // stats
-            NormalVacationWidget(
-              totalDays: _totalDays,
-              consumedDays: _consumedDays,
-              remainingDays: _remainingDays,
+    return BlocConsumer<VacationCubit, VacationStates>(
+      listener: (context, state) {
+        if (state is VacationSubmitSuccess) {
+          showDialog(
+            context: context,
+            builder: (_) => const SuccessDialogWidget(
+              title: 'تم إرسال طلب الإجازة',
+              message: 'سيتم مراجعة طلبك والرد عليك قريباً',
             ),
-          ] else ...[
-            LongVacationWidget(reasonController: _reasonController),
-          ],
-          SizedBox(height: 20.h),
-          VacationDateFieldWidget(
-            label: "تاريخ بداية الإجازة",
-            dateText: _formatDate(_startDate),
-            onTap: () => _pickDate(isStart: true),
+          );
+        } else if (state is VacationSubmitError) {
+          context.showSnack(state.message);
+        }
+      },
+      builder: (context, state) {
+        final isLoading = state is VacationSubmitting;
+        final stats = state is VacationLoadSuccess
+            ? state.response.stats
+            : null;
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              VacationTypeRadioRowWidget(
+                selectedType: _selectedType,
+                onChanged: (v) => setState(() => _selectedType = v),
+              ),
+              if (_selectedType == VacationType.normal) ...[
+                // stats
+                NormalVacationWidget(
+                  totalDays: stats?.allowedOffDays ?? _totalDays,
+                  consumedDays: stats?.usedOffDays ?? _consumedDays,
+                  remainingDays: stats?.remainingOffDays ?? _remainingDays,
+                ),
+              ] else ...[
+                LongVacationWidget(reasonController: _reasonController),
+              ],
+              SizedBox(height: 20.h),
+              VacationDateFieldWidget(
+                label: "تاريخ بداية الإجازة",
+                dateText: _formatDate(_startDate),
+                onTap: () => _pickDate(isStart: true),
+              ),
+              const SizedBox(height: 12),
+              VacationDateFieldWidget(
+                label: "تاريخ نهاية الإجازة",
+                dateText: _formatDate(_endDate),
+                onTap: () => _pickDate(isStart: false),
+              ),
+              SizedBox(height: 16.h),
+              DaysRequiredWidget(requestedDays: _requestedDays),
+              const SizedBox(height: 24),
+              CustomButton(
+                height: 45.h,
+                width: 200.w,
+                text: "إرسال الطلب",
+                onPressed: isLoading
+                    ? null
+                    : (_canSubmit ? () => _handleSubmit(context) : null),
+              ),
+              SizedBox(height: 16.h),
+              const VacationRequestsListSection(),
+            ],
           ),
-          const SizedBox(height: 12),
-          VacationDateFieldWidget(
-            label: "تاريخ نهاية الإجازة",
-            dateText: _formatDate(_endDate),
-            onTap: () => _pickDate(isStart: false),
-          ),
-          SizedBox(height: 16.h),
-          DaysRequiredWidget(requestedDays: _requestedDays),
-          const SizedBox(height: 24),
-          CustomButton(
-            height: 45.h,
-            width: 200.w,
-            text: "إرسال الطلب",
-            onPressed: _canSubmit ? () => _handleSubmit(context) : null,
-          ),
-          SizedBox(height: 16.h),
-          const VacationRequestsListSection(),
-        ],
-      ),
+        );
+      },
     );
   }
 }

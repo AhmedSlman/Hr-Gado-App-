@@ -9,6 +9,8 @@ import '../utils/user_helper.dart';
 // Import feature DI setups
 import '../../features/auth/di/auth_di.dart';
 import '../../features/home/di/home_di.dart';
+import '../../features/time_sheet/di/time_sheet_di.dart';
+import '../../features/vacation/di/vacation_di.dart';
 
 /// Global service locator instance
 final GetIt sl = GetIt.instance;
@@ -40,5 +42,7 @@ class ServiceLocator {
     // Register feature services
     AuthDI.setup();
     HomeDI.setup();
+    TimeSheetDI.setup();
+    VacationDI.setup();
   }
 }
