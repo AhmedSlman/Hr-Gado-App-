@@ -18,6 +18,7 @@ class AppAssets {
   static const String success = 'assets/images/success.png';
   static const String loading = 'assets/images/loading.png';
   static const String profile = "assets/images/profile.png";
+  static const String emptyMeeting = "assets/images/empty_meeting.png";
 
   /// صور الخلفيات
   static const String background1 = 'assets/images/background_1.png';
@@ -36,6 +37,7 @@ class AppAssets {
   static const String settings = 'assets/icons/settings.svg';
   static const String search = 'assets/icons/search.svg';
   static const String notification = 'assets/icons/notification.svg';
+  static const String googleMeet = 'assets/icons/google-meet.svg';
 
   /// أيقونات التنقل
   static const String back = 'assets/icons/back.svg';
@@ -195,6 +197,7 @@ abstract class ImagesAssets {
   static const String success = AppAssets.success;
   static const String loading = AppAssets.loading;
   static const String profile = AppAssets.profile;
+  static const String emptyMeeting = AppAssets.emptyMeeting;
 }
 
 /// الوصول السريع للأيقونات
@@ -208,6 +211,7 @@ abstract class IconsAssets {
   static const String close = AppAssets.close;
   static const String menu = AppAssets.menu;
   static const String correctIcon = AppAssets.correctIcon;
+  
 
   /// أيقونات الموارد البشرية
   static const String cat1 = AppAssets.cat1;
