@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hr_app/core/common/widgets/custom_error_page.dart';
 import 'package:hr_app/core/utils/user_helper.dart';
+import 'package:hr_app/features/account/router/account_names.dart';
+import 'package:hr_app/features/account/router/account_router.dart';
 import 'package:hr_app/features/auth/router/auth_names.dart';
 import 'package:hr_app/features/cars/router/cars_router.dart';
 import 'package:hr_app/features/categories/router/categories_router.dart';
@@ -14,7 +16,6 @@ import 'package:hr_app/features/salary_deduction/router/salary_deduction_router.
 import 'package:hr_app/features/time_sheet/router/time_sheet_names.dart';
 import 'package:hr_app/features/time_sheet/router/time_sheet_router.dart';
 import 'package:hr_app/features/vacation/router/vacation_router.dart';
-
 import '../../features/auth/router/auth_router.dart';
 import '../../features/splash/router/splash_router.dart';
 
@@ -26,7 +27,6 @@ class AppRouter {
     initialLocation: _getInitialRoute(),
     debugLogDiagnostics: true,
     redirect: (context, state) {
-      // التحقق من التوكن في كل تنقل
       final isLoggedIn = UserHelper.isLoggedIn;
       final isAuthRoute = state.uri.path.startsWith('/auth');
       final isSplashRoute = state.uri.path.startsWith('/splash');
@@ -50,6 +50,7 @@ class AppRouter {
       ...SalaryRouter.routes,
       ...NewsRouter.routes,
       ...MeetingsRouter.routes,
+      ...AccountRouter.routes,
       ...CarsRouter.routes,
       ...SalaryDeductionRouter.routes,
     ],
