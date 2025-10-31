@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hr_app/core/theme/app_colors.dart';
 import 'package:hr_app/core/theme/app_typography.dart';
-
-import '../../logic/meetings_cubit.dart';
-import '../../router/meetings_names.dart';
 
 class AddButton extends StatelessWidget {
   const AddButton({super.key, required this.title, this.onTap});
@@ -24,7 +20,7 @@ class AddButton extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-        
+
           borderRadius: BorderRadius.circular(8.r),
           child: Center(
             child: Row(
