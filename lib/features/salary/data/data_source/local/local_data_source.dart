@@ -2,8 +2,8 @@ import '../../../../../core/cache/hive_service.dart';
 import '../../models/response/salary_model.dart';
 
 abstract class SalaryLocalDataSource {
-  Future<void> cacheItems(List<SalaryModel> items);
-  Future<List<SalaryModel>> getCachedItems();
+  Future<void> cacheItems(List<SalarySummaryResponse> items);
+  Future<List<SalarySummaryResponse>> getCachedItems();
   Future<void> clearCache();
   Future<void> logCache();
 }
@@ -14,7 +14,7 @@ class SalaryLocalDataSourceImpl implements SalaryLocalDataSource {
   static const String _dataKey = 'salary_data';
 
   @override
-  Future<void> cacheItems(List<SalaryModel> items) async {
+  Future<void> cacheItems(List<SalarySummaryResponse> items) async {
     try {
       // final data = items.map((item) => item.toJson()).toList();
       await _hiveService.put(_boxName, _dataKey, "");
@@ -24,18 +24,18 @@ class SalaryLocalDataSourceImpl implements SalaryLocalDataSource {
   }
 
   @override
-  Future<List<SalaryModel>> getCachedItems() async {
+  Future<List<SalarySummaryResponse>> getCachedItems() async {
     try {
       final cachedData = await _hiveService.get(_boxName, _dataKey);
       if (cachedData != null) {
         return (cachedData as List)
-            .map((item) => SalaryModel.fromJson(item))
+            .map((item) => SalarySummaryResponse.fromJson(item))
             .toList();
       }
-      return <SalaryModel>[];
+      return <SalarySummaryResponse>[];
     } catch (e) {
       print('Error getting cached salary items: $e');
-      return <SalaryModel>[];
+      return <SalarySummaryResponse>[];
     }
   }
 

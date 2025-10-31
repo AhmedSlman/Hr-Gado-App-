@@ -1,5 +1,4 @@
 class SalaryEndpoints {
-  static const String baseUrl = "https://jsonplaceholder.typicode.com";
+  static const String mySalarySummary = "/employee/my-salary-summary";
+  static const String reportDetails = "/employee/reports";
 }
-
-
