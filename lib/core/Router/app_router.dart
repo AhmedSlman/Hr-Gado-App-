@@ -11,6 +11,8 @@ import 'package:hr_app/features/meetings/router/meetings_router.dart';
 import 'package:hr_app/features/salary/router/salary_router.dart';
 import 'package:hr_app/features/time_sheet/router/time_sheet_names.dart';
 import 'package:hr_app/features/time_sheet/router/time_sheet_router.dart';
+import 'package:hr_app/features/vacation/router/vacation_names.dart';
+import 'package:hr_app/features/vacation/router/vacation_router.dart';
 
 import '../../features/auth/router/auth_router.dart';
 import '../../features/splash/router/splash_router.dart';
@@ -43,6 +45,7 @@ class AppRouter {
       ...HomeRouter.routes,
       ...CategoriesRouter.routes,
       ...TimeSheetRouter.routes,
+      ...VacationRouter.routes,
       ...SalaryRouter.routes,
       ...MeetingsRouter.routes,
     ],
@@ -55,7 +58,7 @@ class AppRouter {
     UserHelper.initialize();
 
     if (UserHelper.isLoggedIn) {
-        return MeetingsRoutes.meetings;
+      return VacationRoutes.vacation;
     } else {
       return AuthRoutes.login;
     }
