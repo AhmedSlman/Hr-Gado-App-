@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hr_app/core/utils/user_helper.dart';
 import 'package:hr_app/features/meetings/logic/meetings_cubit.dart';
 import 'package:hr_app/features/meetings/logic/meetings_states.dart';
 import 'package:hr_app/features/meetings/presentation/components/meetings_list.dart';
 import 'package:hr_app/features/meetings/presentation/widgets/add_meeting_button.dart';
 import 'package:hr_app/features/meetings/presentation/widgets/empty_meetings_state.dart';
+import 'package:hr_app/features/meetings/router/meetings_names.dart';
 
 class MeetingsBodySection extends StatelessWidget {
   const MeetingsBodySection({super.key});
@@ -48,11 +50,20 @@ class MeetingsBodySection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 16),
-                  // const AddMeetingButton(),
 
-                 
+                  // const AddMeetingButton(),
                   UserHelper.userRole == 'Manager'
-                      ? const AddMeetingButton()
+                      ? AddButton(
+                          title: 'اضافة اجتماع',
+                          onTap: () async {
+                            final result = await context.push<bool>(
+                              MeetingsRoutes.addMeeting,
+                            );
+                            if (result == true) {
+                              MeetingsCubit.get(context).getMyMeetings();
+                            }
+                          },
+                        )
                       : const SizedBox.shrink(),
                   const SizedBox(height: 24),
 
