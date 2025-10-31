@@ -8,6 +8,7 @@ import 'package:hr_app/features/categories/models/category_model.dart';
 import 'package:hr_app/features/meetings/router/meetings_names.dart';
 import 'package:hr_app/features/news/router/news_names.dart';
 import 'package:hr_app/features/salary/router/salary_names.dart';
+import 'package:hr_app/features/salary_deduction/router/salary_deduction_names.dart';
 import 'package:hr_app/features/time_sheet/router/time_sheet_names.dart';
 import 'package:hr_app/features/vacation/router/vacation_names.dart';
 
@@ -42,7 +43,10 @@ List<CategoryModel> categories = [
       context.push(MeetingsRoutes.meetings);
     },
   ),
-  CategoryModel(name: 'السلف والأجازات', icon: AppAssets.cat5, route: '/vacation',
+  CategoryModel(
+    name: 'السلف والأجازات',
+    icon: AppAssets.cat5,
+    route: '/vacation',
     onTap: (context) {
       context.push(VacationRoutes.vacation);
     },
@@ -70,5 +74,12 @@ List<CategoryModel> categories = [
     },
   ),
   CategoryModel(name: 'العهد', icon: AppAssets.cat9, route: '/sanctions'),
-  CategoryModel(name: 'الجزاءات', icon: AppAssets.cat8, route: '/salary'),
+  CategoryModel(
+    name: 'الجزاءات',
+    icon: AppAssets.cat8,
+    route: '/salary-deduction',
+    onTap: (context) {
+      context.push(SalaryDeductionRoutes.deductions);
+    },
+  ),
 ];
