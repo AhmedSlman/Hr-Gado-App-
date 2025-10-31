@@ -32,12 +32,17 @@ class AppAssets {
   // ==================== SVG ICONS ====================
 
   /// الأيقونات الأساسية
-  static const String home = 'assets/icons/home.svg';
   // static const String profile = 'assets/icons/profile.svg';
   static const String settings = 'assets/icons/settings.svg';
   static const String search = 'assets/icons/search.svg';
   static const String notification = 'assets/icons/notification.svg';
   static const String googleMeet = 'assets/icons/google-meet.svg';
+  static const String badge = 'assets/icons/badge.svg';
+
+// bottom navigation icons
+  static const String homeIcon = 'assets/icons/home.svg';
+  static const String categoryIcon = 'assets/icons/category.svg';
+  static const String accountIcon = 'assets/icons/account.svg';
 
   /// أيقونات التنقل
   static const String back = 'assets/icons/back.svg';
@@ -202,7 +207,9 @@ abstract class ImagesAssets {
 
 /// الوصول السريع للأيقونات
 abstract class IconsAssets {
-  static const String home = AppAssets.home;
+  static const String home = AppAssets.homeIcon;
+  static const String category = AppAssets.categoryIcon;
+  static const String account = AppAssets.accountIcon;
   static const String settings = AppAssets.settings;
   static const String search = AppAssets.search;
   static const String notification = AppAssets.notification;

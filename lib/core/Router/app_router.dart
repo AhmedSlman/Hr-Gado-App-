@@ -5,6 +5,8 @@ import 'package:hr_app/core/utils/user_helper.dart';
 import 'package:hr_app/features/account/router/account_names.dart';
 import 'package:hr_app/features/account/router/account_router.dart';
 import 'package:hr_app/features/auth/router/auth_names.dart';
+import 'package:hr_app/features/bottom_navigation/router/main_page_names.dart';
+import 'package:hr_app/features/bottom_navigation/router/main_page_router.dart';
 import 'package:hr_app/features/cars/router/cars_router.dart';
 import 'package:hr_app/features/categories/router/categories_router.dart';
 import 'package:hr_app/features/home/router/home_names.dart';
@@ -53,6 +55,7 @@ class AppRouter {
       ...AccountRouter.routes,
       ...CarsRouter.routes,
       ...SalaryDeductionRouter.routes,
+      ...MainPageRouter.routes,
     ],
 
     errorPageBuilder: (context, state) =>
@@ -63,8 +66,8 @@ class AppRouter {
     UserHelper.initialize();
 
     if (UserHelper.isLoggedIn) {
-      return HomeRoutes.home;
-      // return AuthRoutes.login;
+      // return HomeRoutes.home;
+      return MainPageNames.mainPage;
     } else {
       return AuthRoutes.login;
     }
