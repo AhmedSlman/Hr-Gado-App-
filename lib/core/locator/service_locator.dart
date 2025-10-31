@@ -4,6 +4,7 @@ import 'package:hr_app/features/meetings/di/meetings_di.dart';
 // Import feature DI setups
 import '../../features/auth/di/auth_di.dart';
 import '../../features/home/di/home_di.dart';
+import '../../features/news/di/news_di.dart';
 import '../../features/salary/di/salary_di.dart';
 import '../cache/hive_service.dart';
 import '../cache/init_hive.dart';
@@ -43,6 +44,7 @@ class ServiceLocator {
     AuthDI.setup();
     HomeDI.setup();
     SalaryDI.setup();
+    NewsDI.setup();
     MeetingsDI.setup();
   }
 }

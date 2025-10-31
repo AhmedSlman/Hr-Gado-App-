@@ -1,34 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:hr_app/features/news/presentation/widgets/employee_article_card.dart';
+import 'package:hr_app/features/news/presentation/widgets/general_article_card.dart';
 
-class NewsHeaderWidget extends StatelessWidget {
-  final String title;
-  const NewsHeaderWidget({super.key, required this.title});
+import '../../data/models/response/news_model.dart';
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Text(title),
-    );
-  }
-}
-
-class NewsBodyWidget extends StatelessWidget {
-  final List items;
-  const NewsBodyWidget({super.key, required this.items});
+class ArticleCard extends StatelessWidget {
+  final NewsModel article;
+  const ArticleCard({super.key, required this.article});
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text('Item #$index'),
-        );
-      },
-    );
+    if (article.isAboutEmployee && article.employee != null) {
+      return EmployeeArticleCard(article: article);
+    }
+    return GeneralArticleCard(article: article);
   }
 }
-
-

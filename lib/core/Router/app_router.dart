@@ -6,8 +6,9 @@ import 'package:hr_app/features/auth/router/auth_names.dart';
 import 'package:hr_app/features/categories/router/categories_router.dart';
 import 'package:hr_app/features/home/router/home_names.dart';
 import 'package:hr_app/features/home/router/home_router.dart';
-import 'package:hr_app/features/meetings/router/meetings_names.dart';
 import 'package:hr_app/features/meetings/router/meetings_router.dart';
+import 'package:hr_app/features/news/router/news_names.dart';
+import 'package:hr_app/features/news/router/news_router.dart';
 import 'package:hr_app/features/salary/router/salary_router.dart';
 import 'package:hr_app/features/time_sheet/router/time_sheet_names.dart';
 import 'package:hr_app/features/time_sheet/router/time_sheet_router.dart';
@@ -44,6 +45,7 @@ class AppRouter {
       ...CategoriesRouter.routes,
       ...TimeSheetRouter.routes,
       ...SalaryRouter.routes,
+      ...NewsRouter.routes,
       ...MeetingsRouter.routes,
     ],
 
@@ -55,7 +57,7 @@ class AppRouter {
     UserHelper.initialize();
 
     if (UserHelper.isLoggedIn) {
-        return MeetingsRoutes.meetings;
+      return NewsRoutes.news;
     } else {
       return AuthRoutes.login;
     }

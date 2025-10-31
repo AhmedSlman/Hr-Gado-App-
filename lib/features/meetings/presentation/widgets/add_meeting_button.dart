@@ -7,9 +7,10 @@ import 'package:hr_app/core/theme/app_typography.dart';
 import '../../logic/meetings_cubit.dart';
 import '../../router/meetings_names.dart';
 
-class AddMeetingButton extends StatelessWidget {
-  const AddMeetingButton({super.key});
-
+class AddButton extends StatelessWidget {
+  const AddButton({super.key, required this.title, this.onTap});
+  final String title;
+  final Function()? onTap;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -22,12 +23,8 @@ class AddMeetingButton extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () async {
-            final result = await context.push<bool>(MeetingsRoutes.addMeeting);
-            if (result == true) {
-              MeetingsCubit.get(context).getMyMeetings();
-            }
-          },
+          onTap: onTap,
+        
           borderRadius: BorderRadius.circular(8.r),
           child: Center(
             child: Row(
@@ -46,7 +43,7 @@ class AddMeetingButton extends StatelessWidget {
                 ),
                 SizedBox(width: 8.w),
                 Text(
-                  "اضافة اجتماع",
+                  title,
                   style: AppStyles.s14Medium.copyWith(color: AppColors.white),
                 ),
               ],
