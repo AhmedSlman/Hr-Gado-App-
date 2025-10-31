@@ -1,5 +1,5 @@
 class NewsEndpoints {
-  static const String baseUrl = "https://jsonplaceholder.typicode.com";
+  static const String articles = "/employee/articles";
+  static const String createArticle = "/employee/articles";
+  static const String employees = "/employee/employees";
 }
-
-

@@ -11,13 +11,17 @@ class CategoriesListView extends StatelessWidget {
       height: 126,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-
         itemCount: categories.length,
         itemBuilder: (context, index) {
           final category = categories[index];
           return Padding(
             padding: const EdgeInsets.all(8),
-            child: CategoryCard(image: category.icon, title: category.name),
+            child: CategoryCard(
+              image: category.icon,
+              title: category.name,
+              route: category.route,
+              onTap: category.onTap,
+            ),
           );
         },
       ),

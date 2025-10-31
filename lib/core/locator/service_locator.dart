@@ -4,6 +4,8 @@ import 'package:hr_app/features/meetings/di/meetings_di.dart';
 // Import feature DI setups
 import '../../features/auth/di/auth_di.dart';
 import '../../features/home/di/home_di.dart';
+import '../../features/news/di/news_di.dart';
+import '../../features/cars/di/cars_di.dart';
 import '../../features/time_sheet/di/time_sheet_di.dart';
 import '../../features/vacation/di/vacation_di.dart';
 import '../../features/salary/di/salary_di.dart';
@@ -47,6 +49,8 @@ class ServiceLocator {
     TimeSheetDI.setup();
     VacationDI.setup();
     SalaryDI.setup();
+    NewsDI.setup();
     MeetingsDI.setup();
+    CarsDI.setup();
   }
 }
