@@ -13,8 +13,10 @@ import 'package:hr_app/features/vacation/presentation/components/vacation_reques
 import 'package:hr_app/features/vacation/logic/vacation_cubit.dart';
 import 'package:hr_app/features/vacation/logic/vacation_states.dart';
 import 'package:hr_app/features/vacation/data/models/request/vacation_submit_request.dart';
-import 'package:hr_app/core/common/widgets/success_dialog_widget.dart';
 import 'package:hr_app/core/locator/service_locator.dart';
+import 'package:hr_app/core/common/widgets/custom_snackbar.dart';
+import 'package:hr_app/core/common/widgets/success_dialog_widget.dart';
+import 'package:hr_app/features/vacation/data/models/response/vacation_list_response.dart';
 
 class VacationTapSection extends StatefulWidget {
   const VacationTapSection({super.key});
@@ -23,12 +25,15 @@ class VacationTapSection extends StatefulWidget {
   State<VacationTapSection> createState() => _VacationTapSectionState();
 }
 
-class _VacationTapSectionState extends State<VacationTapSection> {
+class _VacationTapSectionState extends State<VacationTapSection>
+    with AutomaticKeepAliveClientMixin {
   VacationType _selectedType = VacationType.normal;
   final TextEditingController _reasonController = TextEditingController();
 
   final int _totalDays = 21;
   final int _consumedDays = 9;
+
+  VacationStats? _stats; // cache latest stats like advances pattern
 
   DateTime? _startDate;
   DateTime? _endDate;
@@ -75,7 +80,6 @@ class _VacationTapSectionState extends State<VacationTapSection> {
     super.dispose();
   }
 
-  int get _remainingDays => _totalDays - _consumedDays;
   bool get _canSubmit {
     if (_selectedType == VacationType.normal) {
       return _startDate != null && _endDate != null && _requestedDays != null;
@@ -85,7 +89,10 @@ class _VacationTapSectionState extends State<VacationTapSection> {
 
   void _handleSubmit(BuildContext context) {
     if (!_canSubmit) {
-      context.showSnack('يرجى استكمال البيانات المطلوبة');
+      CustomSnackBar.showError(
+        context,
+        message: 'يرجى استكمال البيانات المطلوبة',
+      );
       return;
     }
 
@@ -106,25 +113,32 @@ class _VacationTapSectionState extends State<VacationTapSection> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return BlocConsumer<VacationCubit, VacationStates>(
       listener: (context, state) {
+        if (state is VacationLoadSuccess) {
+          setState(() {
+            _stats = state.response.stats;
+          });
+        }
         if (state is VacationSubmitSuccess) {
+          // clear text field on success
+          FocusScope.of(context).unfocus();
+          _reasonController.clear();
           showDialog(
             context: context,
-            builder: (_) => const SuccessDialogWidget(
-              title: 'تم إرسال طلب الإجازة',
-              message: 'سيتم مراجعة طلبك والرد عليك قريباً',
-            ),
+            builder: (_) =>
+                SuccessDialogWidget(title: 'تم بنجاح', message: state.message),
           );
         } else if (state is VacationSubmitError) {
-          context.showSnack(state.message);
+          CustomSnackBar.showError(context, message: state.message);
         }
       },
       builder: (context, state) {
         final isLoading = state is VacationSubmitting;
-        final stats = state is VacationLoadSuccess
-            ? state.response.stats
-            : null;
+        final allowed = _stats?.allowedOffDays ?? _totalDays;
+        final used = _stats?.usedOffDays ?? _consumedDays;
+        final remaining = _stats?.remainingOffDays ?? (allowed - used);
         return SingleChildScrollView(
           child: Column(
             children: [
@@ -135,9 +149,9 @@ class _VacationTapSectionState extends State<VacationTapSection> {
               if (_selectedType == VacationType.normal) ...[
                 // stats
                 NormalVacationWidget(
-                  totalDays: stats?.allowedOffDays ?? _totalDays,
-                  consumedDays: stats?.usedOffDays ?? _consumedDays,
-                  remainingDays: stats?.remainingOffDays ?? _remainingDays,
+                  totalDays: allowed,
+                  consumedDays: used,
+                  remainingDays: remaining,
                 ),
               ] else ...[
                 LongVacationWidget(reasonController: _reasonController),
@@ -160,7 +174,7 @@ class _VacationTapSectionState extends State<VacationTapSection> {
               CustomButton(
                 height: 45.h,
                 width: 200.w,
-                text: "إرسال الطلب",
+                text: isLoading ? "جاري الإرسال..." : "إرسال الطلب",
                 onPressed: isLoading
                     ? null
                     : (_canSubmit ? () => _handleSubmit(context) : null),
@@ -173,10 +187,7 @@ class _VacationTapSectionState extends State<VacationTapSection> {
       },
     );
   }
-}
 
-extension on BuildContext {
-  void showSnack(String message) {
-    ScaffoldMessenger.of(this).showSnackBar(SnackBar(content: Text(message)));
-  }
+  @override
+  bool get wantKeepAlive => true;
 }

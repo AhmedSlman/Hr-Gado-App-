@@ -4,6 +4,7 @@ import 'package:hr_app/core/theme/app_colors.dart';
 import 'package:hr_app/features/vacation/presentation/widgets/vacation_request_list_item_widget.dart';
 import 'package:hr_app/features/vacation/logic/vacation_cubit.dart';
 import 'package:hr_app/features/vacation/logic/vacation_states.dart';
+import 'package:hr_app/core/common/widgets/custom_snackbar.dart';
 
 class VacationListViewSection extends StatelessWidget {
   const VacationListViewSection({super.key});
@@ -18,11 +19,13 @@ class VacationListViewSection extends StatelessWidget {
 
     return Expanded(
       child: BlocConsumer<VacationCubit, VacationStates>(
+        buildWhen: (prev, curr) =>
+            curr is VacationLoading ||
+            curr is VacationLoadSuccess ||
+            curr is VacationLoadError,
         listener: (context, state) {
           if (state is VacationLoadError) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.message)));
+            CustomSnackBar.showError(context, message: state.message);
           }
         },
         builder: (context, state) {

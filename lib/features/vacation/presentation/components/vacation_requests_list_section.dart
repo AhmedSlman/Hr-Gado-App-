@@ -7,6 +7,7 @@ import 'package:hr_app/features/vacation/presentation/widgets/vacation_request_l
 import 'package:hr_app/features/vacation/router/vacation_names.dart';
 import 'package:hr_app/features/vacation/logic/vacation_cubit.dart';
 import 'package:hr_app/features/vacation/logic/vacation_states.dart';
+import 'package:hr_app/core/common/widgets/custom_snackbar.dart';
 
 class VacationRequestsListSection extends StatelessWidget {
   const VacationRequestsListSection({super.key});
@@ -33,7 +34,7 @@ class VacationRequestsListSection extends StatelessWidget {
               const Spacer(),
               InkWell(
                 onTap: () {
-                  context.go(VacationRoutes.vacationRequests);
+                  context.push(VacationRoutes.vacationRequests);
                 },
                 child: Text(
                   'عرض الكل',
@@ -49,11 +50,13 @@ class VacationRequestsListSection extends StatelessWidget {
         SizedBox(
           height: 200,
           child: BlocConsumer<VacationCubit, VacationStates>(
+            buildWhen: (prev, curr) =>
+                curr is VacationLoading ||
+                curr is VacationLoadSuccess ||
+                curr is VacationLoadError,
             listener: (context, state) {
               if (state is VacationLoadError) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text(state.message)));
+                CustomSnackBar.showError(context, message: state.message);
               }
             },
             builder: (context, state) {

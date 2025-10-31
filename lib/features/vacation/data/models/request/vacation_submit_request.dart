@@ -37,7 +37,7 @@ class AdvanceSubmitRequest {
       'type': type,
       'amount': amount,
       if (numberOfMonths != null && numberOfMonths!.isNotEmpty)
-        'number_of_months': numberOfMonths,
+        'number_of_months': int.tryParse(numberOfMonths!) ?? numberOfMonths,
     };
   }
 }

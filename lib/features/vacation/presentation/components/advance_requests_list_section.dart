@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hr_app/core/theme/app_colors.dart';
 import 'package:hr_app/core/theme/app_typography.dart';
 import 'package:hr_app/features/vacation/presentation/widgets/advance_request_value_list_item_widget.dart';
-import 'package:hr_app/features/vacation/presentation/views/advance_requests_view.dart';
+import 'package:hr_app/features/vacation/router/vacation_names.dart';
 import 'package:hr_app/features/vacation/logic/vacation_cubit.dart';
 import 'package:hr_app/features/vacation/logic/vacation_states.dart';
 
@@ -12,13 +13,7 @@ class AdvanceRequestsListSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String _statusText(String label) => label;
-    Color _statusColor(String hex) {
-      if (hex.isEmpty) return AppColors.grayText;
-      final value = int.tryParse(hex.replaceFirst('#', '0xff'));
-      return value != null ? Color(value) : AppColors.grayText;
-    }
-
+    String statusText(String label) => label;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -33,11 +28,7 @@ class AdvanceRequestsListSection extends StatelessWidget {
               const Spacer(),
               InkWell(
                 onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const AdvanceRequestsView(),
-                    ),
-                  );
+                  context.push(VacationRoutes.advanceRequests);
                 },
                 child: Text(
                   'عرض الكل',
@@ -51,6 +42,10 @@ class AdvanceRequestsListSection extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         BlocConsumer<VacationCubit, VacationStates>(
+          buildWhen: (prev, curr) =>
+              curr is AdvanceLoading ||
+              curr is AdvanceLoadSuccess ||
+              curr is AdvanceLoadError,
           listener: (context, state) {},
           builder: (context, state) {
             final advances = state is AdvanceLoadSuccess
@@ -67,7 +62,7 @@ class AdvanceRequestsListSection extends StatelessWidget {
                 return AdvanceRequestValueListItemWidget(
                   titleDateText: it.date,
                   amountText: it.amount.toString(),
-                  statusText: _statusText(it.statusLabel),
+                  statusText: statusText(it.statusLabel),
                 );
               },
             );

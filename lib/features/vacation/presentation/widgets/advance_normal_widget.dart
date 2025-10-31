@@ -32,28 +32,28 @@ class AdvanceNormalWidget extends StatelessWidget {
               Text(lastAdvanceDate, style: AppStyles.s16),
             ],
           ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'تبقى على آخر سلفة',
-                style: AppStyles.s16.copyWith(color: AppColors.primary),
-              ),
-              Text(daysSinceLastAdvance, style: AppStyles.s16),
-            ],
-          ),
+          // const SizedBox(height: 12),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     Text(
+          //       'تبقى على آخر سلفة',
+          //       style: AppStyles.s16.copyWith(color: AppColors.primary),
+          //     ),
+          //     Text(daysSinceLastAdvance, style: AppStyles.s16),
+          //   ],
+          // ),
 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'الرصيد المحقق',
-                style: AppStyles.s16.copyWith(color: AppColors.primary),
-              ),
-              Text(accruedBalance, style: AppStyles.s16),
-            ],
-          ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     Text(
+          //       'الرصيد المحقق',
+          //       style: AppStyles.s16.copyWith(color: AppColors.primary),
+          //     ),
+          //     Text(accruedBalance, style: AppStyles.s16),
+          //   ],
+          // ),
           SizedBox(height: 24.h),
           Container(height: 1, color: AppColors.lightBlue),
           const SizedBox(height: 16),

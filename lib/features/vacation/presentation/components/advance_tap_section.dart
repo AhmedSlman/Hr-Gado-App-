@@ -8,10 +8,12 @@ import 'package:hr_app/features/vacation/presentation/widgets/advance_type_radio
 import 'package:hr_app/features/vacation/presentation/widgets/advance_normal_widget.dart';
 import 'package:hr_app/features/vacation/presentation/widgets/advance_long_widget.dart';
 import 'package:hr_app/features/vacation/presentation/widgets/advance_amount_field_widget.dart';
-import 'package:hr_app/core/common/widgets/success_dialog_widget.dart';
 import 'package:hr_app/features/vacation/logic/vacation_cubit.dart';
 import 'package:hr_app/features/vacation/logic/vacation_states.dart';
 import 'package:hr_app/features/vacation/data/models/request/vacation_submit_request.dart';
+import 'package:hr_app/core/common/widgets/custom_snackbar.dart';
+import 'package:hr_app/core/common/widgets/success_dialog_widget.dart';
+import 'package:hr_app/core/utils/months_parser.dart';
 
 class AdvanceTapSection extends StatefulWidget {
   const AdvanceTapSection({super.key});
@@ -20,7 +22,8 @@ class AdvanceTapSection extends StatefulWidget {
   State<AdvanceTapSection> createState() => _AdvanceTapSectionState();
 }
 
-class _AdvanceTapSectionState extends State<AdvanceTapSection> {
+class _AdvanceTapSectionState extends State<AdvanceTapSection>
+    with AutomaticKeepAliveClientMixin {
   AdvanceType _selectedType = AdvanceType.normal;
   final TextEditingController _amountController = TextEditingController();
   String _repaymentPeriod = 'شهر واحد';
@@ -40,9 +43,7 @@ class _AdvanceTapSectionState extends State<AdvanceTapSection> {
 
   void _handleSubmit() {
     if (!_canSubmit) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('يرجى استكمال البيانات')));
+      CustomSnackBar.showError(context, message: 'يرجى استكمال البيانات');
       return;
     }
 
@@ -50,8 +51,11 @@ class _AdvanceTapSectionState extends State<AdvanceTapSection> {
     final amount = _amountController.text.trim();
     String? months;
     if (_selectedType == AdvanceType.longTerm) {
-      final match = RegExp(r'\d+').firstMatch(_repaymentPeriod);
-      months = match?.group(0);
+      months = extractMonthsNumber(_repaymentPeriod);
+      if (months == null || months.isEmpty) {
+        CustomSnackBar.showError(context, message: 'عدد الأشهر مطلوب');
+        return;
+      }
     }
 
     final req = AdvanceSubmitRequest(
@@ -70,22 +74,22 @@ class _AdvanceTapSectionState extends State<AdvanceTapSection> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return BlocConsumer<VacationCubit, VacationStates>(
       listener: (context, state) {
         if (state is VacationSubmitSuccess) {
+          // clear amount field on success
+          FocusScope.of(context).unfocus();
+          _amountController.clear();
           showDialog(
             context: context,
-            builder: (context) => const SuccessDialogWidget(
-              title: 'تم إرسال طلب السلفة',
-              message: 'سيتم مراجعة طلبك والرد عليك قريباً',
-            ),
+            builder: (_) =>
+                SuccessDialogWidget(title: 'تم بنجاح', message: state.message),
           );
         } else if (state is AdvanceLoadSuccess) {
           _lastAdvanceDate = state.response.stats.latestAdvanceDate;
         } else if (state is VacationSubmitError) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(state.message)));
+          CustomSnackBar.showError(context, message: state.message);
         }
       },
       builder: (context, state) {
@@ -126,10 +130,8 @@ class _AdvanceTapSectionState extends State<AdvanceTapSection> {
               CustomButton(
                 height: 45.h,
                 width: 200.w,
-                text: 'إرسال الطلب',
-                onPressed: isLoading
-                    ? null
-                    : (_canSubmit ? _handleSubmit : null),
+                text: isLoading ? 'جاري الإرسال...' : 'إرسال الطلب',
+                onPressed: isLoading ? null : _handleSubmit,
               ),
               const SizedBox(height: 8),
 
@@ -140,4 +142,7 @@ class _AdvanceTapSectionState extends State<AdvanceTapSection> {
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

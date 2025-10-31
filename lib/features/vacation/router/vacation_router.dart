@@ -12,28 +12,37 @@ class VacationRouter {
     // Vacation Screen
     GoRoute(
       path: VacationRoutes.vacation,
-      builder: (context, state) => BlocProvider<VacationCubit>(
-        create: (_) {
-          final cubit = sl<VacationCubit>();
-          cubit.loadVacations();
-          cubit.loadAdvances();
-          return cubit;
-        },
-        child: const VacationAdvanceView(),
-      ),
+      builder: (context, state) {
+        final cubit = sl<VacationCubit>()
+          ..loadVacations()
+          ..loadAdvances();
+        return BlocProvider<VacationCubit>.value(
+          value: cubit,
+          child: const VacationAdvanceView(),
+        );
+      },
     ),
     // Vacation Requests List Screen
     GoRoute(
       path: VacationRoutes.vacationRequests,
-      builder: (context, state) => BlocProvider.value(
-        value: BlocProvider.of<VacationCubit>(context),
-        child: const VacationRequestsView(),
-      ),
+      builder: (context, state) {
+        final cubit = sl<VacationCubit>()..loadVacations();
+        return BlocProvider<VacationCubit>.value(
+          value: cubit,
+          child: const VacationRequestsView(),
+        );
+      },
     ),
     // Advance Requests List Screen
     GoRoute(
       path: VacationRoutes.advanceRequests,
-      builder: (context, state) => const AdvanceRequestsView(),
+      builder: (context, state) {
+        final cubit = sl<VacationCubit>()..loadAdvances();
+        return BlocProvider<VacationCubit>.value(
+          value: cubit,
+          child: const AdvanceRequestsView(),
+        );
+      },
     ),
   ];
 }
