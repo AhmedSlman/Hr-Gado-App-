@@ -6,6 +6,7 @@ import 'package:hr_app/features/categories/router/categories_names.dart';
 import 'package:hr_app/features/home/presentation/components/attendance_section.dart';
 import 'package:hr_app/features/home/presentation/components/categories_list_view.dart';
 import 'package:hr_app/features/home/presentation/components/home_header_section.dart';
+import 'package:hr_app/features/home/presentation/components/home_lists_body_section.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -24,6 +25,8 @@ class HomeView extends StatelessWidget {
                 AttendanceSection(),
                 SectionTitle(),
                 CategoriesListView(),
+                const SizedBox(height: 24),
+                const HomeListsBodySection(),
               ],
             ),
           ),

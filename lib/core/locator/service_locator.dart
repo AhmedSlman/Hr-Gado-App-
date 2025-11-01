@@ -9,6 +9,7 @@ import '../../features/cars/di/cars_di.dart';
 import '../../features/time_sheet/di/time_sheet_di.dart';
 import '../../features/vacation/di/vacation_di.dart';
 import '../../features/salary/di/salary_di.dart';
+import '../../features/salary_deduction/di/salary_deduction_di.dart';
 import '../cache/hive_service.dart';
 import '../cache/init_hive.dart';
 import '../network/api_consumer.dart';
@@ -52,5 +53,6 @@ class ServiceLocator {
     NewsDI.setup();
     MeetingsDI.setup();
     CarsDI.setup();
+    SalaryDeductionDI.setup();
   }
 }
