@@ -38,20 +38,22 @@ class AccountView extends StatelessWidget {
                     icon: Icons.description,
                     title: 'تقارير الموظفين',
                     onTap: () {
-                      // Navigate to employee reports
+                      context.push(AccountRoutes.employeeReports);
                     },
                   ),
                   AccountMenuItemWidget(
                     icon: Icons.help_outline,
                     title: 'طلبات الموظفين',
                     onTap: () {
-                      // Navigate to employee requests
+                      context.push(AccountRoutes.employeeRequests);
                     },
                   ),
                   AccountMenuItemWidget(
                     icon: Icons.chat_bubble_outline,
                     title: 'تقديم اقتراحات و شکاوی',
-                    onTap: () {},
+                    onTap: () {
+                      context.push(AccountRoutes.complaintsSuggestions);
+                    },
                   ),
 
                   const LogoutWidget(),

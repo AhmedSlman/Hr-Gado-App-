@@ -14,6 +14,7 @@ class PerseonalDataSection extends StatelessWidget {
           onTap: () {
             // Handle photo change
           },
+          imageUrl: '',
         ),
         SizedBox(height: 32.h),
         // Personal data fields
