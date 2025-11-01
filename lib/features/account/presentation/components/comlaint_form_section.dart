@@ -3,9 +3,21 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hr_app/core/common/widgets/custom_button.dart';
 import 'package:hr_app/features/account/presentation/widgets/complaints_text_field.dart';
 
-class ComplaintFormSection extends StatelessWidget {
-  ComplaintFormSection({super.key});
+class ComplaintFormSection extends StatefulWidget {
+  const ComplaintFormSection({super.key});
+
+  @override
+  State<ComplaintFormSection> createState() => _ComplaintFormSectionState();
+}
+
+class _ComplaintFormSectionState extends State<ComplaintFormSection> {
   final TextEditingController _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

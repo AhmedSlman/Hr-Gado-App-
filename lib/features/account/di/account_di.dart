@@ -28,7 +28,7 @@ class AccountDI {
     );
 
     // Cubit
-    sl.registerFactory<AccountCubit>(
+    sl.registerLazySingleton<AccountCubit>(
       () => AccountCubit(sl<AccountRepository>()),
     );
   }

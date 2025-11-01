@@ -20,14 +20,14 @@ class ProfilePictureWidget extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: AppColors.fillGrey,
-              image: imageUrl != null
+              image: imageUrl.isNotEmpty
                   ? DecorationImage(
-                      image: NetworkImage(imageUrl!),
+                      image: NetworkImage(imageUrl),
                       fit: BoxFit.cover,
                     )
                   : null,
             ),
-            child: imageUrl == null
+            child: imageUrl.isEmpty
                 ? Icon(Icons.person, size: 60.sp, color: AppColors.greyIcon)
                 : null,
           ),

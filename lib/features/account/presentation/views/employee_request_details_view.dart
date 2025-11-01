@@ -5,8 +5,13 @@ import 'package:hr_app/features/account/presentation/components/employee_requset
 
 class EmployeeRequsetDetailsView extends StatelessWidget {
   final EmployeeRequestType requestType;
+  final int requestId;
 
-  const EmployeeRequsetDetailsView({super.key, required this.requestType});
+  const EmployeeRequsetDetailsView({
+    super.key,
+    required this.requestType,
+    required this.requestId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +21,10 @@ class EmployeeRequsetDetailsView extends StatelessWidget {
           child: Column(
             children: [
               const CustomAppBar(title: ""),
-              EmployeeRequestSection(requestType: requestType),
+              EmployeeRequestSection(
+                requestType: requestType,
+                requestId: requestId,
+              ),
             ],
           ),
         ),

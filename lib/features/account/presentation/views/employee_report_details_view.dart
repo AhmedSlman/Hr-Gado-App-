@@ -5,7 +5,9 @@ import 'package:hr_app/features/account/presentation/components/employee_report_
 import 'package:hr_app/features/account/presentation/widgets/edit_report_modal.dart';
 
 class EmployeeReportDetailsView extends StatelessWidget {
-  const EmployeeReportDetailsView({super.key});
+  final int reportId;
+
+  const EmployeeReportDetailsView({super.key, required this.reportId});
 
   @override
   Widget build(BuildContext context) {

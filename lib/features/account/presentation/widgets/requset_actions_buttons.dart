@@ -10,8 +10,8 @@ class RequsetActionsButtons extends StatelessWidget {
     required this.onAcceptPressed,
     required this.onRejectPressed,
   });
-  final void Function() onAcceptPressed;
-  final void Function() onRejectPressed;
+  final VoidCallback? onAcceptPressed;
+  final VoidCallback? onRejectPressed;
 
   @override
   Widget build(BuildContext context) {

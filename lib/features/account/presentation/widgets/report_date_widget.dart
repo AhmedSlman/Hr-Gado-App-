@@ -4,7 +4,9 @@ import 'package:hr_app/core/theme/app_colors.dart';
 import 'package:hr_app/core/theme/app_typography.dart';
 
 class ReportDate extends StatelessWidget {
-  const ReportDate({super.key});
+  final String? date;
+
+  const ReportDate({super.key, this.date});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +15,7 @@ class ReportDate extends StatelessWidget {
       child: Align(
         alignment: AlignmentDirectional.centerStart,
         child: Text(
-          'تقرير عمل 1 يناير',
+          date != null ? 'تقرير عمل $date' : 'تقرير عمل',
           style: AppStyles.s16Medium.copyWith(color: AppColors.primary),
         ),
       ),

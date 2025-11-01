@@ -6,7 +6,14 @@ import 'package:hr_app/features/account/presentation/widgets/leave_balance_item_
 import 'package:hr_app/features/account/presentation/widgets/leave_request_field_widget.dart';
 
 class NormalAdvanceRequestSection extends StatelessWidget {
-  const NormalAdvanceRequestSection({super.key});
+  final int amount;
+  final String latestAdvanceDate;
+
+  const NormalAdvanceRequestSection({
+    super.key,
+    required this.amount,
+    required this.latestAdvanceDate,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,23 +46,23 @@ class NormalAdvanceRequestSection extends StatelessWidget {
         // Previous advance information
         LeaveBalanceItemWidget(
           label: 'تاريخ السلفة السابقة',
-          value: '25 يناير 2025',
+          value: latestAdvanceDate.isNotEmpty ? latestAdvanceDate : '-',
           showDivider: false,
         ),
         LeaveBalanceItemWidget(
           label: 'تبقى على اخر سلفة',
-          value: '3 ايام',
+          value: '-',
         ),
         LeaveBalanceItemWidget(
           label: 'الرصيد المحقق',
-          value: '1000',
+          value: '-',
           showDivider: false,
         ),
         SizedBox(height: 24.h),
         // Advance request fields
         LeaveRequestFieldWidget(
           label: 'المبلغ المطلوب للسلفة',
-          value: '900',
+          value: amount.toString(),
           isAmountField: true,
         ),
         LeaveRequestFieldWidget(
