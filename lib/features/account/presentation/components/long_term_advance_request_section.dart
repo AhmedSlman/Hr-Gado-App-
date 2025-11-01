@@ -5,7 +5,14 @@ import 'package:hr_app/core/theme/app_typography.dart';
 import 'package:hr_app/features/account/presentation/widgets/leave_request_field_widget.dart';
 
 class LongTermAdvanceRequestSection extends StatelessWidget {
-  const LongTermAdvanceRequestSection({super.key});
+  final int amount;
+  final int numberOfMonths;
+
+  const LongTermAdvanceRequestSection({
+    super.key,
+    required this.amount,
+    required this.numberOfMonths,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,10 +46,13 @@ class LongTermAdvanceRequestSection extends StatelessWidget {
         // Advance request fields
         LeaveRequestFieldWidget(
           label: 'المبلغ المطلوب للسلفة',
-          value: '3000',
+          value: amount.toString(),
           isAmountField: true,
         ),
-        LeaveRequestFieldWidget(label: 'الوقت المطلوب للسداد', value: '5 اشهر'),
+        LeaveRequestFieldWidget(
+          label: 'الوقت المطلوب للسداد',
+          value: '$numberOfMonths اشهر',
+        ),
       ],
     );
   }

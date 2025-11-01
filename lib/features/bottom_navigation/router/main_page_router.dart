@@ -5,17 +5,14 @@ import 'package:hr_app/features/bottom_navigation/presentation/main_page.dart';
 import 'package:hr_app/features/home/logic/home_cubit.dart';
 import 'main_page_names.dart';
 
-
 class MainPageRouter {
-
-   static List<GoRoute> get routes => [
-    // Categories Screen
+  static List<GoRoute> get routes => [
     GoRoute(
       path: MainPageNames.mainPage,
-      builder: (context, state) =>BlocProvider(
+      builder: (context, state) => BlocProvider(
         create: (context) => sl<HomeCubit>()..getHomeScreen(),
         child: const MainPage(),
-      )
+      ),
     ),
   ];
 }

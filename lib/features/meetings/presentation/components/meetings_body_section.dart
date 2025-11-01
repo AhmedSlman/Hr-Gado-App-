@@ -51,8 +51,8 @@ class MeetingsBodySection extends StatelessWidget {
                 children: [
                   const SizedBox(height: 16),
 
-                  // const AddMeetingButton(),
-                  UserHelper.userRole == 'Manager'
+                  // Add Meeting Button (Manager only)
+                  UserHelper.isManager
                       ? AddButton(
                           title: 'اضافة اجتماع',
                           onTap: () async {

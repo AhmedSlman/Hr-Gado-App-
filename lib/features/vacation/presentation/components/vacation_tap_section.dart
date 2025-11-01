@@ -30,8 +30,8 @@ class _VacationTapSectionState extends State<VacationTapSection>
   VacationType _selectedType = VacationType.normal;
   final TextEditingController _reasonController = TextEditingController();
 
-  final int _totalDays = 21;
-  final int _consumedDays = 9;
+  final int _totalDays = 0;
+  final int _consumedDays = 0;
 
   VacationStats? _stats; // cache latest stats like advances pattern
 

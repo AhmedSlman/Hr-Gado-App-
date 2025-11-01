@@ -14,7 +14,10 @@ class CategoriesView extends StatelessWidget {
           children: [
             SizedBox(height: 20.h),
 
-            CustomAppBar(title: 'الخصائص'),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0.w),
+              child: CustomAppBar(title: 'الخصائص', showBackButton: false),
+            ),
             SizedBox(height: 16.h),
             CategoriesGridViewSection(),
           ],

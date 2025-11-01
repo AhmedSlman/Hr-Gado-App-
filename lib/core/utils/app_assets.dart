@@ -19,6 +19,7 @@ class AppAssets {
   static const String loading = 'assets/images/loading.png';
   static const String profile = "assets/images/profile.png";
   static const String emptyMeeting = "assets/images/empty_meeting.png";
+  static const String gado = "assets/images/gado.png";
 
   /// صور الخلفيات
   static const String background1 = 'assets/images/background_1.png';
@@ -203,6 +204,7 @@ abstract class ImagesAssets {
   static const String loading = AppAssets.loading;
   static const String profile = AppAssets.profile;
   static const String emptyMeeting = AppAssets.emptyMeeting;
+  static const String gado = AppAssets.gado;
 }
 
 /// الوصول السريع للأيقونات

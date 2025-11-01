@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hr_app/core/utils/app_assets.dart';
 
 class SplashHeaderWidget extends StatelessWidget {
   final String title;
@@ -23,11 +25,14 @@ class SplashBodyWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.flutter_dash, size: 100),
-          const SizedBox(height: 20),
+          AppAssets.image(
+            ImagesAssets.gado,
+            height: 150.h,
+            width: 150.w,
+            fit: BoxFit.contain,
+          ),
+          SizedBox(height: 30.h),
           if (isLoading) const CircularProgressIndicator(),
-          const SizedBox(height: 20),
-          const Text('Loading...'),
         ],
       ),
     );

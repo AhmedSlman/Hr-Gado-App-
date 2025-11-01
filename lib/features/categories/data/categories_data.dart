@@ -7,6 +7,7 @@ import 'package:hr_app/features/cars/router/cars_names.dart';
 import 'package:hr_app/features/categories/models/category_model.dart';
 import 'package:hr_app/features/meetings/router/meetings_names.dart';
 import 'package:hr_app/features/news/router/news_names.dart';
+import 'package:hr_app/features/rules/router/rules_names.dart';
 import 'package:hr_app/features/salary/router/salary_names.dart';
 import 'package:hr_app/features/salary_deduction/router/salary_deduction_names.dart';
 import 'package:hr_app/features/time_sheet/router/time_sheet_names.dart';
@@ -25,7 +26,10 @@ List<CategoryModel> categories = [
   CategoryModel(
     name: 'قوانين و لوئح',
     icon: AppAssets.cat2,
-    route: '/vehicles',
+    route: '/company-rules',
+    onTap: (context) {
+      context.push(RulesRoutes.rules);
+    },
   ),
   CategoryModel(
     name: 'رصيدك من الراتب',
@@ -73,7 +77,7 @@ List<CategoryModel> categories = [
       }
     },
   ),
-  CategoryModel(name: 'العهد', icon: AppAssets.cat9, route: '/sanctions'),
+  // CategoryModel(name: 'العهد', icon: AppAssets.cat9, route: '/sanctions'),
   CategoryModel(
     name: 'الجزاءات',
     icon: AppAssets.cat8,

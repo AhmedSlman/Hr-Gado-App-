@@ -9,15 +9,19 @@ class LoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12.w),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AuthHeaderWidget(title: 'تسجيل دخول'),
-            SizedBox(height: 20),
-            LoginSection(),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.w),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: 180.h),
+              AuthHeaderWidget(title: 'تسجيل دخول'),
+              SizedBox(height: 20.h),
+              LoginSection(),
+              SizedBox(height: 40.h),
+            ],
+          ),
         ),
       ),
     );

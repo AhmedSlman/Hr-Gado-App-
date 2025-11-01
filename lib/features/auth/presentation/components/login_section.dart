@@ -9,7 +9,7 @@ import 'package:hr_app/features/auth/logic/auth_cubit.dart';
 import 'package:hr_app/features/auth/logic/auth_states.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hr_app/features/auth/router/auth_names.dart';
-import 'package:hr_app/features/home/router/home_names.dart';
+import 'package:hr_app/features/bottom_navigation/router/main_page_names.dart';
 
 class LoginSection extends StatefulWidget {
   const LoginSection({super.key});
@@ -39,8 +39,8 @@ class _LoginSectionState extends State<LoginSection> {
           // Show success message
           CustomSnackBar.showSuccess(context, message: "تم تسجيل الدخول بنجاح");
 
-          // Navigate to home
-          context.go(HomeRoutes.home);
+          // Navigate to main page (bottom navbar)
+          context.go(MainPageNames.mainPage);
         } else if (state is AuthError) {
           CustomSnackBar.showError(context, message: state.message);
         }

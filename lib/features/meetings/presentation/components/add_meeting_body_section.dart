@@ -80,63 +80,73 @@ class _AddMeetingBodySectionState extends State<AddMeetingBodySection> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
-      builder: (context) {
-        return SafeArea(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 24.h),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+      builder: (bottomSheetContext) {
+        return StatefulBuilder(
+          builder: (context, setBottomSheetState) {
+            return SafeArea(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 24.h),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('اختر الموظفين', style: AppStyles.subHeader),
-                    const Spacer(),
-                    IconButton(
+                    Row(
+                      children: [
+                        Text('اختر الموظفين', style: AppStyles.subHeader),
+                        const Spacer(),
+                        IconButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: const Icon(Icons.close),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 12.h),
+                    SizedBox(
+                      height: 320.h,
+                      child: SingleChildScrollView(
+                        child: Wrap(
+                          spacing: 12.w,
+                          runSpacing: 12.h,
+                          children: employees
+                              .map(
+                                (e) => EmployeeChip(
+                                  name: e.name,
+                                  image: e.image,
+                                  selected: _selectedEmployeeIds.contains(e.id),
+                                  onTap: () {
+                                    // Update both parent state and bottom sheet state
+                                    setState(() {
+                                      if (_selectedEmployeeIds.contains(e.id)) {
+                                        _selectedEmployeeIds.remove(e.id);
+                                      } else {
+                                        _selectedEmployeeIds.add(e.id);
+                                      }
+                                    });
+                                    // Trigger bottom sheet rebuild
+                                    setBottomSheetState(() {});
+                                  },
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16.h),
+                    CustomButton(
+                      text: 'تم',
                       onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.close),
                     ),
                   ],
                 ),
-                SizedBox(height: 12.h),
-                SizedBox(
-                  height: 320.h,
-                  child: SingleChildScrollView(
-                    child: Wrap(
-                      spacing: 12.w,
-                      runSpacing: 12.h,
-                      children: employees
-                          .map(
-                            (e) => EmployeeChip(
-                              name: e.name,
-                              image: e.image,
-                              selected: _selectedEmployeeIds.contains(e.id),
-                              onTap: () {
-                                setState(() {
-                                  if (_selectedEmployeeIds.contains(e.id)) {
-                                    _selectedEmployeeIds.remove(e.id);
-                                  } else {
-                                    _selectedEmployeeIds.add(e.id);
-                                  }
-                                });
-                              },
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 16.h),
-                CustomButton(
-                  text: 'تم',
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
-    );
+    ).then((_) {
+      // Refresh the main view when bottom sheet closes
+      setState(() {});
+    });
   }
 
   void _submit() {

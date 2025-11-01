@@ -161,14 +161,31 @@ class DioConsumer implements ApiConsumer {
     bool isFormData = false,
     bool showLoading = false,
   }) {
-    _updateHeaders(method: 'PUT', isFile: isFormData);
+    // Check if headers specify form-urlencoded content type
+    final isFormUrlEncoded = headers?['Content-Type'] == 'application/x-www-form-urlencoded';
+    
+    // Only update headers if not form-urlencoded (to preserve custom Content-Type)
+    if (!isFormUrlEncoded) {
+      _updateHeaders(method: 'PUT', isFile: isFormData);
+    }
+    
     return _handleRequest<T>(
-      request: () => _dio.put(
-        path,
-        data: isFormData ? FormData.fromMap(body ?? {}) : body,
-        queryParameters: queryParameters,
-        options: Options(headers: headers),
-      ),
+      request: () {
+        // For form-urlencoded, Dio automatically encodes Map as form-urlencoded
+        // when Content-Type is set to application/x-www-form-urlencoded
+        final data = isFormData 
+            ? FormData.fromMap(body ?? {})
+            : (isFormUrlEncoded && body != null)
+                ? body // Dio will encode Map as form-urlencoded automatically
+                : body;
+        
+        return _dio.put(
+          path,
+          data: data,
+          queryParameters: queryParameters,
+          options: Options(headers: headers),
+        );
+      },
       parser: parser,
       showLoading: showLoading,
     );

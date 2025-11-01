@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hr_app/features/account/data/models/response/vacation_details_model.dart';
 import 'package:hr_app/features/account/presentation/widgets/leave_balance_item_widget.dart';
 import 'package:hr_app/features/account/presentation/widgets/leave_request_field_widget.dart';
 
 class VacationRequestSection extends StatelessWidget {
-  const VacationRequestSection({super.key});
+  final VacationDetailsModel data;
+
+  const VacationRequestSection({
+    super.key,
+    required this.data,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,16 +19,16 @@ class VacationRequestSection extends StatelessWidget {
         // Leave balance section
         LeaveBalanceItemWidget(
           label: 'عدد ايام الاجازات',
-          value: '21 يوم',
+          value: '${data.stats.allowedOffDays} يوم',
           showDivider: false,
         ),
         LeaveBalanceItemWidget(
           label: 'عدد ايام الاجازة المستهلكة',
-          value: '9 ايام',
+          value: '${data.stats.usedOffDays} ايام',
         ),
         LeaveBalanceItemWidget(
           label: 'عدد ايام الاجازة المتبقية',
-          value: '12 يوم',
+          value: '${data.stats.remainingOffDays} يوم',
           isRemaining: true,
           showDivider: false,
         ),
@@ -30,15 +36,15 @@ class VacationRequestSection extends StatelessWidget {
         // Leave request details section
         LeaveRequestFieldWidget(
           label: 'تاريخ بداية الاجازة',
-          value: '8 يناير 2025',
+          value: data.startDate,
         ),
         LeaveRequestFieldWidget(
           label: 'تاريخ نهاية الاجازة',
-          value: '15 يناير 2025',
+          value: data.endDate,
         ),
         LeaveRequestFieldWidget(
           label: 'عدد الايام المطلوبة',
-          value: '3',
+          value: data.numberOfDays.toString(),
           isDaysField: true,
         ),
       ],

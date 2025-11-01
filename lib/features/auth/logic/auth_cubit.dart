@@ -36,10 +36,14 @@ class AuthCubit extends Cubit<AuthStates> {
 
   // Logout method
   Future<void> logout() async {
-    await repository.logout();
-    emit(AuthInitial());
-    // إعادة توجيه إلى صفحة تسجيل الدخول
-    // سيتم التعامل مع إعادة التوجيه في الـ router redirect
+    emit(AuthLogoutLoading());
+    
+    final result = await repository.logout();
+    
+    result.fold(
+      (failure) => emit(AuthLogoutError(failure.message)),
+      (_) => emit(AuthLogoutSuccess('تم تسجيل الخروج بنجاح')),
+    );
   }
 
   // Check if user is logged in

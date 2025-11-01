@@ -1,5 +1,8 @@
 import 'package:get_it/get_it.dart';
+import 'package:hr_app/features/account/di/account_di.dart';
 import 'package:hr_app/features/meetings/di/meetings_di.dart';
+import 'package:hr_app/features/notifications/di/notifications_di.dart';
+import 'package:hr_app/features/rules/di/rules_di.dart';
 
 // Import feature DI setups
 import '../../features/auth/di/auth_di.dart';
@@ -54,5 +57,8 @@ class ServiceLocator {
     MeetingsDI.setup();
     CarsDI.setup();
     SalaryDeductionDI.setup();
+    AccountDI.setup();
+    RulesDI.setup();
+    NotificationsDI.setup();
   }
 }

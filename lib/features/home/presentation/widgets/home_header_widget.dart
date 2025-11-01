@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hr_app/core/theme/app_typography.dart';
 import 'package:hr_app/core/utils/app_assets.dart';
+import 'package:hr_app/features/notifications/router/notifications_names.dart';
 
 class HomeHeaderWidget extends StatelessWidget {
   const HomeHeaderWidget({
@@ -28,7 +30,12 @@ class HomeHeaderWidget extends StatelessWidget {
       ),
       title: Text(userName, style: AppStyles.s14Medium),
       subtitle: Text(role, style: AppStyles.s12),
-      trailing: AppAssets.svg(IconsAssets.notification),
+      trailing: InkWell(
+        onTap: () {
+          context.push(NotificationsRoutes.notifications);
+        },
+        child: AppAssets.svg(IconsAssets.notification),
+      ),
     );
   }
 }

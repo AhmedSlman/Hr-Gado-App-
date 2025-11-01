@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hr_app/core/theme/app_colors.dart';
 import 'package:hr_app/core/theme/app_typography.dart';
+import 'package:hr_app/features/time_sheet/logic/time_sheet_cubit.dart';
 
 class ChangeMonthHeader extends StatefulWidget {
   const ChangeMonthHeader({super.key});
@@ -35,6 +37,36 @@ class _ChangeMonthHeaderState extends State<ChangeMonthHeader> {
       "ديسمبر",
     ];
     return "${arabicMonths[now.month - 1]} ${now.year}";
+  }
+
+  Map<String, int> _parseMonthYear(String dateStr) {
+    final arabicMonths = [
+      "يناير",
+      "فبراير",
+      "مارس",
+      "أبريل",
+      "مايو",
+      "يونيو",
+      "يوليو",
+      "أغسطس",
+      "سبتمبر",
+      "أكتوبر",
+      "نوفمبر",
+      "ديسمبر",
+    ];
+
+    final parts = dateStr.trim().split(' ');
+    if (parts.length >= 2) {
+      final monthName = parts[0];
+      final yearStr = parts[1];
+      final monthIndex = arabicMonths.indexOf(monthName);
+      final year = int.tryParse(yearStr);
+
+      if (monthIndex >= 0 && year != null) {
+        return {'month': monthIndex + 1, 'year': year};
+      }
+    }
+    return {};
   }
 
   List<String> get availableDates {
@@ -94,6 +126,14 @@ class _ChangeMonthHeaderState extends State<ChangeMonthHeader> {
                 setState(() {
                   selectedDate = newValue;
                 });
+                // Reload data with new month/year
+                final dateMap = _parseMonthYear(newValue);
+                if (dateMap.isNotEmpty) {
+                  context.read<TimeSheetCubit>().loadItems(
+                    month: dateMap['month'],
+                    year: dateMap['year'],
+                  );
+                }
               }
             },
           ),

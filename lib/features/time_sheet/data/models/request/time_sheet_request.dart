@@ -1,11 +1,18 @@
 class TimeSheetRequest {
-  // Add request fields here
-  const TimeSheetRequest();
+  final int? month;
+  final int? year;
+
+  const TimeSheetRequest({this.month, this.year});
 
   Map<String, dynamic> toJson() {
-    return {
-      // Add request fields here
-    };
+    final map = <String, dynamic>{};
+    if (month != null) {
+      map['month'] = month;
+    }
+    if (year != null) {
+      map['year'] = year;
+    }
+    return map;
   }
 }
 

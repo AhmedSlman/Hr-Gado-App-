@@ -9,9 +9,13 @@ class RequsetActionsButtons extends StatelessWidget {
     super.key,
     required this.onAcceptPressed,
     required this.onRejectPressed,
+    this.isApproving = false,
+    this.isRejecting = false,
   });
-  final void Function() onAcceptPressed;
-  final void Function() onRejectPressed;
+  final VoidCallback? onAcceptPressed;
+  final VoidCallback? onRejectPressed;
+  final bool isApproving;
+  final bool isRejecting;
 
   @override
   Widget build(BuildContext context) {
@@ -19,27 +23,29 @@ class RequsetActionsButtons extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Row(
         children: [
-          // Reject button (red)
+          // Accept button (green)
           Expanded(
             child: CustomButton(
               text: 'قبول الطلب',
               backgroundColor: AppColors.deepGreenColor,
               height: 50.h,
-              onPressed: onAcceptPressed,
+              onPressed: (isApproving || isRejecting) ? null : onAcceptPressed,
               textStyle: AppStyles.s16Medium.copyWith(color: AppColors.white),
+              isLoading: isApproving,
             ),
           ),
           SizedBox(width: 16.w),
+          // Reject button (red)
           Expanded(
             child: CustomButton(
               text: 'رفض الطلب',
               backgroundColor: AppColors.red,
               height: 50.h,
-              onPressed: onRejectPressed,
+              onPressed: (isApproving || isRejecting) ? null : onRejectPressed,
               textStyle: AppStyles.s16Medium.copyWith(color: AppColors.white),
+              isLoading: isRejecting,
             ),
           ),
-          // Accept button (green)
         ],
       ),
     );

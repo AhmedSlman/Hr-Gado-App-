@@ -68,10 +68,36 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<void> logout() async {
-    // Clear user data from local cache
-    await UserHelper.clearUser();
-    // Also clear from local data source if needed
-    await localDataSource.clearUser();
+  Future<Result<void>> logout() async {
+    try {
+      // Call logout API first
+      final result = await remoteDataSource.logout();
+
+      return await result.fold(
+        (failure) async {
+          // Even if API fails, clear local data
+          await UserHelper.clearUser();
+          await localDataSource.clearUser();
+          return Left(failure);
+        },
+        (_) async {
+          // Clear user data from local cache after successful API call
+          await UserHelper.clearUser();
+          // Also clear from local data source if needed
+          await localDataSource.clearUser();
+          return const Right(null);
+        },
+      );
+    } catch (e) {
+      // Even if there's an exception, clear local data
+      await UserHelper.clearUser();
+      await localDataSource.clearUser();
+      return Left(
+        UnknownFailure(
+          message: 'فشل في تسجيل الخروج: ${e.toString()}',
+          originalError: e,
+        ),
+      );
+    }
   }
 }
