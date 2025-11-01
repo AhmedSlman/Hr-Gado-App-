@@ -27,23 +27,23 @@ class LeaveBalanceItemWidget extends StatelessWidget {
             children: [
               // Value on the left (RTL)
               Text(
+                label,
+                style: AppStyles.s16Medium.copyWith(color: AppColors.primary),
+              ),
+              const Spacer(),
+              Text(
                 value,
                 style: isRemaining
                     ? AppStyles.s18Bold.copyWith(color: AppColors.primary)
                     : AppStyles.s16.copyWith(color: AppColors.black),
               ),
-              const Spacer(),
               // Label on the right (RTL)
-              Text(
-                label,
-                style: AppStyles.s16Medium.copyWith(color: AppColors.primary),
-              ),
             ],
           ),
         ),
         if (showDivider)
           Divider(
-            color: AppColors.lightGrey,
+            color: AppColors.lightBlue,
             height: 1,
             thickness: 1,
             indent: 16.w,

@@ -37,7 +37,9 @@ class AccountView extends StatelessWidget {
                   AccountMenuItemWidget(
                     icon: Icons.description,
                     title: 'تقارير الموظفين',
-                    onTap: () {},
+                    onTap: () {
+                      context.push(AccountRoutes.employeeReports);
+                    },
                   ),
                   AccountMenuItemWidget(
                     icon: Icons.help_outline,
@@ -49,7 +51,9 @@ class AccountView extends StatelessWidget {
                   AccountMenuItemWidget(
                     icon: Icons.chat_bubble_outline,
                     title: 'تقديم اقتراحات و شکاوی',
-                    onTap: () {},
+                    onTap: () {
+                      context.push(AccountRoutes.complaintsSuggestions);
+                    },
                   ),
 
                   const LogoutWidget(),

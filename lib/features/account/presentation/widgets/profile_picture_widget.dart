@@ -3,10 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hr_app/core/theme/app_colors.dart';
 
 class ProfilePictureWidget extends StatelessWidget {
-  final String? imageUrl;
+  final String imageUrl;
   final VoidCallback? onTap;
 
-  const ProfilePictureWidget({super.key, this.imageUrl, this.onTap});
+  const ProfilePictureWidget({super.key, required this.imageUrl, this.onTap});
 
   @override
   Widget build(BuildContext context) {
