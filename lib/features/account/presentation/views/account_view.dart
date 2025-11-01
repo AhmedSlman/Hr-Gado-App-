@@ -16,7 +16,10 @@ class AccountView extends StatelessWidget {
         child: Column(
           children: [
             SizedBox(height: 16.h),
-            CustomAppBar(title: "الحساب"),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0.w),
+              child: CustomAppBar(title: "الحساب", showBackButton: false),
+            ),
             Expanded(
               child: ListView(
                 children: [

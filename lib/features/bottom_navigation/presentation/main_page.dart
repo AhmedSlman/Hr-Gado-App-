@@ -1,50 +1,55 @@
 import 'package:flutter/material.dart';
-import 'package:hr_app/features/bottom_navigation/presentation/widget/nav_app.dart';
+import 'package:hr_app/features/account/presentation/views/account_view.dart';
+import 'package:hr_app/features/bottom_navigation/presentation/widgets/bottom_nav_bar_widget.dart';
 import 'package:hr_app/features/categories/presentation/views/categories_view.dart';
 import 'package:hr_app/features/home/presentation/views/home_view.dart';
 
 class MainPage extends StatefulWidget {
-  final int index;
+  final int initialIndex;
 
-  const MainPage({super.key, this.index = 0});
+  const MainPage({super.key, this.initialIndex = 0});
 
   @override
   State<MainPage> createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
-  int _index = 0;
+  late int _currentIndex;
 
   @override
   void initState() {
-    _index = widget.index;
     super.initState();
+    _currentIndex = widget.initialIndex;
   }
 
-  Widget fregmant(int index) {
+  Widget _buildPage(int index) {
     switch (index) {
       case 0:
-        return HomeView();
+        return const HomeView();
       case 1:
-        return CategoriesView();
+        return const CategoriesView();
       case 2:
-        return Container();
-
+        return const AccountView();
       default:
-        return Container();
+        return const HomeView();
+    }
+  }
+
+  void _handleNavItemSelected(int index) {
+    if (_currentIndex != index) {
+      setState(() {
+        _currentIndex = index;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: fregmant(_index),
-      bottomNavigationBar: NavApp(
-        index: _index,
-        onSelect: (p0) {
-          _index = p0;
-          setState(() {});
-        },
+      body: _buildPage(_currentIndex),
+      bottomNavigationBar: BottomNavBarWidget(
+        currentIndex: _currentIndex,
+        onItemSelected: _handleNavItemSelected,
       ),
     );
   }
