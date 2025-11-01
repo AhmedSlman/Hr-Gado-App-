@@ -18,4 +18,10 @@ class AccountEndpoints {
   static const String employeeReports = '/employee/employees-reports';
   static String employeeReportDetails(int reportId) =>
       '/employee/employees-reports/$reportId';
+  static String updateReport(int reportId) =>
+      '/employee/daily-reports/$reportId';
+  static String confirmReport(int reportId) =>
+      '/employee/confirm-report/$reportId';
+  static const String profile = '/employee/profile';
+  static const String reportIssue = '/employee/report-issue';
 }

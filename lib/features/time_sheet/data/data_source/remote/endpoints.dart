@@ -1,5 +1,6 @@
 class TimeSheetEndpoints {
-  static const String baseUrl = "https://jsonplaceholder.typicode.com";
+  static const String attendances = '/employee/attendances';
+  static const String attendanceRequests = '/employee/attendance-requests';
 }
 
 

@@ -151,9 +151,8 @@ class EmployeeRequestSection extends StatelessWidget {
           current is ApproveLeaveError ||
           current is RejectLeaveError,
       builder: (context, actionState) {
-        final isProcessing =
-            actionState is ApproveLeaveProcessing ||
-            actionState is RejectLeaveProcessing;
+        final isApproving = actionState is ApproveLeaveProcessing;
+        final isRejecting = actionState is RejectLeaveProcessing;
 
         return Column(
           children: [
@@ -173,16 +172,14 @@ class EmployeeRequestSection extends StatelessWidget {
             VacationRequestSection(data: data),
             SizedBox(height: 32.h),
             RequsetActionsButtons(
-              onAcceptPressed: isProcessing
-                  ? null
-                  : () {
-                      sl<AccountCubit>().approveLeave(requestId);
-                    },
-              onRejectPressed: isProcessing
-                  ? null
-                  : () {
-                      sl<AccountCubit>().rejectLeave(requestId);
-                    },
+              onAcceptPressed: () {
+                sl<AccountCubit>().approveLeave(requestId);
+              },
+              onRejectPressed: () {
+                sl<AccountCubit>().rejectLeave(requestId);
+              },
+              isApproving: isApproving,
+              isRejecting: isRejecting,
             ),
             SizedBox(height: 32.h),
           ],
@@ -201,9 +198,8 @@ class EmployeeRequestSection extends StatelessWidget {
           current is ApproveAdvanceError ||
           current is RejectAdvanceError,
       builder: (context, actionState) {
-        final isProcessing =
-            actionState is ApproveAdvanceProcessing ||
-            actionState is RejectAdvanceProcessing;
+        final isApproving = actionState is ApproveAdvanceProcessing;
+        final isRejecting = actionState is RejectAdvanceProcessing;
 
         return Column(
           children: [
@@ -223,16 +219,14 @@ class EmployeeRequestSection extends StatelessWidget {
             _buildAdvanceRequestContent(context, data),
             SizedBox(height: 32.h),
             RequsetActionsButtons(
-              onAcceptPressed: isProcessing
-                  ? null
-                  : () {
-                      sl<AccountCubit>().approveAdvance(requestId);
-                    },
-              onRejectPressed: isProcessing
-                  ? null
-                  : () {
-                      sl<AccountCubit>().rejectAdvance(requestId);
-                    },
+              onAcceptPressed: () {
+                sl<AccountCubit>().approveAdvance(requestId);
+              },
+              onRejectPressed: () {
+                sl<AccountCubit>().rejectAdvance(requestId);
+              },
+              isApproving: isApproving,
+              isRejecting: isRejecting,
             ),
             SizedBox(height: 32.h),
           ],

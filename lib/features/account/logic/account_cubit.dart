@@ -34,6 +34,15 @@ class AccountCubit extends Cubit<AccountStates> {
     );
   }
 
+  Future<void> loadProfile() async {
+    emit(ProfileLoading());
+    final result = await repository.fetchProfile();
+    result.fold(
+      (failure) => emit(ProfileLoadError(failure.message)),
+      (data) => emit(ProfileLoadSuccess(data)),
+    );
+  }
+
   Future<void> loadAdvanceDetails(int requestId) async {
     emit(AdvanceDetailsLoading());
     final result = await repository.fetchAdvanceDetails(requestId);
@@ -70,6 +79,24 @@ class AccountCubit extends Cubit<AccountStates> {
     );
   }
 
+  Future<void> updateReport(int reportId, Map<String, dynamic> formData) async {
+    emit(UpdateReportProcessing());
+    final result = await repository.updateReport(reportId, formData);
+    result.fold(
+      (failure) => emit(UpdateReportError(failure.message)),
+      (response) => emit(UpdateReportSuccess(response.msg)),
+    );
+  }
+
+  Future<void> confirmReport(int reportId) async {
+    emit(ConfirmReportProcessing());
+    final result = await repository.confirmReport(reportId);
+    result.fold(
+      (failure) => emit(ConfirmReportError(failure.message)),
+      (response) => emit(ConfirmReportSuccess(response.msg)),
+    );
+  }
+
   Future<void> approveAdvance(int requestId) async {
     emit(ApproveAdvanceProcessing());
     final result = await repository.approveAdvance(requestId);
@@ -103,6 +130,15 @@ class AccountCubit extends Cubit<AccountStates> {
     result.fold(
       (failure) => emit(RejectLeaveError(failure.message)),
       (response) => emit(RejectLeaveSuccess(response.msg)),
+    );
+  }
+
+  Future<void> reportIssue(Map<String, dynamic> formData) async {
+    emit(ReportIssueProcessing());
+    final result = await repository.reportIssue(formData);
+    result.fold(
+      (failure) => emit(ReportIssueError(failure.message)),
+      (response) => emit(ReportIssueSuccess(response.msg)),
     );
   }
 }

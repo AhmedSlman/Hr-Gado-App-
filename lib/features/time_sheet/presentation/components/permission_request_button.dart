@@ -1,32 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hr_app/core/common/widgets/custom_button.dart';
+import 'package:hr_app/core/locator/service_locator.dart';
 import 'package:hr_app/core/theme/app_colors.dart';
+import 'package:hr_app/features/time_sheet/logic/time_sheet_cubit.dart';
 import 'package:hr_app/features/time_sheet/presentation/components/permission_request_dialog_section.dart';
-import 'package:hr_app/core/common/widgets/success_dialog_widget.dart';
 
 class PermissionRequestButton extends StatelessWidget {
   PermissionRequestButton({super.key});
 
   void _showPermissionRequestDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return PermissionRequestDialogComponent(
-          delayDurations: _delayDurations,
-          onRequestSubmitted: () => _showSuccessDialog(context),
-        );
-      },
-    );
-  }
+    final cubit = sl<TimeSheetCubit>();
 
-  void _showSuccessDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return const SuccessDialogWidget(
-          title: "تم إرسال الطلب بنجاح",
-          message:
-              "نقدر حرصك على إبلاغ الإدارة مسبقًا، وسيتم النظر فيه خلال وقت قصير.",
+      builder: (BuildContext dialogContext) {
+        return BlocProvider<TimeSheetCubit>.value(
+          value: cubit,
+          child: PermissionRequestDialogComponent(
+            delayDurations: _delayDurations,
+          ),
         );
       },
     );

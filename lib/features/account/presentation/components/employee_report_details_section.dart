@@ -12,11 +12,13 @@ import 'package:hr_app/features/account/presentation/widgets/report_details_widg
 import 'package:hr_app/features/account/presentation/widgets/report_row_card_widget.dart';
 
 class EmployeeReportDetailsSection extends StatelessWidget {
+  final int reportId;
   final VoidCallback? onEditPressed;
   final VoidCallback? onConfirmPressed;
 
   const EmployeeReportDetailsSection({
     super.key,
+    required this.reportId,
     this.onEditPressed,
     this.onConfirmPressed,
   });
@@ -27,7 +29,11 @@ class EmployeeReportDetailsSection extends StatelessWidget {
       buildWhen: (previous, current) =>
           current is EmployeeReportDetailsLoading ||
           current is EmployeeReportDetailsLoadSuccess ||
-          current is EmployeeReportDetailsLoadError,
+          current is EmployeeReportDetailsLoadError ||
+          current is UpdateReportProcessing ||
+          current is UpdateReportSuccess ||
+          current is ConfirmReportProcessing ||
+          current is ConfirmReportSuccess,
       listener: (context, state) {
         if (state is EmployeeReportDetailsLoadError) {
           CustomSnackBar.showError(context, message: state.message);
@@ -49,33 +55,53 @@ class EmployeeReportDetailsSection extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context, EmployeeReportDetailsModel data) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          SizedBox(height: 24.h),
-          PersonDataWidget(
-            employeeName: data.employeeName,
-            jobTitle: data.employeeJob,
-            profileImageUrl: data.employeeImage,
+    return BlocBuilder<AccountCubit, AccountStates>(
+      buildWhen: (previous, current) =>
+          current is UpdateReportProcessing ||
+          current is UpdateReportSuccess ||
+          current is UpdateReportError ||
+          current is ConfirmReportProcessing ||
+          current is ConfirmReportSuccess ||
+          current is ConfirmReportError,
+      builder: (context, state) {
+        final isUpdatingState = state is UpdateReportProcessing;
+        final isConfirmingState = state is ConfirmReportProcessing;
+
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: 24.h),
+              PersonDataWidget(
+                employeeName: data.employeeName,
+                jobTitle: data.employeeJob,
+                profileImageUrl: data.employeeImage,
+              ),
+              SizedBox(height: 32.h),
+              ReportDate(date: data.date),
+              SizedBox(height: 16.h),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: _buildReportStats(data),
+              ),
+              SizedBox(height: 24.h),
+              // Report content
+              ReportDetailsWidget(report: data.content),
+              SizedBox(height: 32.h),
+              ReportActionsWidget(
+                onEditPressed: isUpdatingState || isConfirmingState
+                    ? null
+                    : onEditPressed,
+                onConfirmPressed: isUpdatingState || isConfirmingState
+                    ? null
+                    : onConfirmPressed,
+                isUpdating: isUpdatingState,
+                isConfirming: isConfirmingState,
+              ),
+              SizedBox(height: 32.h),
+            ],
           ),
-          SizedBox(height: 32.h),
-          ReportDate(date: data.date),
-          SizedBox(height: 16.h),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
-            child: _buildReportStats(data),
-          ),
-          SizedBox(height: 24.h),
-          // Report content
-          ReportDetailsWidget(report: data.content),
-          SizedBox(height: 32.h),
-          ReportActionsWidget(
-            onEditPressed: onEditPressed,
-            onConfirmPressed: onConfirmPressed,
-          ),
-          SizedBox(height: 32.h),
-        ],
-      ),
+        );
+      },
     );
   }
 

@@ -20,4 +20,14 @@ class AuthForgotPasswordSuccess extends AuthStates {}
 
 class AuthResetPasswordSuccess extends AuthStates {}
 
-class AuthLogoutSuccess extends AuthStates {}
+class AuthLogoutLoading extends AuthStates {}
+
+class AuthLogoutSuccess extends AuthStates {
+  final String message;
+  AuthLogoutSuccess(this.message);
+}
+
+class AuthLogoutError extends AuthStates {
+  final String message;
+  AuthLogoutError(this.message);
+}

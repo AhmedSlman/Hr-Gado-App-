@@ -34,6 +34,12 @@ class AccountRepositoryImpl implements AccountRepository {
   }
 
   @override
+  Future<Result<PersonalDataModel>> fetchProfile() async {
+    final result = await remoteDataSource.fetchProfile();
+    return result;
+  }
+
+  @override
   Future<Result<AdvanceDetailsModel>> fetchAdvanceDetails(int requestId) async {
     final result = await remoteDataSource.fetchAdvanceDetails(requestId);
     return result;
@@ -62,6 +68,21 @@ class AccountRepositoryImpl implements AccountRepository {
   }
 
   @override
+  Future<Result<ApiMessageResponse>> updateReport(
+    int reportId,
+    Map<String, dynamic> formData,
+  ) async {
+    final result = await remoteDataSource.updateReport(reportId, formData);
+    return result;
+  }
+
+  @override
+  Future<Result<ApiMessageResponse>> confirmReport(int reportId) async {
+    final result = await remoteDataSource.confirmReport(reportId);
+    return result;
+  }
+
+  @override
   Future<Result<ApiMessageResponse>> approveAdvance(int requestId) async {
     final result = await remoteDataSource.approveAdvance(requestId);
     return result;
@@ -82,6 +103,14 @@ class AccountRepositoryImpl implements AccountRepository {
   @override
   Future<Result<ApiMessageResponse>> rejectLeave(int requestId) async {
     final result = await remoteDataSource.rejectLeave(requestId);
+    return result;
+  }
+
+  @override
+  Future<Result<ApiMessageResponse>> reportIssue(
+    Map<String, dynamic> formData,
+  ) async {
+    final result = await remoteDataSource.reportIssue(formData);
     return result;
   }
 }

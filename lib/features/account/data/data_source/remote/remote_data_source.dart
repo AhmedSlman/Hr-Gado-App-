@@ -16,16 +16,23 @@ abstract class AccountRemoteDataSource {
   Future<Result<EmployeeRequestsResponse>> fetchEmployeeRequests();
   Future<Result<EmployeesResponse>> fetchEmployees();
   Future<Result<PersonalDataModel>> fetchPersonalData(int employeeId);
+  Future<Result<PersonalDataModel>> fetchProfile();
   Future<Result<AdvanceDetailsModel>> fetchAdvanceDetails(int requestId);
   Future<Result<VacationDetailsModel>> fetchVacationDetails(int requestId);
   Future<Result<EmployeeReportsResponse>> fetchEmployeeReports();
   Future<Result<EmployeeReportDetailsModel>> fetchEmployeeReportDetails(
     int reportId,
   );
+  Future<Result<ApiMessageResponse>> updateReport(
+    int reportId,
+    Map<String, dynamic> formData,
+  );
+  Future<Result<ApiMessageResponse>> confirmReport(int reportId);
   Future<Result<ApiMessageResponse>> approveAdvance(int requestId);
   Future<Result<ApiMessageResponse>> rejectAdvance(int requestId);
   Future<Result<ApiMessageResponse>> approveLeave(int requestId);
   Future<Result<ApiMessageResponse>> rejectLeave(int requestId);
+  Future<Result<ApiMessageResponse>> reportIssue(Map<String, dynamic> formData);
 }
 
 class AccountRemoteDataSourceImpl implements AccountRemoteDataSource {
@@ -64,6 +71,23 @@ class AccountRemoteDataSourceImpl implements AccountRemoteDataSource {
   Future<Result<PersonalDataModel>> fetchPersonalData(int employeeId) async {
     final result = await _apiConsumer.get<PersonalDataModel>(
       path: AccountEndpoints.personalData(employeeId),
+      headers: const {'Accept': 'application/vnd.api+json'},
+      parser: (json) {
+        final data = (json['data'] ?? {}) as Map<String, dynamic>;
+        return PersonalDataModel.fromJson(data);
+      },
+    );
+
+    return result.fold(
+      onSuccess: (data) => Right(data),
+      onFailure: (failure) => Left(failure),
+    );
+  }
+
+  @override
+  Future<Result<PersonalDataModel>> fetchProfile() async {
+    final result = await _apiConsumer.get<PersonalDataModel>(
+      path: AccountEndpoints.profile,
       headers: const {'Accept': 'application/vnd.api+json'},
       parser: (json) {
         final data = (json['data'] ?? {}) as Map<String, dynamic>;
@@ -194,6 +218,59 @@ class AccountRemoteDataSourceImpl implements AccountRemoteDataSource {
         final data = (json['data'] ?? {}) as Map<String, dynamic>;
         return EmployeeReportDetailsModel.fromJson(data);
       },
+    );
+
+    return result.fold(
+      onSuccess: (data) => Right(data),
+      onFailure: (failure) => Left(failure),
+    );
+  }
+
+  @override
+  Future<Result<ApiMessageResponse>> updateReport(
+    int reportId,
+    Map<String, dynamic> formData,
+  ) async {
+    final result = await _apiConsumer.put<ApiMessageResponse>(
+      path: AccountEndpoints.updateReport(reportId),
+      body: formData,
+      headers: const {
+        'Accept': 'application/vnd.api+json',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      parser: (json) => ApiMessageResponse.fromJson(json),
+    );
+
+    return result.fold(
+      onSuccess: (data) => Right(data),
+      onFailure: (failure) => Left(failure),
+    );
+  }
+
+  @override
+  Future<Result<ApiMessageResponse>> confirmReport(int reportId) async {
+    final result = await _apiConsumer.post<ApiMessageResponse>(
+      path: AccountEndpoints.confirmReport(reportId),
+      headers: const {'Accept': 'application/vnd.api+json'},
+      parser: (json) => ApiMessageResponse.fromJson(json),
+    );
+
+    return result.fold(
+      onSuccess: (data) => Right(data),
+      onFailure: (failure) => Left(failure),
+    );
+  }
+
+  @override
+  Future<Result<ApiMessageResponse>> reportIssue(
+    Map<String, dynamic> formData,
+  ) async {
+    final result = await _apiConsumer.post<ApiMessageResponse>(
+      path: AccountEndpoints.reportIssue,
+      body: formData,
+      isFormData: true,
+      headers: const {'Accept': 'application/vnd.api+json'},
+      parser: (json) => ApiMessageResponse.fromJson(json),
     );
 
     return result.fold(

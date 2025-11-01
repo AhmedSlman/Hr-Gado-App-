@@ -14,6 +14,7 @@ class PermissionRequestDialogWidget extends StatelessWidget {
   final Function(String?) onDelayDurationChanged;
   final VoidCallback onSubmit;
   final VoidCallback onCancel;
+  final bool isLoading;
 
   const PermissionRequestDialogWidget({
     super.key,
@@ -24,6 +25,7 @@ class PermissionRequestDialogWidget extends StatelessWidget {
     required this.onDelayDurationChanged,
     required this.onSubmit,
     required this.onCancel,
+    this.isLoading = false,
   });
 
   @override
@@ -115,7 +117,10 @@ class PermissionRequestDialogWidget extends StatelessWidget {
             SizedBox(height: 14.h),
             CustomButton(
               text: "إرسال طلب",
-              onPressed: selectedDelayDuration != null ? onSubmit : null,
+              onPressed: (isLoading || selectedDelayDuration == null)
+                  ? null
+                  : onSubmit,
+              isLoading: isLoading,
             ),
           ],
         ),

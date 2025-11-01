@@ -20,7 +20,12 @@ class CategoriesGridViewSection extends StatelessWidget {
       itemCount: categories.length,
       itemBuilder: (context, index) {
         final category = categories[index];
-        return CategoryCard(image: category.icon, title: category.name);
+        return CategoryCard(
+          image: category.icon,
+          title: category.name,
+          route: category.route,
+          onTap: category.onTap,
+        );
       },
     );
   }

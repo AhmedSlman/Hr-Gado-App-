@@ -54,41 +54,61 @@ class EmployeeRequestCardWidget extends StatelessWidget {
             ),
             SizedBox(width: 16.w),
 
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  date,
-                  style: AppStyles.s14Medium.copyWith(
-                    color: AppColors.grayText,
-                  ),
-                ),
-                SizedBox(height: 8.h),
-                Row(
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 12.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      employeeName,
-                      style: AppStyles.s16Medium.copyWith(
+                      date,
+                      style: AppStyles.s14Medium.copyWith(
                         color: AppColors.grayText,
                       ),
                     ),
-                    SizedBox(width: 60.w),
-                    Text(
-                      requestType,
-                      style: AppStyles.s16Medium.copyWith(
-                        color: AppColors.grayText,
-                      ),
-                    ),
-                    SizedBox(width: 60.w),
-                    Text(
-                      details,
-                      style: AppStyles.s16Medium.copyWith(
-                        color: AppColors.grayText,
-                      ),
+                    SizedBox(height: 8.h),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            employeeName,
+                            style: AppStyles.s16Medium.copyWith(
+                              color: AppColors.grayText,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        SizedBox(width: 8.w),
+                        Expanded(
+                          child: Text(
+                            requestType,
+                            style: AppStyles.s16Medium.copyWith(
+                              color: AppColors.grayText,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        SizedBox(width: 8.w),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Text(
+                              details,
+                              style: AppStyles.s16Medium.copyWith(
+                                color: AppColors.grayText,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.end,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
+              ),
             ),
           ],
         ),

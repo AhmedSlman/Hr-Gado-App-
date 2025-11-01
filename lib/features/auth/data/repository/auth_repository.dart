@@ -5,5 +5,5 @@ import '../../../../core/error/result_extensions.dart';
 abstract class AuthRepository {
   Future<Result<UserModel>> login(LoginRequest request);
   Future<Result<void>> forgotPassword(String username);
-  Future<void> logout();
+  Future<Result<void>> logout();
 }

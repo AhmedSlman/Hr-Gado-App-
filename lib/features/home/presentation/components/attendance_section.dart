@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hr_app/core/common/widgets/custom_snackbar.dart';
 import 'package:hr_app/core/locator/service_locator.dart';
 import 'package:hr_app/core/utils/date_time_helper.dart';
+import 'package:hr_app/core/utils/location_service.dart';
 import 'package:hr_app/core/utils/user_helper.dart';
 import 'package:hr_app/features/home/data/models/work_report_model.dart';
 import 'package:hr_app/features/home/logic/home_cubit.dart';
@@ -52,21 +53,53 @@ class _AttendanceSectionState extends State<AttendanceSection> {
     });
   }
 
-  void _handleCheckIn() {
+  Future<void> _handleCheckIn() async {
     final currentTime = DateTimeHelper.getCurrentTime();
 
     showDialog(
       context: context,
       builder: (context) => CheckInDialog(
         checkInTime: currentTime,
-        onConfirm: () {
+        onConfirm: () async {
+          Navigator.of(context).pop();
+
           setState(() {
             _isLoading = true;
           });
 
-          sl<HomeCubit>().checkIn(31.035727351307926, 31.398294376175777);
+          try {
+            // Get current location
+            final coordinates =
+                await LocationService.getCurrentLocationCoordinates();
+            final latitude = coordinates['latitude']!;
+            final longitude = coordinates['longitude']!;
 
-          Navigator.of(context).pop();
+            // Call checkIn with actual location
+            sl<HomeCubit>().checkIn(latitude, longitude);
+          } catch (e) {
+            setState(() {
+              _isLoading = false;
+            });
+
+            String errorMessage = 'فشل الحصول على الموقع';
+            if (e is LocationPermissionException) {
+              errorMessage = 'يرجى تفعيل صلاحيات الموقع من الإعدادات';
+              // Optionally open settings
+              final opened = await LocationService.openLocationSettings();
+              if (!opened) {
+                CustomSnackBar.showError(
+                  context,
+                  message: 'يرجى تفعيل صلاحيات الموقع يدوياً من الإعدادات',
+                );
+              }
+            } else if (e is LocationServiceException) {
+              errorMessage = 'يرجى تفعيل خدمات الموقع في إعدادات الجهاز';
+            } else {
+              errorMessage = e.toString();
+            }
+
+            CustomSnackBar.showError(context, message: errorMessage);
+          }
         },
       ),
     );
@@ -96,9 +129,7 @@ class _AttendanceSectionState extends State<AttendanceSection> {
     showDialog(
       context: context,
       builder: (context) => ReportSummaryDialog(
-        devices: workReport.devices,
-        meters: workReport.meters,
-        report: workReport.report,
+        workReport: workReport,
         onConfirm: () {
           Navigator.of(context).pop();
           _showSuccessDialog(currentTime);
@@ -126,16 +157,50 @@ class _AttendanceSectionState extends State<AttendanceSection> {
       context: context,
       builder: (context) => CheckOutDialog(
         checkOutTime: currentTime,
-        onConfirm: () {
+        onConfirm: () async {
+          Navigator.of(context).pop();
+
           if (mounted) {
             // بدء الـ loading
             setState(() {
               _isLoading = true;
             });
 
-            sl<HomeCubit>().checkOut(31.035727351307926, 31.398294376175777);
+            try {
+              // Get current location
+              final coordinates =
+                  await LocationService.getCurrentLocationCoordinates();
+              final latitude = coordinates['latitude']!;
+              final longitude = coordinates['longitude']!;
 
-            Navigator.of(context).pop();
+              // Call checkOut with actual location
+              sl<HomeCubit>().checkOut(latitude, longitude);
+            } catch (e) {
+              if (mounted) {
+                setState(() {
+                  _isLoading = false;
+                });
+
+                String errorMessage = 'فشل الحصول على الموقع';
+                if (e is LocationPermissionException) {
+                  errorMessage = 'يرجى تفعيل صلاحيات الموقع من الإعدادات';
+                  // Optionally open settings
+                  final opened = await LocationService.openLocationSettings();
+                  if (!opened) {
+                    CustomSnackBar.showError(
+                      context,
+                      message: 'يرجى تفعيل صلاحيات الموقع يدوياً من الإعدادات',
+                    );
+                  }
+                } else if (e is LocationServiceException) {
+                  errorMessage = 'يرجى تفعيل خدمات الموقع في إعدادات الجهاز';
+                } else {
+                  errorMessage = e.toString();
+                }
+
+                CustomSnackBar.showError(context, message: errorMessage);
+              }
+            }
           }
         },
       ),
@@ -145,7 +210,6 @@ class _AttendanceSectionState extends State<AttendanceSection> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<HomeCubit, HomeStates>(
-      bloc: sl<HomeCubit>(),
       listener: (context, state) {
         if (state is AttendanceLoading) {
           setState(() {

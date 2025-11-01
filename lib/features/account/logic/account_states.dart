@@ -46,6 +46,18 @@ class PersonalDataLoadError extends AccountStates {
   PersonalDataLoadError(this.message);
 }
 
+class ProfileLoading extends AccountStates {}
+
+class ProfileLoadSuccess extends AccountStates {
+  final PersonalDataModel data;
+  ProfileLoadSuccess(this.data);
+}
+
+class ProfileLoadError extends AccountStates {
+  final String message;
+  ProfileLoadError(this.message);
+}
+
 class AdvanceDetailsLoading extends AccountStates {}
 
 class AdvanceDetailsLoadSuccess extends AccountStates {
@@ -94,6 +106,30 @@ class EmployeeReportDetailsLoadError extends AccountStates {
   EmployeeReportDetailsLoadError(this.message);
 }
 
+class UpdateReportProcessing extends AccountStates {}
+
+class UpdateReportSuccess extends AccountStates {
+  final String message;
+  UpdateReportSuccess(this.message);
+}
+
+class UpdateReportError extends AccountStates {
+  final String message;
+  UpdateReportError(this.message);
+}
+
+class ConfirmReportProcessing extends AccountStates {}
+
+class ConfirmReportSuccess extends AccountStates {
+  final String message;
+  ConfirmReportSuccess(this.message);
+}
+
+class ConfirmReportError extends AccountStates {
+  final String message;
+  ConfirmReportError(this.message);
+}
+
 class ApproveAdvanceProcessing extends AccountStates {}
 
 class ApproveAdvanceSuccess extends AccountStates {
@@ -140,4 +176,16 @@ class RejectLeaveSuccess extends AccountStates {
 class RejectLeaveError extends AccountStates {
   final String message;
   RejectLeaveError(this.message);
+}
+
+class ReportIssueProcessing extends AccountStates {}
+
+class ReportIssueSuccess extends AccountStates {
+  final String message;
+  ReportIssueSuccess(this.message);
+}
+
+class ReportIssueError extends AccountStates {
+  final String message;
+  ReportIssueError(this.message);
 }

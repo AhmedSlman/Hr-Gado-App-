@@ -9,10 +9,14 @@ class ReportActionsWidget extends StatelessWidget {
     super.key,
     required this.onEditPressed,
     required this.onConfirmPressed,
+    this.isUpdating = false,
+    this.isConfirming = false,
   });
 
   final VoidCallback? onEditPressed;
   final VoidCallback? onConfirmPressed;
+  final bool isUpdating;
+  final bool isConfirming;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +32,7 @@ class ReportActionsWidget extends StatelessWidget {
               height: 50.h,
               onPressed: onEditPressed,
               borderColor: AppColors.primary,
+              isLoading: isUpdating,
             ),
           ),
           SizedBox(width: 16.w),
@@ -38,6 +43,7 @@ class ReportActionsWidget extends StatelessWidget {
               textStyle: AppStyles.s16Medium.copyWith(color: AppColors.white),
               height: 50.h,
               onPressed: onConfirmPressed,
+              isLoading: isConfirming,
             ),
           ),
         ],

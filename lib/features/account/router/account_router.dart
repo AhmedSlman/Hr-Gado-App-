@@ -13,6 +13,7 @@ import '../presentation/views/employee_request_details_view.dart';
 import '../presentation/views/employee_requests_view.dart';
 import '../presentation/views/employees_view.dart';
 import '../presentation/views/personal_data_view.dart';
+import '../presentation/views/profile_view.dart';
 
 class AccountRouter {
   static List<GoRoute> get routes => [
@@ -20,6 +21,17 @@ class AccountRouter {
     GoRoute(
       path: AccountRoutes.account,
       builder: (context, state) => const AccountView(),
+    ),
+    // Profile Screen
+    GoRoute(
+      path: AccountRoutes.profile,
+      builder: (context, state) {
+        final cubit = sl<AccountCubit>()..loadProfile();
+        return BlocProvider<AccountCubit>.value(
+          value: cubit,
+          child: const ProfileView(),
+        );
+      },
     ),
     // Personal Data Screen
     GoRoute(
@@ -109,7 +121,12 @@ class AccountRouter {
     // Complaints and Suggestions Screen
     GoRoute(
       path: AccountRoutes.complaintsSuggestions,
-      builder: (context, state) => const ComplaintsSuggestionsView(),
+      builder: (context, state) {
+        return BlocProvider<AccountCubit>.value(
+          value: sl<AccountCubit>(),
+          child: const ComplaintsSuggestionsView(),
+        );
+      },
     ),
   ];
 }
