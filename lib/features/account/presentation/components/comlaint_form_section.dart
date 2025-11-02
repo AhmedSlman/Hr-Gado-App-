@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hr_app/core/common/widgets/custom_button.dart';
 import 'package:hr_app/core/common/widgets/custom_snackbar.dart';
 import 'package:hr_app/core/common/widgets/success_dialog_widget.dart';
-import 'package:hr_app/core/locator/service_locator.dart';
 import 'package:hr_app/features/account/logic/account_cubit.dart';
 import 'package:hr_app/features/account/logic/account_states.dart';
 import 'package:hr_app/features/account/presentation/widgets/complaints_text_field.dart';
@@ -31,20 +30,33 @@ class _ComplaintFormSectionState extends State<ComplaintFormSection> {
     return BlocListener<AccountCubit, AccountStates>(
       listener: (context, state) {
         if (state is ReportIssueSuccess) {
-          _controller.clear();
-          showDialog(
-            context: context,
-            builder: (_) =>
-                SuccessDialogWidget(title: 'تم بنجاح', message: state.message),
-          );
-        }
-        if (state is ReportIssueError) {
-          CustomSnackBar.showError(context, message: state.message);
-        }
-        if (state is ReportIssueProcessing) {
-          setState(() => _isLoading = true);
-        } else if (state is ReportIssueSuccess || state is ReportIssueError) {
+          // تأخير clear والـ dialog حتى بعد انتهاء setState (متوافق مع go_router)
+          setState(() {
+            _isLoading = false;
+            _controller.clear();
+          });
+          // استخدام Future.delayed لتأخير عرض الـ dialog
+          Future.delayed(const Duration(milliseconds: 300), () {
+            if (mounted && context.mounted) {
+              showDialog(
+                context: context,
+                builder: (dialogContext) => SuccessDialogWidget(
+                  title: 'تم بنجاح',
+                  message: state.message,
+                ),
+              );
+            }
+          });
+        } else if (state is ReportIssueError) {
           setState(() => _isLoading = false);
+          // استخدام Future.delayed لتأخير عرض رسالة الخطأ
+          Future.delayed(const Duration(milliseconds: 300), () {
+            if (mounted && context.mounted) {
+              CustomSnackBar.showError(context, message: state.message);
+            }
+          });
+        } else if (state is ReportIssueProcessing) {
+          setState(() => _isLoading = true);
         }
       },
       child: Padding(
@@ -77,6 +89,7 @@ class _ComplaintFormSectionState extends State<ComplaintFormSection> {
     }
 
     final formData = {'content': content};
-    sl<AccountCubit>().reportIssue(formData);
+    // استخدام context.read للحصول على نفس instance الذي يستمع له BlocListener
+    context.read<AccountCubit>().reportIssue(formData);
   }
 }

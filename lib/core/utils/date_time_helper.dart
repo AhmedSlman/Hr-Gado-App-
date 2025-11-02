@@ -82,13 +82,39 @@ class DateTimeHelper {
   /// تحويل الوقت من 12 ساعة إلى 24 ساعة
   static String convertTo24Hour(String time12) {
     try {
-      final parts = time12.split(' ');
-      final timePart = parts[0];
-      final period = parts[1];
+      // إذا كان الوقت بالفعل بتنسيق 24 ساعة (لا يحتوي على ص أو م)
+      if (!time12.contains('ص') && !time12.contains('م')) {
+        // التحقق إذا كان بالفعل بتنسيق 24 ساعة
+        final parts = time12.trim().split(':');
+        if (parts.length == 2) {
+          final hour = int.tryParse(parts[0].trim());
+          final minute = int.tryParse(parts[1].trim());
+          if (hour != null &&
+              minute != null &&
+              hour >= 0 &&
+              hour < 24 &&
+              minute >= 0 &&
+              minute < 60) {
+            return time12.trim(); // الوقت بالفعل بتنسيق 24 ساعة
+          }
+        }
+      }
+
+      final parts = time12.trim().split(' ');
+      if (parts.length < 2) {
+        return time12; // تنسيق غير صحيح
+      }
+
+      final timePart = parts[0].trim();
+      final period = parts[1].trim();
 
       final timeParts = timePart.split(':');
-      var hour = int.parse(timeParts[0]);
-      final minute = timeParts[1];
+      if (timeParts.length != 2) {
+        return time12; // تنسيق غير صحيح
+      }
+
+      var hour = int.parse(timeParts[0].trim());
+      final minute = timeParts[1].trim();
 
       if (period == 'م' && hour != 12) {
         hour += 12;
@@ -98,6 +124,7 @@ class DateTimeHelper {
 
       return '${hour.toString().padLeft(2, '0')}:$minute';
     } catch (e) {
+      print('🔍 Error converting time to 24h: $time12 - $e');
       return time12; // إرجاع الوقت الأصلي في حالة الخطأ
     }
   }
