@@ -237,7 +237,6 @@ class _AttendanceSectionState extends State<AttendanceSection> {
                   errorMessage = e.toString();
                 }
 
-                // استخدام Future.delayed لتأخير العرض حتى بعد إغلاق dialog
                 if (mounted && parentContext.mounted) {
                   Future.delayed(const Duration(milliseconds: 300), () {
                     if (mounted && parentContext.mounted) {
@@ -258,7 +257,6 @@ class _AttendanceSectionState extends State<AttendanceSection> {
 
   @override
   Widget build(BuildContext context) {
-    // حفظ context من build method لاستخدامه في callbacks
     final buildContext = context;
 
     return BlocListener<HomeCubit, HomeStates>(
@@ -268,10 +266,6 @@ class _AttendanceSectionState extends State<AttendanceSection> {
             _isLoading = true;
           });
         } else if (state is AttendanceSuccess) {
-          print('🔍 AttendanceSection - AttendanceSuccess received');
-          print('🔍 isSuccess: ${state.response.isSuccess}');
-          print('🔍 msg: ${state.response.msg}');
-
           final isSuccess = state.response.isSuccess;
           final message = state.response.msg;
 
@@ -288,11 +282,8 @@ class _AttendanceSectionState extends State<AttendanceSection> {
             }
           });
 
-          // عرض الرسالة بعد انتهاء setState باستخدام buildContext
-          // استخدام Future.delayed لتأخير العرض حتى بعد انتهاء frame كامل (متوافق مع go_router)
           Future.delayed(const Duration(milliseconds: 300), () {
             if (mounted && buildContext.mounted) {
-              print('🔍 AttendanceSection - Showing snackbar: $message');
               if (isSuccess) {
                 CustomSnackBar.showSuccess(buildContext, message: message);
               } else {
@@ -305,8 +296,6 @@ class _AttendanceSectionState extends State<AttendanceSection> {
             _isLoading = false;
           });
 
-          // عرض رسالة الخطأ بعد انتهاء setState باستخدام buildContext
-          // استخدام Future.delayed لتأخير العرض حتى بعد انتهاء frame كامل (متوافق مع go_router)
           Future.delayed(const Duration(milliseconds: 300), () {
             if (mounted && buildContext.mounted) {
               CustomSnackBar.showError(buildContext, message: state.message);
@@ -338,8 +327,6 @@ class _AttendanceSectionState extends State<AttendanceSection> {
                 : '09:30 ص';
           });
         } else if (state is HomeScreenError) {
-          // عرض رسالة الخطأ بعد انتهاء أي عمليات أخرى
-          // استخدام Future.delayed لتأخير العرض حتى بعد انتهاء frame كامل (متوافق مع go_router)
           Future.delayed(const Duration(milliseconds: 300), () {
             if (mounted && buildContext.mounted) {
               CustomSnackBar.showError(buildContext, message: state.message);

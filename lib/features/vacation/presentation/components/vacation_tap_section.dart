@@ -136,9 +136,13 @@ class _VacationTapSectionState extends State<VacationTapSection>
       },
       builder: (context, state) {
         final isLoading = state is VacationSubmitting;
-        final allowed = _stats?.allowedOffDays ?? _totalDays;
-        final used = _stats?.usedOffDays ?? _consumedDays;
-        final remaining = _stats?.remainingOffDays ?? (allowed - used);
+        // استخدام البيانات من state مباشرة إذا كانت متوفرة
+        final stats = state is VacationLoadSuccess
+            ? state.response.stats
+            : _stats;
+        final allowed = stats?.allowedOffDays ?? _totalDays;
+        final used = stats?.usedOffDays ?? _consumedDays;
+        final remaining = stats?.remainingOffDays ?? (allowed - used);
         return SingleChildScrollView(
           child: Column(
             children: [

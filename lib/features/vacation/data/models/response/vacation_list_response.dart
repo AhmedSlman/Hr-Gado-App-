@@ -10,10 +10,18 @@ class VacationStats {
   });
 
   factory VacationStats.fromJson(Map<String, dynamic> json) {
+    // تحويل القيم إلى int بشكل آمن
+    int parseToInt(dynamic value) {
+      if (value == null) return 0;
+      if (value is int) return value;
+      if (value is num) return value.toInt();
+      return int.tryParse(value.toString()) ?? 0;
+    }
+
     return VacationStats(
-      allowedOffDays: (json['allowed_off_days'] ?? 0) as int,
-      usedOffDays: (json['used_off_days'] ?? 0) as int,
-      remainingOffDays: (json['remaining_off_days'] ?? 0) as int,
+      allowedOffDays: parseToInt(json['allowed_off_days']),
+      usedOffDays: parseToInt(json['used_off_days']),
+      remainingOffDays: parseToInt(json['remaining_off_days']),
     );
   }
 }
