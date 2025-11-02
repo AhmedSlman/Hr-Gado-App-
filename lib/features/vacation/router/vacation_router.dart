@@ -13,6 +13,7 @@ class VacationRouter {
     GoRoute(
       path: VacationRoutes.vacation,
       builder: (context, state) {
+        // استخدام نفس instance من service locator (lazy singleton)
         final cubit = sl<VacationCubit>()
           ..loadVacations()
           ..loadAdvances();

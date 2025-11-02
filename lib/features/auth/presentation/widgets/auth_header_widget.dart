@@ -20,7 +20,7 @@ class AuthHeaderWidget extends StatelessWidget {
           width: 100.w,
           fit: BoxFit.contain,
         ),
-        SizedBox(height: 20.h),
+        // SizedBox(height: 20.h),
         Text(
           title,
           style: AppStyles.s20Medium.copyWith(color: AppColors.primary),

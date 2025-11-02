@@ -63,6 +63,7 @@ class _AdvanceTapSectionState extends State<AdvanceTapSection>
       amount: amount,
       numberOfMonths: months,
     );
+    // استخدام sl للحصول على نفس instance (lazy singleton)
     sl<VacationCubit>().submitAdvance(req);
   }
 
@@ -78,18 +79,35 @@ class _AdvanceTapSectionState extends State<AdvanceTapSection>
     return BlocConsumer<VacationCubit, VacationStates>(
       listener: (context, state) {
         if (state is VacationSubmitSuccess) {
-          // clear amount field on success
+          // clear amount field and repayment period on success
           FocusScope.of(context).unfocus();
-          _amountController.clear();
-          showDialog(
-            context: context,
-            builder: (_) =>
-                SuccessDialogWidget(title: 'تم بنجاح', message: state.message),
-          );
+          setState(() {
+            _amountController.clear();
+            _repaymentPeriod = 'شهر واحد';
+          });
+          // استخدام Future.delayed لتأخير عرض الـ dialog حتى بعد انتهاء setState (متوافق مع go_router)
+          Future.delayed(const Duration(milliseconds: 300), () {
+            if (mounted && context.mounted) {
+              showDialog(
+                context: context,
+                builder: (dialogContext) => SuccessDialogWidget(
+                  title: 'تم بنجاح',
+                  message: state.message,
+                ),
+              );
+            }
+          });
         } else if (state is AdvanceLoadSuccess) {
-          _lastAdvanceDate = state.response.stats.latestAdvanceDate;
+          setState(() {
+            _lastAdvanceDate = state.response.stats.latestAdvanceDate;
+          });
         } else if (state is VacationSubmitError) {
-          CustomSnackBar.showError(context, message: state.message);
+          // استخدام Future.delayed لتأخير عرض رسالة الخطأ (متوافق مع go_router)
+          Future.delayed(const Duration(milliseconds: 300), () {
+            if (mounted && context.mounted) {
+              CustomSnackBar.showError(context, message: state.message);
+            }
+          });
         }
       },
       builder: (context, state) {

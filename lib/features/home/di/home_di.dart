@@ -25,6 +25,6 @@ class HomeDI {
     );
 
     // Cubit
-    sl.registerLazySingleton<HomeCubit>(() => HomeCubit(sl<HomeRepository>()));
+    sl.registerFactory<HomeCubit>(() => HomeCubit(sl<HomeRepository>()));
   }
 }
