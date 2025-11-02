@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hr_app/core/common/widgets/custom_snackbar.dart';
-import 'package:hr_app/core/locator/service_locator.dart';
 import 'package:hr_app/core/utils/date_time_helper.dart';
 import 'package:hr_app/core/utils/location_service.dart';
 import 'package:hr_app/core/utils/user_helper.dart';
@@ -55,13 +55,17 @@ class _AttendanceSectionState extends State<AttendanceSection> {
 
   Future<void> _handleCheckIn() async {
     final currentTime = DateTimeHelper.getCurrentTime();
+    // حفظ context من build method لاستخدامه في callbacks
+    final parentContext = context;
 
     showDialog(
-      context: context,
-      builder: (context) => CheckInDialog(
+      context: parentContext,
+      builder: (dialogContext) => CheckInDialog(
         checkInTime: currentTime,
         onConfirm: () async {
-          Navigator.of(context).pop();
+          if (dialogContext.canPop()) {
+            dialogContext.pop();
+          }
 
           setState(() {
             _isLoading = true;
@@ -75,7 +79,8 @@ class _AttendanceSectionState extends State<AttendanceSection> {
             final longitude = coordinates['longitude']!;
 
             // Call checkIn with actual location
-            sl<HomeCubit>().checkIn(latitude, longitude);
+            // استخدام context.read للحصول على نفس instance الذي يستمع له BlocListener
+            parentContext.read<HomeCubit>().checkIn(latitude, longitude);
           } catch (e) {
             setState(() {
               _isLoading = false;
@@ -86,11 +91,15 @@ class _AttendanceSectionState extends State<AttendanceSection> {
               errorMessage = 'يرجى تفعيل صلاحيات الموقع من الإعدادات';
               // Optionally open settings
               final opened = await LocationService.openLocationSettings();
-              if (!opened) {
-                CustomSnackBar.showError(
-                  context,
-                  message: 'يرجى تفعيل صلاحيات الموقع يدوياً من الإعدادات',
-                );
+              if (!opened && mounted && parentContext.mounted) {
+                Future.delayed(const Duration(milliseconds: 300), () {
+                  if (mounted && parentContext.mounted) {
+                    CustomSnackBar.showError(
+                      parentContext,
+                      message: 'يرجى تفعيل صلاحيات الموقع يدوياً من الإعدادات',
+                    );
+                  }
+                });
               }
             } else if (e is LocationServiceException) {
               errorMessage = 'يرجى تفعيل خدمات الموقع في إعدادات الجهاز';
@@ -98,7 +107,17 @@ class _AttendanceSectionState extends State<AttendanceSection> {
               errorMessage = e.toString();
             }
 
-            CustomSnackBar.showError(context, message: errorMessage);
+            // استخدام Future.delayed لتأخير العرض حتى بعد إغلاق dialog
+            if (mounted && parentContext.mounted) {
+              Future.delayed(const Duration(milliseconds: 300), () {
+                if (mounted && parentContext.mounted) {
+                  CustomSnackBar.showError(
+                    parentContext,
+                    message: errorMessage,
+                  );
+                }
+              });
+            }
           }
         },
       ),
@@ -126,24 +145,33 @@ class _AttendanceSectionState extends State<AttendanceSection> {
     String currentTime,
     WorkReportModel workReport,
   ) {
+    // استخدام context.read للحصول على نفس instance الذي يستمع له BlocListener
+    final homeCubit = context.read<HomeCubit>();
     showDialog(
       context: context,
-      builder: (context) => ReportSummaryDialog(
-        workReport: workReport,
-        onConfirm: () {
-          Navigator.of(context).pop();
-          _showSuccessDialog(currentTime);
-        },
+      builder: (dialogContext) => BlocProvider<HomeCubit>.value(
+        value: homeCubit,
+        child: ReportSummaryDialog(
+          workReport: workReport,
+          onConfirm: () {
+            // ReportSummaryDialog يغلق نفسه بالفعل، فقط استدعاء الخطوة التالية
+            _showSuccessDialog(currentTime);
+          },
+        ),
       ),
     );
   }
 
   void _showSuccessDialog(String currentTime) {
+    // حفظ context من build method
+    final parentContext = context;
     showDialog(
-      context: context,
-      builder: (context) => SuccessDialog(
+      context: parentContext,
+      builder: (dialogContext) => SuccessDialog(
         onConfirm: () {
-          Navigator.of(context).pop();
+          if (dialogContext.canPop()) {
+            dialogContext.pop();
+          }
           _showCheckOutDialog(currentTime);
         },
       ),
@@ -153,12 +181,17 @@ class _AttendanceSectionState extends State<AttendanceSection> {
   void _showCheckOutDialog(String currentTime) {
     if (!mounted) return;
 
+    // حفظ context من build method لاستخدامه في callbacks
+    final parentContext = context;
+
     showDialog(
-      context: context,
-      builder: (context) => CheckOutDialog(
+      context: parentContext,
+      builder: (dialogContext) => CheckOutDialog(
         checkOutTime: currentTime,
         onConfirm: () async {
-          Navigator.of(context).pop();
+          if (dialogContext.canPop()) {
+            dialogContext.pop();
+          }
 
           if (mounted) {
             // بدء الـ loading
@@ -174,7 +207,8 @@ class _AttendanceSectionState extends State<AttendanceSection> {
               final longitude = coordinates['longitude']!;
 
               // Call checkOut with actual location
-              sl<HomeCubit>().checkOut(latitude, longitude);
+              // استخدام context.read للحصول على نفس instance الذي يستمع له BlocListener
+              parentContext.read<HomeCubit>().checkOut(latitude, longitude);
             } catch (e) {
               if (mounted) {
                 setState(() {
@@ -186,11 +220,16 @@ class _AttendanceSectionState extends State<AttendanceSection> {
                   errorMessage = 'يرجى تفعيل صلاحيات الموقع من الإعدادات';
                   // Optionally open settings
                   final opened = await LocationService.openLocationSettings();
-                  if (!opened) {
-                    CustomSnackBar.showError(
-                      context,
-                      message: 'يرجى تفعيل صلاحيات الموقع يدوياً من الإعدادات',
-                    );
+                  if (!opened && mounted && parentContext.mounted) {
+                    Future.delayed(const Duration(milliseconds: 300), () {
+                      if (mounted && parentContext.mounted) {
+                        CustomSnackBar.showError(
+                          parentContext,
+                          message:
+                              'يرجى تفعيل صلاحيات الموقع يدوياً من الإعدادات',
+                        );
+                      }
+                    });
                   }
                 } else if (e is LocationServiceException) {
                   errorMessage = 'يرجى تفعيل خدمات الموقع في إعدادات الجهاز';
@@ -198,7 +237,17 @@ class _AttendanceSectionState extends State<AttendanceSection> {
                   errorMessage = e.toString();
                 }
 
-                CustomSnackBar.showError(context, message: errorMessage);
+                // استخدام Future.delayed لتأخير العرض حتى بعد إغلاق dialog
+                if (mounted && parentContext.mounted) {
+                  Future.delayed(const Duration(milliseconds: 300), () {
+                    if (mounted && parentContext.mounted) {
+                      CustomSnackBar.showError(
+                        parentContext,
+                        message: errorMessage,
+                      );
+                    }
+                  });
+                }
               }
             }
           }
@@ -209,16 +258,26 @@ class _AttendanceSectionState extends State<AttendanceSection> {
 
   @override
   Widget build(BuildContext context) {
+    // حفظ context من build method لاستخدامه في callbacks
+    final buildContext = context;
+
     return BlocListener<HomeCubit, HomeStates>(
-      listener: (context, state) {
+      listener: (listenerContext, state) {
         if (state is AttendanceLoading) {
           setState(() {
             _isLoading = true;
           });
         } else if (state is AttendanceSuccess) {
+          print('🔍 AttendanceSection - AttendanceSuccess received');
+          print('🔍 isSuccess: ${state.response.isSuccess}');
+          print('🔍 msg: ${state.response.msg}');
+
+          final isSuccess = state.response.isSuccess;
+          final message = state.response.msg;
+
           setState(() {
             _isLoading = false;
-            if (state.response.isSuccess) {
+            if (isSuccess) {
               if (!_isCheckedIn) {
                 _isCheckedIn = true;
                 _checkInTime = DateTimeHelper.getCurrentTime();
@@ -229,16 +288,30 @@ class _AttendanceSectionState extends State<AttendanceSection> {
             }
           });
 
-          if (state.response.isSuccess) {
-            CustomSnackBar.showSuccess(context, message: state.response.msg);
-          } else {
-            CustomSnackBar.showError(context, message: state.response.msg);
-          }
+          // عرض الرسالة بعد انتهاء setState باستخدام buildContext
+          // استخدام Future.delayed لتأخير العرض حتى بعد انتهاء frame كامل (متوافق مع go_router)
+          Future.delayed(const Duration(milliseconds: 300), () {
+            if (mounted && buildContext.mounted) {
+              print('🔍 AttendanceSection - Showing snackbar: $message');
+              if (isSuccess) {
+                CustomSnackBar.showSuccess(buildContext, message: message);
+              } else {
+                CustomSnackBar.showError(buildContext, message: message);
+              }
+            }
+          });
         } else if (state is AttendanceError) {
           setState(() {
             _isLoading = false;
           });
-          CustomSnackBar.showError(context, message: state.message);
+
+          // عرض رسالة الخطأ بعد انتهاء setState باستخدام buildContext
+          // استخدام Future.delayed لتأخير العرض حتى بعد انتهاء frame كامل (متوافق مع go_router)
+          Future.delayed(const Duration(milliseconds: 300), () {
+            if (mounted && buildContext.mounted) {
+              CustomSnackBar.showError(buildContext, message: state.message);
+            }
+          });
         } else if (state is HomeScreenSuccess) {
           setState(() {
             final shift = state.homeScreen.data.shift;
@@ -251,7 +324,13 @@ class _AttendanceSectionState extends State<AttendanceSection> {
             _lastTimeBeforeDeduction = shift.lastTimeBeforeDeduction;
           });
         } else if (state is HomeScreenError) {
-          CustomSnackBar.showError(context, message: state.message);
+          // عرض رسالة الخطأ بعد انتهاء أي عمليات أخرى
+          // استخدام Future.delayed لتأخير العرض حتى بعد انتهاء frame كامل (متوافق مع go_router)
+          Future.delayed(const Duration(milliseconds: 300), () {
+            if (mounted && buildContext.mounted) {
+              CustomSnackBar.showError(buildContext, message: state.message);
+            }
+          });
         }
       },
       child: BlocBuilder<HomeCubit, HomeStates>(

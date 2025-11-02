@@ -28,7 +28,7 @@ class TimeSheetDI {
     );
 
     // Cubit
-    sl.registerLazySingleton<TimeSheetCubit>(
+    sl.registerFactory<TimeSheetCubit>(
       () => TimeSheetCubit(sl<TimeSheetRepository>()),
     );
   }

@@ -16,15 +16,10 @@ class RulesDI {
 
     // Repository
     sl.registerLazySingleton<RulesRepository>(
-      () => RulesRepositoryImpl(
-        remoteDataSource: sl<RulesRemoteDataSource>(),
-      ),
+      () => RulesRepositoryImpl(remoteDataSource: sl<RulesRemoteDataSource>()),
     );
 
     // Cubit
-    sl.registerLazySingleton<RulesCubit>(
-      () => RulesCubit(sl<RulesRepository>()),
-    );
+    sl.registerFactory<RulesCubit>(() => RulesCubit(sl<RulesRepository>()));
   }
 }
-

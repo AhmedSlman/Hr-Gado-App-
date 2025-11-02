@@ -28,7 +28,7 @@ class VacationDI {
     );
 
     // Cubit as lazy singleton to ensure single shared instance across UI
-    sl.registerLazySingleton<VacationCubit>(
+    sl.registerFactory<VacationCubit>(
       () => VacationCubit(sl<VacationRepository>()),
     );
   }
