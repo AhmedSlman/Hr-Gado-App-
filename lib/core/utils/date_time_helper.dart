@@ -52,9 +52,23 @@ class DateTimeHelper {
   /// تحويل الوقت من 24 ساعة إلى 12 ساعة
   static String convertTo12Hour(String time24) {
     try {
-      final parts = time24.split(':');
+      // التحقق إذا كان الوقت بالفعل بتنسيق 12 ساعة (يحتوي على ص أو م)
+      if (time24.contains('ص') || time24.contains('م')) {
+        return time24; // الوقت بالفعل بتنسيق 12 ساعة
+      }
+
+      // تنظيف الوقت من أي مسافات إضافية
+      final cleanedTime = time24.trim();
+      final parts = cleanedTime.split(':');
+
+      if (parts.length < 2) {
+        return time24; // تنسيق غير صحيح، إرجاع الوقت الأصلي
+      }
+
       final hour = int.parse(parts[0]);
-      final minute = parts[1];
+      final minute = parts[1]
+          .split(' ')
+          .first; // أخذ الدقائق فقط (تجاهل أي نص إضافي)
 
       final period = hour >= 12 ? 'م' : 'ص';
       final displayHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);

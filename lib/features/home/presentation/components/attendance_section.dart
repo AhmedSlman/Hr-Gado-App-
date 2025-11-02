@@ -317,11 +317,25 @@ class _AttendanceSectionState extends State<AttendanceSection> {
             final shift = state.homeScreen.data.shift;
             _isCheckedIn = shift.isCheckedIn;
             _isCheckedOut = shift.isCheckedOut;
-            _checkInTime = shift.attendanceTime ?? '';
-            _checkOutTime = shift.departureTime ?? '';
-            _workStartTime = shift.from;
-            _workEndTime = shift.to;
-            _lastTimeBeforeDeduction = shift.lastTimeBeforeDeduction;
+            // تحويل الوقت من 24 ساعة إلى 12 ساعة إذا كان موجوداً
+            _checkInTime =
+                shift.attendanceTime != null && shift.attendanceTime!.isNotEmpty
+                ? DateTimeHelper.convertTo12Hour(shift.attendanceTime!)
+                : '';
+            _checkOutTime =
+                shift.departureTime != null && shift.departureTime!.isNotEmpty
+                ? DateTimeHelper.convertTo12Hour(shift.departureTime!)
+                : '';
+            // تحويل أوقات العمل أيضاً إلى 12 ساعة
+            _workStartTime = shift.from.isNotEmpty
+                ? DateTimeHelper.convertTo12Hour(shift.from)
+                : '09:00 ص';
+            _workEndTime = shift.to.isNotEmpty
+                ? DateTimeHelper.convertTo12Hour(shift.to)
+                : '05:00 م';
+            _lastTimeBeforeDeduction = shift.lastTimeBeforeDeduction.isNotEmpty
+                ? DateTimeHelper.convertTo12Hour(shift.lastTimeBeforeDeduction)
+                : '09:30 ص';
           });
         } else if (state is HomeScreenError) {
           // عرض رسالة الخطأ بعد انتهاء أي عمليات أخرى
