@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hr_app/core/locator/service_locator.dart';
 import 'package:hr_app/features/vacation/data/models/vacation_type.dart';
 import 'package:hr_app/features/vacation/presentation/widgets/days_required_widget.dart';
 import 'package:hr_app/features/vacation/presentation/widgets/vacation_type_radio_row_widget.dart';
@@ -13,7 +14,6 @@ import 'package:hr_app/features/vacation/presentation/components/vacation_reques
 import 'package:hr_app/features/vacation/logic/vacation_cubit.dart';
 import 'package:hr_app/features/vacation/logic/vacation_states.dart';
 import 'package:hr_app/features/vacation/data/models/request/vacation_submit_request.dart';
-import 'package:hr_app/core/locator/service_locator.dart';
 import 'package:hr_app/core/common/widgets/custom_snackbar.dart';
 import 'package:hr_app/core/common/widgets/success_dialog_widget.dart';
 import 'package:hr_app/features/vacation/data/models/response/vacation_list_response.dart';
@@ -108,6 +108,7 @@ class _VacationTapSectionState extends State<VacationTapSection>
           : null,
     );
 
+    // استخدام sl للحصول على نفس instance (lazy singleton)
     sl<VacationCubit>().submit(req);
   }
 
@@ -122,16 +123,32 @@ class _VacationTapSectionState extends State<VacationTapSection>
           });
         }
         if (state is VacationSubmitSuccess) {
-          // clear text field on success
+          // clear all fields on success
           FocusScope.of(context).unfocus();
-          _reasonController.clear();
-          showDialog(
-            context: context,
-            builder: (_) =>
-                SuccessDialogWidget(title: 'تم بنجاح', message: state.message),
-          );
+          setState(() {
+            _reasonController.clear();
+            _startDate = null;
+            _endDate = null;
+          });
+          // استخدام Future.delayed لتأخير عرض الـ dialog حتى بعد انتهاء setState (متوافق مع go_router)
+          Future.delayed(const Duration(milliseconds: 300), () {
+            if (mounted && context.mounted) {
+              showDialog(
+                context: context,
+                builder: (dialogContext) => SuccessDialogWidget(
+                  title: 'تم بنجاح',
+                  message: state.message,
+                ),
+              );
+            }
+          });
         } else if (state is VacationSubmitError) {
-          CustomSnackBar.showError(context, message: state.message);
+          // استخدام Future.delayed لتأخير عرض رسالة الخطأ (متوافق مع go_router)
+          Future.delayed(const Duration(milliseconds: 300), () {
+            if (mounted && context.mounted) {
+              CustomSnackBar.showError(context, message: state.message);
+            }
+          });
         }
       },
       builder: (context, state) {
