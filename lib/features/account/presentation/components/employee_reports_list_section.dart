@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hr_app/core/common/widgets/custom_snackbar.dart';
+import 'package:hr_app/core/common/widgets/empty_state_widget.dart';
 import 'package:hr_app/features/account/logic/account_cubit.dart';
 import 'package:hr_app/features/account/logic/account_states.dart';
 import 'package:hr_app/features/account/presentation/widgets/employee_report_card_widget.dart';
@@ -35,8 +36,11 @@ class EmployeeReportsListSection extends StatelessWidget {
           final reports = state.response.reports;
 
           if (reports.isEmpty) {
-            return const Expanded(
-              child: Center(child: Text('لا توجد تقارير')),
+            return Expanded(
+              child: EmptyStateWidget.simple(
+                message: 'لا توجد تقارير',
+                icon: Icons.description_outlined,
+              ),
             );
           }
 
@@ -61,8 +65,11 @@ class EmployeeReportsListSection extends StatelessWidget {
           );
         }
 
-        return const Expanded(
-          child: Center(child: Text('لا توجد بيانات')),
+        return Expanded(
+          child: EmptyStateWidget.simple(
+            message: 'لا توجد بيانات',
+            icon: Icons.description_outlined,
+          ),
         );
       },
     );

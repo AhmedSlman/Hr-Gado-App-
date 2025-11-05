@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hr_app/core/common/widgets/empty_state_widget.dart';
+import 'package:hr_app/core/utils/app_assets.dart';
 import 'package:hr_app/core/utils/user_helper.dart';
 import 'package:hr_app/features/meetings/logic/meetings_cubit.dart';
 import 'package:hr_app/features/meetings/logic/meetings_states.dart';
 import 'package:hr_app/features/meetings/presentation/components/meetings_list.dart';
 import 'package:hr_app/features/meetings/presentation/widgets/add_meeting_button.dart';
-import 'package:hr_app/features/meetings/presentation/widgets/empty_meetings_state.dart';
 import 'package:hr_app/features/meetings/router/meetings_names.dart';
 
 class MeetingsBodySection extends StatelessWidget {
@@ -69,7 +70,14 @@ class MeetingsBodySection extends StatelessWidget {
 
                   // Meetings List or Empty State
                   if (state.meetingsResponse.data.isEmpty)
-                    const EmptyMeetingsState()
+                    EmptyStateWidget.withImage(
+                      message: 'لم يتم تحديد أي اجتماعات حتى الآن.سيتم إشعارك عند إضافة أي اجتماعات جديدة!',
+                      imagePath: AppAssets.emptyMeeting,
+                      imageWidth: 100,
+                      imageHeight: 100,
+                      topPadding: 0,
+                      bottomPadding: 0,
+                    )
                   else
                     MeetingsList(meetings: state.meetingsResponse.data),
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hr_app/core/common/widgets/empty_state_widget.dart';
 import 'package:hr_app/core/utils/user_helper.dart';
 import 'package:hr_app/features/meetings/presentation/widgets/add_meeting_button.dart';
 
@@ -45,6 +46,12 @@ class NewsBodySection extends StatelessWidget {
                   return Center(child: Text(state.message));
                 }
                 if (state is NewsSuccess) {
+                  if (state.articles.isEmpty) {
+                    return EmptyStateWidget.simple(
+                      message: 'لا توجد أخبار',
+                      icon: Icons.article_outlined,
+                    );
+                  }
                   return ListView.separated(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),

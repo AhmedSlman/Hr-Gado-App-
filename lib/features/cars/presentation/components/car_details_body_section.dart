@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/common/widgets/empty_state_widget.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../logic/cars_cubit.dart';
@@ -45,30 +46,21 @@ class CarDetailsBodySection extends StatelessWidget {
         }
 
         if (state is CarDetailsError) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'حدث خطأ: ${state.message}',
-                  style: const TextStyle(color: Colors.red),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 16.h),
-                ElevatedButton(
-                  onPressed: () {
-                    final currentPath = GoRouterState.of(context).uri.path;
-                    final carId = CarsRoutes.extractCarId(currentPath);
-                    if (currentPath == CarsRoutes.myCar) {
-                      CarsCubit.get(context).getMyCar();
-                    } else if (carId != null) {
-                      CarsCubit.get(context).getCarDetails(carId);
-                    }
-                  },
-                  child: const Text('إعادة المحاولة'),
-                ),
-              ],
-            ),
+          return EmptyStateWidget.withIcon(
+            message: 'حدث خطأ في تحميل بيانات السيارة',
+            subtitle: state.message,
+            icon: Icons.error_outline,
+            iconColor: Colors.red,
+            actionLabel: 'إعادة المحاولة',
+            onAction: () {
+              final currentPath = GoRouterState.of(context).uri.path;
+              final carId = CarsRoutes.extractCarId(currentPath);
+              if (currentPath == CarsRoutes.myCar) {
+                CarsCubit.get(context).getMyCar();
+              } else if (carId != null) {
+                CarsCubit.get(context).getCarDetails(carId);
+              }
+            },
           );
         }
 
