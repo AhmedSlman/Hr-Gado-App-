@@ -1,0 +1,16 @@
+# قم بنسخ هذا الملف إلى key.properties واملأ القيم
+# ملف key.properties موجود في .gitignore ولن يتم رفعه للـ repository
+
+storePassword=your_keystore_password
+keyPassword=your_key_password
+keyAlias=your_key_alias
+storeFile=../app/upload-keystore.jks
+
+# التعليمات:
+# 1. قم بإنشاء keystore باستخدام الأمر:
+#    keytool -genkey -v -keystore upload-keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+# 2. انسخ هذا الملف إلى key.properties
+# 3. املأ القيم أعلاه
+# 4. تأكد من أن upload-keystore.jks موجود في مجلد android/app/
+
+
