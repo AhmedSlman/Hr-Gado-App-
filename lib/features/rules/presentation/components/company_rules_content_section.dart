@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hr_app/core/common/widgets/custom_snackbar.dart';
+import 'package:hr_app/core/common/widgets/empty_state_widget.dart';
 import 'package:hr_app/core/theme/app_colors.dart';
 import 'package:hr_app/core/theme/app_typography.dart';
 import '../../logic/rules_cubit.dart';
@@ -31,7 +32,10 @@ class CompanyRulesContentSection extends StatelessWidget {
           final rules = state.rules;
 
           if (rules.isEmpty) {
-            return const Center(child: Text('لا توجد قوانين'));
+            return EmptyStateWidget.simple(
+              message: 'لا توجد قوانين',
+              icon: Icons.rule_outlined,
+            );
           }
 
           return SingleChildScrollView(
@@ -58,7 +62,10 @@ class CompanyRulesContentSection extends StatelessWidget {
           );
         }
 
-        return const Center(child: Text('لا توجد بيانات'));
+        return EmptyStateWidget.simple(
+          message: 'لا توجد بيانات',
+          icon: Icons.rule_outlined,
+        );
       },
     );
   }

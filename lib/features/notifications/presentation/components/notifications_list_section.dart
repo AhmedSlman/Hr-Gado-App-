@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hr_app/core/common/widgets/custom_snackbar.dart';
+import 'package:hr_app/core/common/widgets/empty_state_widget.dart';
 import 'package:hr_app/features/notifications/logic/notifications_cubit.dart';
 import 'package:hr_app/features/notifications/logic/notifications_states.dart';
 import 'package:hr_app/features/notifications/presentation/widgets/notification_card_widget.dart';
@@ -44,11 +45,9 @@ class NotificationsListSection extends StatelessWidget {
 
           if (notifications.isEmpty) {
             return Expanded(
-              child: Center(
-                child: Text(
-                  'لا توجد إشعارات',
-                  style: TextStyle(color: Colors.grey),
-                ),
+              child: EmptyStateWidget.simple(
+                message: 'لا توجد إشعارات',
+                icon: Icons.notifications_none_outlined,
               ),
             );
           }
@@ -75,8 +74,11 @@ class NotificationsListSection extends StatelessWidget {
           );
         }
 
-        return const Expanded(
-          child: Center(child: Text('لا توجد بيانات')),
+        return Expanded(
+          child: EmptyStateWidget.simple(
+            message: 'لا توجد بيانات',
+            icon: Icons.notifications_none_outlined,
+          ),
         );
       },
     );

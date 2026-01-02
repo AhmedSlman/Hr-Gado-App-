@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hr_app/core/common/widgets/custom_snackbar.dart';
+import 'package:hr_app/core/common/widgets/empty_state_widget.dart';
 import 'package:hr_app/core/utils/user_helper.dart';
 
 import '../../../meetings/presentation/widgets/add_meeting_button.dart';
@@ -77,14 +78,9 @@ class CarsBodySection extends StatelessWidget {
                   SizedBox(height: 24.h),
                   // Cars List
                   if (state.carsResponse.data.isEmpty)
-                    Center(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 40.h),
-                        child: Text(
-                          'لا توجد سيارات',
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      ),
+                    EmptyStateWidget.simple(
+                      message: 'لا توجد سيارات',
+                      icon: Icons.directions_car_outlined,
                     )
                   else
                     CarsList(cars: state.carsResponse.data),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hr_app/core/common/widgets/empty_state_widget.dart';
 import 'package:hr_app/core/theme/app_colors.dart';
 import 'package:hr_app/core/theme/app_typography.dart';
 import 'package:hr_app/features/meetings/presentation/widgets/add_meeting_button.dart';
@@ -66,16 +67,9 @@ class ManagerDeductionsBodySection extends StatelessWidget {
                 }
                 if (state is SalaryDeductionSuccess) {
                   if (state.deductionsResponse.data.isEmpty) {
-                    return Center(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 40.h),
-                        child: Text(
-                          'لا توجد جزاءات',
-                          style: AppStyles.body.copyWith(
-                            color: AppColors.grayText,
-                          ),
-                        ),
-                      ),
+                    return EmptyStateWidget.simple(
+                      message: 'لا توجد جزاءات',
+                      icon: Icons.remove_circle_outline,
                     );
                   }
                   return ListView.separated(

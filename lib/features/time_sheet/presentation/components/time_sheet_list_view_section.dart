@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hr_app/core/common/widgets/custom_snackbar.dart';
+import 'package:hr_app/core/common/widgets/empty_state_widget.dart';
 import 'package:hr_app/features/time_sheet/logic/time_sheet_cubit.dart';
 import 'package:hr_app/features/time_sheet/logic/time_sheet_states.dart';
 import 'package:hr_app/features/time_sheet/presentation/widgets/time_sheet_item_widget.dart';
@@ -29,7 +30,10 @@ class TimeSheetListViewSection extends StatelessWidget {
           final items = state.items;
 
           if (items.isEmpty) {
-            return const Center(child: Text('لا توجد بيانات'));
+            return EmptyStateWidget.simple(
+              message: 'لا توجد بيانات حضور',
+              icon: Icons.access_time_outlined,
+            );
           }
 
           return ListView.builder(
@@ -45,7 +49,10 @@ class TimeSheetListViewSection extends StatelessWidget {
           );
         }
 
-        return const Center(child: Text('لا توجد بيانات'));
+        return EmptyStateWidget.simple(
+          message: 'لا توجد بيانات',
+          icon: Icons.access_time_outlined,
+        );
       },
     );
   }
