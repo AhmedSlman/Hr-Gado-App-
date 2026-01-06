@@ -19,11 +19,12 @@ class HomeCubit extends Cubit<HomeStates> {
 
   Future<void> checkIn(double latitude, double longitude) async {
     emit(AttendanceLoading());
-
+print('🔍 HomeCubit - CheckIn: $latitude, $longitude');
     final request = AttendanceRequestModel(
       latitude: latitude,
       longitude: longitude,
     );
+    
 
     final result = await repository.checkIn(request);
 
