@@ -127,7 +127,7 @@ class _AttendanceSectionState extends State<AttendanceSection> {
   void _handleCheckOut() {
     final currentTime = DateTimeHelper.getCurrentTime();
 
-    _showWorkReportDialog(currentTime);
+    _showCheckOutDialog(currentTime);
   }
 
   void _showWorkReportDialog(String currentTime) {
@@ -296,11 +296,19 @@ class _AttendanceSectionState extends State<AttendanceSection> {
             _isLoading = false;
           });
 
-          Future.delayed(const Duration(milliseconds: 300), () {
-            if (mounted && buildContext.mounted) {
-              CustomSnackBar.showError(buildContext, message: state.message);
-            }
-          });
+          if (state.message.contains('يرجي ارسال التقرير') ||
+              state.message.contains('يرجى إرسال التقرير') ||
+              state.message.contains(
+                'يجب تقديم التقرير اليومي قبل تسجيل المغادرة.',
+              )) {
+            _showWorkReportDialog(DateTimeHelper.getCurrentTime());
+          } else {
+            Future.delayed(const Duration(milliseconds: 300), () {
+              if (mounted && buildContext.mounted) {
+                CustomSnackBar.showError(buildContext, message: state.message);
+              }
+            });
+          }
         } else if (state is HomeScreenSuccess) {
           setState(() {
             final shift = state.homeScreen.data.shift;

@@ -39,15 +39,12 @@ class _WorkReportDialogState extends State<WorkReportDialog> {
   String? _selectedCommercialDevices;
 
   // Dropdown lists
-  final List<String> _devicesList = List.generate(50, (i) => '${i + 1}');
-  final List<String> _metersList = List.generate(50, (i) => '${(i + 1) * 50}');
-  final List<String> _overtimeHoursList = List.generate(12, (i) => '${i + 1}');
-  final List<String> _soldDevicesList = List.generate(100, (i) => '${i + 1}');
-  final List<String> _boughtDevicesList = List.generate(100, (i) => '${i + 1}');
-  final List<String> _commercialDevicesList = List.generate(
-    100,
-    (i) => '${i + 1}',
-  );
+  final List<String> _devicesList = List.generate(50, (i) => '$i');
+  final List<String> _metersList = List.generate(50, (i) => '${i * 50}');
+  final List<String> _overtimeHoursList = List.generate(12, (i) => '$i');
+  final List<String> _soldDevicesList = List.generate(100, (i) => '$i');
+  final List<String> _boughtDevicesList = List.generate(100, (i) => '$i');
+  final List<String> _commercialDevicesList = List.generate(100, (i) => '$i');
 
   UserJobType get _userJobType {
     final jobType = UserHelper.userJobType?.toLowerCase() ?? '';
