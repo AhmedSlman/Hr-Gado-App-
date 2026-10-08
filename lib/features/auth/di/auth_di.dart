@@ -5,7 +5,7 @@ import '../data/data_source/remote/auth_remote_data_source.dart';
 import '../data/repository/auth_repository.dart';
 import '../data/repository/auth_repository_impl.dart';
 import '../logic/auth_cubit.dart';
-import '../../../../core/locator/service_locator.dart';
+import '../../../core/locator/service_locator.dart';
 
 /// Dependency injection setup for Auth feature
 class AuthDI {

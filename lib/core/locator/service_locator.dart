@@ -15,6 +15,7 @@ import '../../features/salary/di/salary_di.dart';
 import '../../features/salary_deduction/di/salary_deduction_di.dart';
 import '../cache/hive_service.dart';
 import '../cache/init_hive.dart';
+import '../config/key.dart';
 import '../network/api_consumer.dart';
 import '../network/dio_consumer.dart';
 import '../network/network_config.dart';
@@ -38,7 +39,9 @@ class ServiceLocator {
 
     // Register network services
     sl.registerLazySingleton<NetworkConfig>(
-      () => NetworkConfig.development, // Change to .production for production
+      () => ConstKeys.baseUrl.isEmpty
+          ? NetworkConfig.development
+          : NetworkConfig.development.copyWith(baseUrl: ConstKeys.baseUrl),
     );
 
     sl.registerLazySingleton<DioConsumer>(
