@@ -236,7 +236,7 @@ class AccountRemoteDataSourceImpl implements AccountRemoteDataSource {
       body: formData,
       headers: const {
         'Accept': 'application/vnd.api+json',
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
       },
       parser: (json) => ApiMessageResponse.fromJson(json),
     );

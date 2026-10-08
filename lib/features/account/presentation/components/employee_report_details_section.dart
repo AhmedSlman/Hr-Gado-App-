@@ -1,3 +1,5 @@
+import '../../../salary/presentation/widgets/report_metric_labels.dart';
+import '../../../salary/data/models/response/report_metrics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -29,11 +31,7 @@ class EmployeeReportDetailsSection extends StatelessWidget {
       buildWhen: (previous, current) =>
           current is EmployeeReportDetailsLoading ||
           current is EmployeeReportDetailsLoadSuccess ||
-          current is EmployeeReportDetailsLoadError ||
-          current is UpdateReportProcessing ||
-          current is UpdateReportSuccess ||
-          current is ConfirmReportProcessing ||
-          current is ConfirmReportSuccess,
+          current is EmployeeReportDetailsLoadError,
       listener: (context, state) {
         if (state is EmployeeReportDetailsLoadError) {
           CustomSnackBar.showError(context, message: state.message);
@@ -106,101 +104,18 @@ class EmployeeReportDetailsSection extends StatelessWidget {
   }
 
   Widget _buildReportStats(EmployeeReportDetailsModel data) {
-    final stats = <Widget>[];
-
-    // Type 3: devices + meters
-    if (data.numOfDevices != null && data.numOfMeters != null) {
-      stats.add(
-        ReportRowCardWidget(
-          title: 'عدد الاجهزة',
-          value: data.displayDevices ?? '0',
-        ),
-      );
-      stats.add(SizedBox(height: 12.h));
-      stats.add(
-        ReportRowCardWidget(
-          title: 'عدد الامتار',
-          value: data.displayMeters ?? '0',
-        ),
-      );
-    }
-    // Type 1: devices + overtime
-    else if (data.numOfDevices != null && data.overtimeHours != null) {
-      stats.add(
-        ReportRowCardWidget(
-          title: 'عدد الاجهزة',
-          value: data.displayDevices ?? '0',
-        ),
-      );
-      stats.add(SizedBox(height: 12.h));
-      stats.add(
-        ReportRowCardWidget(
-          title: 'عدد الساعات',
-          value: data.displayHours ?? '0',
-        ),
-      );
-    }
-    // Type 2: sold + bought + commercial devices
-    else if (data.soldDevices != null &&
-        data.boughtDevices != null &&
-        data.commercialDevices != null) {
-      stats.add(
-        ReportRowCardWidget(
-          title: 'عدد الاجهزة المباعة',
-          value: data.soldDevices.toString(),
-        ),
-      );
-      stats.add(SizedBox(height: 12.h));
-      stats.add(
-        ReportRowCardWidget(
-          title: 'عدد الاجهزة المشتراة',
-          value: data.boughtDevices.toString(),
-        ),
-      );
-      stats.add(SizedBox(height: 12.h));
-      stats.add(
-        ReportRowCardWidget(
-          title: 'عدد الاجهزة التجارية',
-          value: data.commercialDevices.toString(),
-        ),
-      );
-    }
-    // Alternative format: addition + addition_overtime
-    else if (data.addition != null && data.additionOvertime != null) {
-      stats.add(
-        ReportRowCardWidget(
-          title: data.addition!,
-          value: data.additionOvertime.toString(),
-        ),
-      );
-    }
-    // Fallback: show available data
-    else {
-      if (data.displayDevices != null) {
-        stats.add(
-          ReportRowCardWidget(
-            title: 'عدد الاجهزة',
-            value: data.displayDevices!,
-          ),
-        );
-      }
-      if (data.displayMeters != null) {
-        if (stats.isNotEmpty) stats.add(SizedBox(height: 12.h));
-        stats.add(
-          ReportRowCardWidget(title: 'عدد الامتار', value: data.displayMeters!),
-        );
-      }
-      if (data.displayHours != null) {
-        if (stats.isNotEmpty) stats.add(SizedBox(height: 12.h));
-        stats.add(
-          ReportRowCardWidget(title: 'عدد الساعات', value: data.displayHours!),
-        );
-      }
-    }
-
+    final metrics = displayReportMetrics(data.metrics);
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: stats,
+      children: [
+        for (final entry in metrics.entries)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: ReportRowCardWidget(
+              title: reportMetricLabels[entry.key] ?? entry.key,
+              value: entry.value,
+            ),
+          ),
+      ],
     );
   }
 }

@@ -1,260 +1,145 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hr_app/core/common/widgets/custom_button.dart';
-import 'package:hr_app/core/common/widgets/custom_snackbar.dart';
-import 'package:hr_app/core/common/widgets/success_dialog_widget.dart';
-import 'package:hr_app/core/theme/app_colors.dart';
-import 'package:hr_app/core/theme/app_typography.dart';
-import 'package:hr_app/features/account/data/models/response/employee_report_details_model.dart';
-import 'package:hr_app/features/account/logic/account_cubit.dart';
-import 'package:hr_app/features/account/logic/account_states.dart';
-
-enum EditReportType {
-  devicesAndMeters, // عدد الأجهزة والأمتار
-  achievedGoals, // الأهداف المحققة
-}
+import '../../data/models/response/employee_report_details_model.dart';
+import '../../logic/account_cubit.dart';
+import '../../logic/account_states.dart';
+import '../../../home/presentation/widgets/report_number_field.dart';
+import '../../../salary/data/models/response/api_values.dart';
+import '../../../salary/presentation/widgets/report_metric_labels.dart';
 
 class EditReportModal extends StatefulWidget {
-  final EditReportType editType;
   final int reportId;
-  final EmployeeReportDetailsModel? reportData;
-
+  final EmployeeReportDetailsModel reportData;
   const EditReportModal({
     super.key,
-    required this.editType,
     required this.reportId,
-    this.reportData,
+    required this.reportData,
   });
-
   @override
   State<EditReportModal> createState() => _EditReportModalState();
 }
 
 class _EditReportModalState extends State<EditReportModal> {
-
-  late TextEditingController _devicesController;
-  late TextEditingController _metersController;
-  late TextEditingController _contentController;
-  bool _isLoading = false;
-
+  final _form = GlobalKey<FormState>();
+  late final TextEditingController _content;
+  late final Map<String, String> _values;
   @override
   void initState() {
     super.initState();
-    _devicesController = TextEditingController(
-      text: widget.reportData?.displayDevices ?? '',
-    );
-    _metersController = TextEditingController(
-      text: widget.reportData?.displayMeters ?? '',
-    );
-    _contentController = TextEditingController(
-      text: widget.reportData?.content ?? '',
-    );
+    _content = TextEditingController(text: widget.reportData.content);
+    _values = {
+      for (final entry in widget.reportData.metrics.entries)
+        entry.key: entry.value == null
+            ? ''
+            : formatSalaryNumber(entry.value!.toDouble()),
+    };
   }
 
   @override
   void dispose() {
-    _devicesController.dispose();
-    _metersController.dispose();
-    _contentController.dispose();
+    _content.dispose();
     super.dispose();
   }
 
+  void _submit() {
+    if (!_form.currentState!.validate()) return;
+    final changes = <String, dynamic>{};
+    if (_content.text != widget.reportData.content)
+      changes['content'] = _content.text;
+    for (final entry in _values.entries) {
+      if (entry.value.isEmpty) continue;
+      final value = apiNumber(entry.value);
+      if (value != widget.reportData.metrics[entry.key]) {
+        changes[entry.key] = entry.key.contains('devices')
+            ? apiCount(entry.value)
+            : value;
+      }
+    }
+    if (changes.isEmpty) {
+      Navigator.of(context).pop(false);
+      return;
+    }
+    context.read<AccountCubit>().updateReport(widget.reportId, changes);
+  }
+
   @override
-  Widget build(BuildContext context) {
-    return BlocListener<AccountCubit, AccountStates>(
-      listener: (context, state) {
-        if (state is UpdateReportSuccess) {
-          Navigator.of(context).pop();
-          showDialog(
-            context: context,
-            builder: (_) => SuccessDialogWidget(
-              title: 'تم بنجاح',
-              message: state.message,
-            ),
-          ).then((_) {
-            // Refresh report details
-            context.read<AccountCubit>().loadEmployeeReportDetails(widget.reportId);
-          });
-        }
-        if (state is UpdateReportError) {
-          CustomSnackBar.showError(context, message: state.message);
-        }
-        if (state is UpdateReportProcessing) {
-          setState(() => _isLoading = true);
-        } else if (state is UpdateReportSuccess || state is UpdateReportError) {
-          setState(() => _isLoading = false);
-        }
-      },
-      child: Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        child: Container(
-          padding: EdgeInsets.all(24.w),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
+  Widget build(
+    BuildContext context,
+  ) => BlocConsumer<AccountCubit, AccountStates>(
+    listener: (context, state) {
+      if (state is UpdateReportSuccess) Navigator.of(context).pop(true);
+    },
+    builder: (context, state) {
+      final busy = state is UpdateReportProcessing;
+      return AlertDialog(
+        title: const Text('تعديل التقرير'),
+        content: SingleChildScrollView(
+          child: Form(
+            key: _form,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (final entry in _values.entries)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: entry.key == 'overtime_hours'
+                        ? DropdownButtonFormField<String>(
+                            initialValue: entry.value.isEmpty
+                                ? null
+                                : entry.value,
+                            decoration: const InputDecoration(
+                              labelText: 'ساعات العمل الإضافية',
+                            ),
+                            items: [
+                              for (final value in {
+                                ...List.generate(12, (i) => '$i'),
+                                if (entry.value.isNotEmpty) entry.value,
+                              })
+                                DropdownMenuItem(
+                                  value: value,
+                                  child: Text(value),
+                                ),
+                            ],
+                            onChanged: busy
+                                ? null
+                                : (value) => _values[entry.key] = value ?? '',
+                          )
+                        : ReportNumberField(
+                            label: reportMetricLabels[entry.key] ?? entry.key,
+                            initialValue: entry.value,
+                            decimal: entry.key == 'num_of_meters',
+                            onChanged: (value) => _values[entry.key] = value,
+                            optional: true,
+                          ),
+                  ),
+                TextFormField(
+                  controller: _content,
+                  maxLines: 4,
+                  decoration: const InputDecoration(labelText: 'تقرير العمل'),
+                ),
+                if (state is UpdateReportError)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12),
                     child: Text(
-                      'تعديل التقرير',
-                      textAlign: TextAlign.center,
-                      style: AppStyles.s18Bold.copyWith(color: AppColors.black),
+                      state.message,
+                      style: const TextStyle(color: Colors.red),
                     ),
                   ),
-                  InkWell(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Icon(
-                      Icons.close,
-                      color: AppColors.grayText,
-                      size: 24.sp,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 24.h),
-              // Content based on edit type
-              _buildContent(context),
-              SizedBox(height: 24.h),
-              // Send button
-              CustomButton(
-                text: 'ارسال',
-                onPressed: _isLoading ? null : () => _handleSubmit(context),
-                height: 50.h,
-                isLoading: _isLoading,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _handleSubmit(BuildContext context) {
-    final formData = <String, dynamic>{};
-
-    // Add content if available
-    if (_contentController.text.isNotEmpty) {
-      formData['content'] = _contentController.text;
-    }
-
-    // Add devices and meters for Type 3
-    if (widget.editType == EditReportType.devicesAndMeters) {
-      if (_devicesController.text.isNotEmpty) {
-        formData['num_of_devices'] = _devicesController.text;
-      }
-      if (_metersController.text.isNotEmpty) {
-        formData['num_of_meters'] = _metersController.text;
-      }
-    }
-
-    context.read<AccountCubit>().updateReport(widget.reportId, formData);
-  }
-
-  Widget _buildContent(BuildContext context) {
-    switch (widget.editType) {
-      case EditReportType.devicesAndMeters:
-        return _buildDevicesAndMetersContent();
-      case EditReportType.achievedGoals:
-        return _buildAchievedGoalsContent();
-    }
-  }
-
-  Widget _buildDevicesAndMetersContent() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Number of devices field
-        Text(
-          'عدد الاجهزة',
-          style: AppStyles.s16Medium.copyWith(color: AppColors.primary),
-        ),
-        SizedBox(height: 8.h),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            border: Border.all(color: AppColors.lightBlue, width: 1),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: TextField(
-            controller: _devicesController,
-            keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              hintText: 'اختر عدد الأجهزة',
-              hintStyle: AppStyles.s16.copyWith(color: AppColors.grayText),
+              ],
             ),
-            style: AppStyles.s16.copyWith(color: AppColors.black),
           ),
         ),
-        SizedBox(height: 16.h),
-        // Number of meters field
-        Text(
-          'عدد الامتار',
-          style: AppStyles.s16Medium.copyWith(color: AppColors.primary),
-        ),
-        SizedBox(height: 8.h),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            border: Border.all(color: AppColors.lightBlue, width: 1),
-            borderRadius: BorderRadius.circular(4),
+        actions: [
+          TextButton(
+            onPressed: busy ? null : () => Navigator.of(context).pop(false),
+            child: const Text('إلغاء'),
           ),
-          child: TextField(
-            controller: _metersController,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
-            ],
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              hintText: 'اختر عدد الامتار',
-              hintStyle: AppStyles.s16.copyWith(color: AppColors.grayText),
-            ),
-            style: AppStyles.s16.copyWith(color: AppColors.black),
+          FilledButton(
+            onPressed: busy ? null : _submit,
+            child: Text(busy ? 'جارٍ الحفظ' : 'حفظ'),
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildAchievedGoalsContent() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Achieved goals label
-        Text(
-          'الأهداف المحققة',
-          style: AppStyles.s16Medium.copyWith(color: AppColors.primary),
-        ),
-        SizedBox(height: 8.h),
-        // Text input field
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            border: Border.all(color: AppColors.lightBlue, width: 1),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: TextField(
-            controller: _contentController,
-            maxLines: null,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              hintText: 'اكتب الأهداف المحققة',
-              hintStyle: AppStyles.s16.copyWith(color: AppColors.grayText),
-            ),
-            style: AppStyles.s16.copyWith(color: AppColors.black),
-          ),
-        ),
-      ],
-    );
-  }
+        ],
+      );
+    },
+  );
 }

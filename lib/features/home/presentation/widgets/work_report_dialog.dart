@@ -1,3 +1,4 @@
+import 'report_number_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -26,6 +27,8 @@ class _WorkReportDialogState extends State<WorkReportDialog> {
 
   // Driver & Technician
   String? _selectedDevices;
+  String? _installationDevices;
+  String? _supplyDevices;
 
   // Technician only
   String? _selectedMeters;
@@ -39,12 +42,7 @@ class _WorkReportDialogState extends State<WorkReportDialog> {
   String? _selectedCommercialDevices;
 
   // Dropdown lists
-  final List<String> _devicesList = List.generate(50, (i) => '$i');
-  final List<String> _metersList = List.generate(50, (i) => '${i * 50}');
   final List<String> _overtimeHoursList = List.generate(12, (i) => '$i');
-  final List<String> _soldDevicesList = List.generate(100, (i) => '$i');
-  final List<String> _boughtDevicesList = List.generate(100, (i) => '$i');
-  final List<String> _commercialDevicesList = List.generate(100, (i) => '$i');
 
   UserJobType get _userJobType {
     final jobType = UserHelper.userJobType?.toLowerCase() ?? '';
@@ -66,17 +64,18 @@ class _WorkReportDialogState extends State<WorkReportDialog> {
     // Initialize default values based on user type
     switch (_userJobType) {
       case UserJobType.driver:
-        _selectedDevices = _devicesList.first;
+        _installationDevices = '0';
+        _supplyDevices = '0';
         _selectedOvertimeHours = _overtimeHoursList.first;
         break;
       case UserJobType.sales:
-        _selectedSoldDevices = _soldDevicesList.first;
-        _selectedBoughtDevices = _boughtDevicesList.first;
-        _selectedCommercialDevices = _commercialDevicesList.first;
+        _selectedSoldDevices = '0';
+        _selectedBoughtDevices = '0';
+        _selectedCommercialDevices = '0';
         break;
       case UserJobType.technician:
-        _selectedDevices = _devicesList.first;
-        _selectedMeters = _metersList.first;
+        _selectedDevices = '0';
+        _selectedMeters = '0';
         break;
       case UserJobType.other:
         _selectedOvertimeHours = _overtimeHoursList.first;
@@ -157,19 +156,16 @@ class _WorkReportDialogState extends State<WorkReportDialog> {
       case UserJobType.driver:
         // Driver: عدد الأجهزة، ساعات عمل إضافية، تقرير عمل اليوم
         fields.addAll([
-          CustomDropdownField<String>(
-            value: _selectedDevices,
-            labelText: 'عدد الأجهزة',
-            items: _devicesList.map((String value) {
-              return DropdownMenuItem<String>(value: value, child: Text(value));
-            }).toList(),
-            onChanged: (String? newValue) {
-              setState(() {
-                _selectedDevices = newValue!;
-              });
-            },
-            validator: (value) =>
-                value == null ? 'يجب اختيار عدد الأجهزة' : null,
+          ReportNumberField(
+            initialValue: _installationDevices,
+            label: 'عدد أجهزة التركيب',
+            onChanged: (value) => _installationDevices = value,
+          ),
+          SizedBox(height: 20.h),
+          ReportNumberField(
+            initialValue: _supplyDevices,
+            label: 'عدد أجهزة التوريد',
+            onChanged: (value) => _supplyDevices = value,
           ),
           SizedBox(height: 20.h),
           CustomDropdownField<String>(
@@ -199,49 +195,22 @@ class _WorkReportDialogState extends State<WorkReportDialog> {
       case UserJobType.sales:
         // Sales: عدد الأجهزة المباعة، عدد الأجهزة المشتراة، عدد التجاري، تقرير عمل اليوم
         fields.addAll([
-          CustomDropdownField<String>(
-            value: _selectedSoldDevices,
-            labelText: 'عدد الأجهزة المباعة',
-            items: _soldDevicesList.map((String value) {
-              return DropdownMenuItem<String>(value: value, child: Text(value));
-            }).toList(),
-            onChanged: (String? newValue) {
-              setState(() {
-                _selectedSoldDevices = newValue!;
-              });
-            },
-            validator: (value) =>
-                value == null ? 'يجب اختيار عدد الأجهزة المباعة' : null,
+          ReportNumberField(
+            initialValue: _selectedSoldDevices,
+            label: 'عدد الأجهزة المباعة',
+            onChanged: (value) => _selectedSoldDevices = value,
           ),
           SizedBox(height: 20.h),
-          CustomDropdownField<String>(
-            value: _selectedBoughtDevices,
-            labelText: 'عدد الأجهزة المشتراة',
-            items: _boughtDevicesList.map((String value) {
-              return DropdownMenuItem<String>(value: value, child: Text(value));
-            }).toList(),
-            onChanged: (String? newValue) {
-              setState(() {
-                _selectedBoughtDevices = newValue!;
-              });
-            },
-            validator: (value) =>
-                value == null ? 'يجب اختيار عدد الأجهزة المشتراة' : null,
+          ReportNumberField(
+            initialValue: _selectedBoughtDevices,
+            label: 'عدد الأجهزة المشتراة',
+            onChanged: (value) => _selectedBoughtDevices = value,
           ),
           SizedBox(height: 20.h),
-          CustomDropdownField<String>(
-            value: _selectedCommercialDevices,
-            labelText: 'عدد الأجهزة التجارية',
-            items: _commercialDevicesList.map((String value) {
-              return DropdownMenuItem<String>(value: value, child: Text(value));
-            }).toList(),
-            onChanged: (String? newValue) {
-              setState(() {
-                _selectedCommercialDevices = newValue!;
-              });
-            },
-            validator: (value) =>
-                value == null ? 'يجب اختيار عدد الأجهزة التجارية' : null,
+          ReportNumberField(
+            initialValue: _selectedCommercialDevices,
+            label: 'عدد الأجهزة التجارية',
+            onChanged: (value) => _selectedCommercialDevices = value,
           ),
           SizedBox(height: 20.h),
           CustomTextAreaField(
@@ -256,34 +225,17 @@ class _WorkReportDialogState extends State<WorkReportDialog> {
       case UserJobType.technician:
         // Technician: عدد الأجهزة، عدد الأمتار، تقرير عمل اليوم
         fields.addAll([
-          CustomDropdownField<String>(
-            value: _selectedDevices,
-            labelText: 'عدد الأجهزة',
-            items: _devicesList.map((String value) {
-              return DropdownMenuItem<String>(value: value, child: Text(value));
-            }).toList(),
-            onChanged: (String? newValue) {
-              setState(() {
-                _selectedDevices = newValue!;
-              });
-            },
-            validator: (value) =>
-                value == null ? 'يجب اختيار عدد الأجهزة' : null,
+          ReportNumberField(
+            initialValue: _selectedDevices,
+            label: 'عدد الأجهزة',
+            onChanged: (value) => _selectedDevices = value,
           ),
           SizedBox(height: 20.h),
-          CustomDropdownField<String>(
-            value: _selectedMeters,
-            labelText: 'عدد الأمتار',
-            items: _metersList.map((String value) {
-              return DropdownMenuItem<String>(value: value, child: Text(value));
-            }).toList(),
-            onChanged: (String? newValue) {
-              setState(() {
-                _selectedMeters = newValue!;
-              });
-            },
-            validator: (value) =>
-                value == null ? 'يجب اختيار عدد الأمتار' : null,
+          ReportNumberField(
+            initialValue: _selectedMeters,
+            label: 'عدد الأمتار',
+            decimal: true,
+            onChanged: (value) => _selectedMeters = value,
           ),
           SizedBox(height: 20.h),
           CustomTextAreaField(
@@ -329,7 +281,8 @@ class _WorkReportDialogState extends State<WorkReportDialog> {
   bool _validateFields() {
     switch (_userJobType) {
       case UserJobType.driver:
-        return _selectedDevices != null &&
+        return _installationDevices != null &&
+            _supplyDevices != null &&
             _selectedOvertimeHours != null &&
             _reportController.text.isNotEmpty;
       case UserJobType.sales:
@@ -351,6 +304,8 @@ class _WorkReportDialogState extends State<WorkReportDialog> {
     return WorkReportModel(
       report: _reportController.text,
       devices: _selectedDevices,
+      installationDevices: _installationDevices,
+      supplyDevices: _supplyDevices,
       meters: _selectedMeters,
       overtimeHours: _selectedOvertimeHours,
       soldDevices: _selectedSoldDevices,

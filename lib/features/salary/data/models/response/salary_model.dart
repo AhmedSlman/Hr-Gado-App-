@@ -1,5 +1,8 @@
+import 'api_values.dart';
+
 // Employee Type Enum
 enum EmployeeType {
+  manager,
   driver, // السواق
   sales, // المبيعات
   technician, // الفني
@@ -12,6 +15,8 @@ sealed class SalaryMetrics {
 
   factory SalaryMetrics.fromJson(Map<String, dynamic> json, EmployeeType type) {
     switch (type) {
+      case EmployeeType.manager:
+        return const EmptyMetrics();
       case EmployeeType.driver:
         return DriverMetrics.fromJson(json);
       case EmployeeType.sales:
@@ -35,35 +40,50 @@ sealed class SalaryMetrics {
     if (json.containsKey('meters') && json.containsKey('devices')) {
       return EmployeeType.technician;
     }
-    if (json.containsKey('devices') && json.containsKey('overtime_hours')) {
+    if (json.containsKey('installation_devices') ||
+        json.containsKey('supply_devices') ||
+        (json.containsKey('devices') && json.containsKey('overtime_hours'))) {
       return EmployeeType.driver;
     }
     if (json.containsKey('overtime_hours') && json.keys.length == 1) {
       return EmployeeType.other;
     }
     // Default fallback
-    return EmployeeType.driver;
+    return EmployeeType.other;
   }
 }
 
-// Driver Metrics (السواق)
+class EmptyMetrics extends SalaryMetrics {
+  const EmptyMetrics();
+  @override
+  Map<String, dynamic> toJson() => {};
+}
+
 class DriverMetrics extends SalaryMetrics {
-  final int devices;
+  final int installationDevices;
+  final int supplyDevices;
   final double overtimeHours;
 
-  const DriverMetrics({required this.devices, required this.overtimeHours});
+  const DriverMetrics({
+    required this.installationDevices,
+    required this.supplyDevices,
+    required this.overtimeHours,
+  });
 
-  factory DriverMetrics.fromJson(Map<String, dynamic> json) {
-    return DriverMetrics(
-      devices: json['devices'] ?? 0,
-      overtimeHours: (json['overtime_hours'] ?? 0).toDouble(),
-    );
-  }
+  factory DriverMetrics.fromJson(Map<String, dynamic> json) => DriverMetrics(
+    installationDevices: apiCount(
+      json['installation_devices'] ?? json['devices'],
+    ),
+    supplyDevices: apiCount(json['supply_devices']),
+    overtimeHours: apiNumber(json['overtime_hours']),
+  );
 
   @override
-  Map<String, dynamic> toJson() {
-    return {'devices': devices, 'overtime_hours': overtimeHours};
-  }
+  Map<String, dynamic> toJson() => {
+    'installation_devices': installationDevices,
+    'supply_devices': supplyDevices,
+    'overtime_hours': overtimeHours,
+  };
 }
 
 // Sales Metrics (المبيعات)
@@ -80,9 +100,9 @@ class SalesMetrics extends SalaryMetrics {
 
   factory SalesMetrics.fromJson(Map<String, dynamic> json) {
     return SalesMetrics(
-      soldDevices: json['sold_devices'] ?? 0,
-      boughtDevices: json['bought_devices'] ?? 0,
-      commercialDevices: json['commercial_devices'] ?? 0,
+      soldDevices: apiCount(json['sold_devices']),
+      boughtDevices: apiCount(json['bought_devices']),
+      commercialDevices: apiCount(json['commercial_devices']),
     );
   }
 
@@ -105,8 +125,8 @@ class TechnicianMetrics extends SalaryMetrics {
 
   factory TechnicianMetrics.fromJson(Map<String, dynamic> json) {
     return TechnicianMetrics(
-      devices: json['devices'] ?? 0,
-      meters: (json['meters'] ?? 0).toDouble(),
+      devices: apiCount(json['devices']),
+      meters: apiNumber(json['meters']),
     );
   }
 
@@ -123,9 +143,7 @@ class OtherMetrics extends SalaryMetrics {
   const OtherMetrics({required this.overtimeHours});
 
   factory OtherMetrics.fromJson(Map<String, dynamic> json) {
-    return OtherMetrics(
-      overtimeHours: (json['overtime_hours'] ?? 0).toDouble(),
-    );
+    return OtherMetrics(overtimeHours: apiNumber(json['overtime_hours']));
   }
 
   @override
@@ -159,7 +177,9 @@ class SalaryHistoryItem {
       reportId: json['report_id'],
       date: json['date'] ?? '',
       salaryText: json['salary_text'] ?? '',
-      metrics: SalaryMetrics.fromJson(json['metrics'] ?? {}, type),
+      metrics: apiMetrics(json['metrics']).isEmpty
+          ? const EmptyMetrics()
+          : SalaryMetrics.fromJson(apiMetrics(json['metrics']), type),
       hasReport: json['has_report'] ?? false,
       employeeType: type,
     );
@@ -167,7 +187,7 @@ class SalaryHistoryItem {
 
   Map<String, dynamic> toJson() {
     return {
-      'report_id': reportId,
+      if (reportId != null) 'report_id': reportId,
       'date': date,
       'salary_text': salaryText,
       'metrics': metrics.toJson(),
@@ -183,6 +203,8 @@ class SalarySummaryData {
   final double netMonthlySalary;
   final double totalDeductions;
   final double totalBonuses;
+  final double totalAllowances;
+  final double insuranceDeduction;
   final List<SalaryHistoryItem> salaryHistory;
   final EmployeeType employeeType;
 
@@ -193,28 +215,38 @@ class SalarySummaryData {
     required this.netMonthlySalary,
     required this.totalDeductions,
     required this.totalBonuses,
+    this.totalAllowances = 0,
+    this.insuranceDeduction = 0,
     required this.salaryHistory,
     required this.employeeType,
   });
 
-  factory SalarySummaryData.fromJson(Map<String, dynamic> json) {
+  factory SalarySummaryData.fromJson(
+    Map<String, dynamic> json, {
+    EmployeeType? employeeType,
+  }) {
     final historyList = json['salary_history'] as List? ?? [];
 
-    // Detect employee type from first history item metrics
-    EmployeeType detectedType = EmployeeType.driver;
-    if (historyList.isNotEmpty) {
-      final firstMetrics =
-          historyList.first['metrics'] as Map<String, dynamic>? ?? {};
-      detectedType = SalaryMetrics.detectType(firstMetrics);
-    }
+    final detectedType =
+        employeeType ??
+        (json.containsKey('total_allowances')
+            ? EmployeeType.manager
+            : historyList
+                      .map((item) => apiMetrics(item['metrics']))
+                      .where((metrics) => metrics.isNotEmpty)
+                      .map(SalaryMetrics.detectType)
+                      .firstOrNull ??
+                  EmployeeType.other);
 
     return SalarySummaryData(
       salaryReceiptDate: json['salary_receipt_date'] ?? '',
-      dailySalary: (json['daily_salary'] ?? 0).toDouble(),
-      baseSalary: (json['base_salary'] ?? 0).toDouble(),
-      netMonthlySalary: (json['net_monthly_salary'] ?? 0).toDouble(),
-      totalDeductions: (json['total_deductions'] ?? 0).toDouble(),
-      totalBonuses: (json['total_bonuses'] ?? 0).toDouble(),
+      dailySalary: apiNumber(json['daily_salary']),
+      baseSalary: apiNumber(json['base_salary']),
+      netMonthlySalary: apiNumber(json['net_monthly_salary']),
+      totalDeductions: apiNumber(json['total_deductions']),
+      totalBonuses: apiNumber(json['total_bonuses']),
+      totalAllowances: apiNumber(json['total_allowances']),
+      insuranceDeduction: apiNumber(json['insurance_deduction']),
       salaryHistory: historyList
           .map((item) => SalaryHistoryItem.fromJson(item, detectedType))
           .toList(),
@@ -230,6 +262,9 @@ class SalarySummaryData {
       'net_monthly_salary': netMonthlySalary,
       'total_deductions': totalDeductions,
       'total_bonuses': totalBonuses,
+      if (employeeType == EmployeeType.manager)
+        'total_allowances': totalAllowances,
+      'insurance_deduction': insuranceDeduction,
       'salary_history': salaryHistory.map((item) => item.toJson()).toList(),
     };
   }
@@ -246,11 +281,17 @@ class SalarySummaryResponse {
     required this.data,
   });
 
-  factory SalarySummaryResponse.fromJson(Map<String, dynamic> json) {
+  factory SalarySummaryResponse.fromJson(
+    Map<String, dynamic> json, {
+    EmployeeType? employeeType,
+  }) {
     return SalarySummaryResponse(
       key: json['key'] ?? '',
       msg: json['msg'] ?? '',
-      data: SalarySummaryData.fromJson(json['data'] ?? {}),
+      data: SalarySummaryData.fromJson(
+        json['data'] ?? {},
+        employeeType: employeeType,
+      ),
     );
   }
 

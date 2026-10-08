@@ -1,17 +1,22 @@
+import '../../../../salary/data/models/response/api_values.dart';
+import '../../../../salary/data/models/response/report_metrics.dart';
 import 'employee_model_simple.dart';
 
 class EmployeeReportDetailsModel {
+  final Map<String, num?> metrics;
+  final int? installationDevices;
+  final int? supplyDevices;
   final int id;
   final String date;
   final String content;
 
   // Type 1 fields (devices + overtime)
   final int? numOfDevices;
-  final int? overtimeHours;
+  final double? overtimeHours;
 
   // Type 2 fields (alternative format)
   final String? addition;
-  final int? additionOvertime;
+  final double? additionOvertime;
 
   // Type 2 fields (sold/bought/commercial)
   final int? soldDevices;
@@ -19,7 +24,7 @@ class EmployeeReportDetailsModel {
   final int? commercialDevices;
 
   // Type 3 fields (devices + meters)
-  final int? numOfMeters;
+  final double? numOfMeters;
 
   // Employee info (can be nested or flat)
   final EmployeeModelSimple? employee;
@@ -28,6 +33,9 @@ class EmployeeReportDetailsModel {
   final String? job;
 
   const EmployeeReportDetailsModel({
+    this.metrics = const {},
+    this.installationDevices,
+    this.supplyDevices,
     required this.id,
     required this.date,
     required this.content,
@@ -60,17 +68,38 @@ class EmployeeReportDetailsModel {
     final employeeJob = employeeObj?.job ?? json['job'] as String?;
 
     return EmployeeReportDetailsModel(
-      id: (json['id'] ?? 0) as int,
+      metrics: readReportMetrics(json),
+      installationDevices: json['installation_devices'] == null
+          ? null
+          : apiCount(json['installation_devices']),
+      supplyDevices: json['supply_devices'] == null
+          ? null
+          : apiCount(json['supply_devices']),
+      id: apiCount(json['id']),
       date: (json['date'] ?? '').toString(),
       content: (json['content'] ?? '').toString(),
-      numOfDevices: json['num_of_devices'] as int?,
-      overtimeHours: json['overtime_hours'] as int?,
+      numOfDevices: json['num_of_devices'] == null
+          ? null
+          : apiCount(json['num_of_devices']),
+      overtimeHours: json['overtime_hours'] == null
+          ? null
+          : apiNumber(json['overtime_hours']),
       addition: json['addition'] as String?,
-      additionOvertime: json['addition_overtime'] as int?,
-      soldDevices: json['sold_devices'] as int?,
-      boughtDevices: json['bought_devices'] as int?,
-      commercialDevices: json['commercial_devices'] as int?,
-      numOfMeters: json['num_of_meters'] as int?,
+      additionOvertime: json['addition_overtime'] == null
+          ? null
+          : apiNumber(json['addition_overtime']),
+      soldDevices: json['sold_devices'] == null
+          ? null
+          : apiCount(json['sold_devices']),
+      boughtDevices: json['bought_devices'] == null
+          ? null
+          : apiCount(json['bought_devices']),
+      commercialDevices: json['commercial_devices'] == null
+          ? null
+          : apiCount(json['commercial_devices']),
+      numOfMeters: json['num_of_meters'] == null
+          ? null
+          : apiNumber(json['num_of_meters']),
       employee: employeeObj,
       name: employeeName,
       image: employeeImage,

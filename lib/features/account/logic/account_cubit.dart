@@ -1,3 +1,4 @@
+import '../../../core/common/salary_updates.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../data/repository/account_repository.dart';
 import 'account_states.dart';
@@ -82,55 +83,75 @@ class AccountCubit extends Cubit<AccountStates> {
   Future<void> updateReport(int reportId, Map<String, dynamic> formData) async {
     emit(UpdateReportProcessing());
     final result = await repository.updateReport(reportId, formData);
-    result.fold(
-      (failure) => emit(UpdateReportError(failure.message)),
-      (response) => emit(UpdateReportSuccess(response.msg)),
-    );
+    result.fold((failure) => emit(UpdateReportError(failure.message)), (
+      response,
+    ) {
+      if (response.key != 'success') {
+        emit(UpdateReportError(response.msg));
+        return;
+      }
+      SalaryUpdates.notify();
+      emit(UpdateReportSuccess(response.msg));
+    });
   }
 
   Future<void> confirmReport(int reportId) async {
     emit(ConfirmReportProcessing());
     final result = await repository.confirmReport(reportId);
-    result.fold(
-      (failure) => emit(ConfirmReportError(failure.message)),
-      (response) => emit(ConfirmReportSuccess(response.msg)),
-    );
+    result.fold((failure) => emit(ConfirmReportError(failure.message)), (
+      response,
+    ) {
+      if (response.key != 'success') {
+        emit(ConfirmReportError(response.msg));
+        return;
+      }
+      SalaryUpdates.notify();
+      emit(ConfirmReportSuccess(response.msg));
+    });
   }
 
   Future<void> approveAdvance(int requestId) async {
     emit(ApproveAdvanceProcessing());
     final result = await repository.approveAdvance(requestId);
-    result.fold(
-      (failure) => emit(ApproveAdvanceError(failure.message)),
-      (response) => emit(ApproveAdvanceSuccess(response.msg)),
-    );
+    result.fold((failure) => emit(ApproveAdvanceError(failure.message)), (
+      response,
+    ) {
+      if (response.key == 'success') SalaryUpdates.notify();
+      emit(ApproveAdvanceSuccess(response.msg));
+    });
   }
 
   Future<void> rejectAdvance(int requestId) async {
     emit(RejectAdvanceProcessing());
     final result = await repository.rejectAdvance(requestId);
-    result.fold(
-      (failure) => emit(RejectAdvanceError(failure.message)),
-      (response) => emit(RejectAdvanceSuccess(response.msg)),
-    );
+    result.fold((failure) => emit(RejectAdvanceError(failure.message)), (
+      response,
+    ) {
+      if (response.key == 'success') SalaryUpdates.notify();
+      emit(RejectAdvanceSuccess(response.msg));
+    });
   }
 
   Future<void> approveLeave(int requestId) async {
     emit(ApproveLeaveProcessing());
     final result = await repository.approveLeave(requestId);
-    result.fold(
-      (failure) => emit(ApproveLeaveError(failure.message)),
-      (response) => emit(ApproveLeaveSuccess(response.msg)),
-    );
+    result.fold((failure) => emit(ApproveLeaveError(failure.message)), (
+      response,
+    ) {
+      if (response.key == 'success') SalaryUpdates.notify();
+      emit(ApproveLeaveSuccess(response.msg));
+    });
   }
 
   Future<void> rejectLeave(int requestId) async {
     emit(RejectLeaveProcessing());
     final result = await repository.rejectLeave(requestId);
-    result.fold(
-      (failure) => emit(RejectLeaveError(failure.message)),
-      (response) => emit(RejectLeaveSuccess(response.msg)),
-    );
+    result.fold((failure) => emit(RejectLeaveError(failure.message)), (
+      response,
+    ) {
+      if (response.key == 'success') SalaryUpdates.notify();
+      emit(RejectLeaveSuccess(response.msg));
+    });
   }
 
   Future<void> reportIssue(Map<String, dynamic> formData) async {

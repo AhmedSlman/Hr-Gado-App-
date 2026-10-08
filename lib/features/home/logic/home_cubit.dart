@@ -1,3 +1,4 @@
+import '../../../core/common/salary_updates.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hr_app/features/home/data/models/request/attendance_requset_model.dart';
 import 'package:hr_app/features/home/data/models/request/daily_report_request_model.dart';
@@ -19,25 +20,28 @@ class HomeCubit extends Cubit<HomeStates> {
 
   Future<void> checkIn(double latitude, double longitude) async {
     emit(AttendanceLoading());
-print('🔍 HomeCubit - CheckIn: $latitude, $longitude');
+    print('🔍 HomeCubit - CheckIn: $latitude, $longitude');
     final request = AttendanceRequestModel(
       latitude: latitude,
       longitude: longitude,
     );
-    
 
     final result = await repository.checkIn(request);
 
-    result.fold((failure) {
-      print('🔍 HomeCubit - CheckIn Failure: ${failure.message}');
-      emit(AttendanceError(failure.message));
-    }, (response) {
-      print('🔍 HomeCubit - CheckIn Success');
-      print('🔍 Response key: ${response.key}');
-      print('🔍 Response msg: ${response.msg}');
-      print('🔍 isSuccess: ${response.isSuccess}');
-      emit(AttendanceSuccess(response));
-    });
+    result.fold(
+      (failure) {
+        print('🔍 HomeCubit - CheckIn Failure: ${failure.message}');
+        emit(AttendanceError(failure.message));
+      },
+      (response) {
+        print('🔍 HomeCubit - CheckIn Success');
+        print('🔍 Response key: ${response.key}');
+        print('🔍 Response msg: ${response.msg}');
+        print('🔍 isSuccess: ${response.isSuccess}');
+        if (response.isSuccess) SalaryUpdates.notify();
+        emit(AttendanceSuccess(response));
+      },
+    );
   }
 
   Future<void> checkOut(double latitude, double longitude) async {
@@ -50,31 +54,39 @@ print('🔍 HomeCubit - CheckIn: $latitude, $longitude');
 
     final result = await repository.checkOut(request);
 
-    result.fold((failure) {
-      print('🔍 HomeCubit - CheckOut Failure: ${failure.message}');
-      emit(AttendanceError(failure.message));
-    }, (response) {
-      print('🔍 HomeCubit - CheckOut Success');
-      print('🔍 Response key: ${response.key}');
-      print('🔍 Response msg: ${response.msg}');
-      print('🔍 isSuccess: ${response.isSuccess}');
-      emit(AttendanceSuccess(response));
-    });
+    result.fold(
+      (failure) {
+        print('🔍 HomeCubit - CheckOut Failure: ${failure.message}');
+        emit(AttendanceError(failure.message));
+      },
+      (response) {
+        print('🔍 HomeCubit - CheckOut Success');
+        print('🔍 Response key: ${response.key}');
+        print('🔍 Response msg: ${response.msg}');
+        print('🔍 isSuccess: ${response.isSuccess}');
+        if (response.isSuccess) SalaryUpdates.notify();
+        emit(AttendanceSuccess(response));
+      },
+    );
   }
 
   Future<void> submitDailyReport(WorkReportModel workReport) async {
     emit(DailyReportLoading());
 
-    final request = DailyReportRequestModel(
-      workReport: workReport,
-    );
+    final request = DailyReportRequestModel(workReport: workReport);
 
     final result = await repository.submitDailyReport(request);
 
-    result.fold((failure) {
-      print('🔍 HomeCubit - DailyReport Failure: ${failure.message}');
-      emit(DailyReportError(failure.message));
-    }, (response) => emit(DailyReportSuccess(response)));
+    result.fold(
+      (failure) {
+        print('🔍 HomeCubit - DailyReport Failure: ${failure.message}');
+        emit(DailyReportError(failure.message));
+      },
+      (response) {
+        if (response.isSuccess) SalaryUpdates.notify();
+        emit(DailyReportSuccess(response));
+      },
+    );
   }
 
   Future<void> getHomeScreen() async {

@@ -1,3 +1,4 @@
+import '../models/response/personal_reports_model.dart';
 import '../../../../../core/error/result_extensions.dart';
 import '../data_source/remote/remote_data_source.dart';
 import '../models/response/report_model.dart';
@@ -8,6 +9,11 @@ class SalaryRepositoryImpl implements SalaryRepository {
   final SalaryRemoteDataSource remoteDataSource;
 
   SalaryRepositoryImpl({required this.remoteDataSource});
+
+  @override
+  Future<Result<PersonalReportsResponse>> getPersonalReports(
+    ReportFilters filters,
+  ) => remoteDataSource.getPersonalReports(filters);
 
   @override
   Future<Result<SalarySummaryResponse>> getMySalarySummary() async {

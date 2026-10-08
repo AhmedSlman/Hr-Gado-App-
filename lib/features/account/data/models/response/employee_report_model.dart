@@ -1,27 +1,36 @@
+import '../../../../salary/data/models/response/api_values.dart';
+import '../../../../salary/data/models/response/report_metrics.dart';
+
 /// Employee Report Model
 /// Supports different report types:
 /// - Type 1: num_of_devices + overtime_hours
 /// - Type 2: sold_devices + bought_devices + commercial_devices
 /// - Type 3: num_of_devices + num_of_meters
 class EmployeeReportModel {
+  final Map<String, num?> metrics;
+  final int? installationDevices;
+  final int? supplyDevices;
   final int id;
   final String date;
   final int employeeId;
   final String name;
-  
+
   // Type 1 fields
   final int? numOfDevices;
-  final int? overtimeHours;
-  
+  final double? overtimeHours;
+
   // Type 2 fields
   final int? soldDevices;
   final int? boughtDevices;
   final int? commercialDevices;
-  
+
   // Type 3 fields
-  final int? numOfMeters;
+  final double? numOfMeters;
 
   const EmployeeReportModel({
+    this.metrics = const {},
+    this.installationDevices,
+    this.supplyDevices,
     required this.id,
     required this.date,
     required this.employeeId,
@@ -36,16 +45,35 @@ class EmployeeReportModel {
 
   factory EmployeeReportModel.fromJson(Map<String, dynamic> json) {
     return EmployeeReportModel(
-      id: (json['id'] ?? 0) as int,
+      metrics: readReportMetrics(json),
+      installationDevices: json['installation_devices'] == null
+          ? null
+          : apiCount(json['installation_devices']),
+      supplyDevices: json['supply_devices'] == null
+          ? null
+          : apiCount(json['supply_devices']),
+      id: apiCount(json['id']),
       date: (json['date'] ?? '').toString(),
       employeeId: (json['employee_id'] ?? 0) as int,
       name: (json['name'] ?? '').toString(),
-      numOfDevices: json['num_of_devices'] as int?,
-      overtimeHours: json['overtime_hours'] as int?,
-      soldDevices: json['sold_devices'] as int?,
-      boughtDevices: json['bought_devices'] as int?,
-      commercialDevices: json['commercial_devices'] as int?,
-      numOfMeters: json['num_of_meters'] as int?,
+      numOfDevices: json['num_of_devices'] == null
+          ? null
+          : apiCount(json['num_of_devices']),
+      overtimeHours: json['overtime_hours'] == null
+          ? null
+          : apiNumber(json['overtime_hours']),
+      soldDevices: json['sold_devices'] == null
+          ? null
+          : apiCount(json['sold_devices']),
+      boughtDevices: json['bought_devices'] == null
+          ? null
+          : apiCount(json['bought_devices']),
+      commercialDevices: json['commercial_devices'] == null
+          ? null
+          : apiCount(json['commercial_devices']),
+      numOfMeters: json['num_of_meters'] == null
+          ? null
+          : apiNumber(json['num_of_meters']),
     );
   }
 
@@ -54,9 +82,7 @@ class EmployeeReportModel {
 
   /// Check if this is a Type 2 report (sold/bought/commercial devices)
   bool get isType2 =>
-      soldDevices != null &&
-      boughtDevices != null &&
-      commercialDevices != null;
+      soldDevices != null && boughtDevices != null && commercialDevices != null;
 
   /// Check if this is a Type 3 report (devices + meters)
   bool get isType3 => numOfDevices != null && numOfMeters != null;
@@ -67,4 +93,3 @@ class EmployeeReportModel {
   /// Get the display value for meters (for UI)
   String? get displayMeters => numOfMeters?.toString();
 }
-

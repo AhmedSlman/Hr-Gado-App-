@@ -1,3 +1,5 @@
+import '../../../../salary/data/models/response/api_values.dart';
+
 /// نموذج بيانات الشاشة الرئيسية
 class HomeScreenModel {
   final String key;
@@ -27,7 +29,7 @@ class HomeScreenData {
   final ShiftData shift;
   final List<MeetingData> todayMeetings;
   final List<ArticleData> articles;
-  final DailySalaryData dailySalary;
+  final DailySalaryData? dailySalary;
 
   const HomeScreenData({
     required this.today,
@@ -51,7 +53,9 @@ class HomeScreenData {
               ?.map((article) => ArticleData.fromJson(article))
               .toList() ??
           [],
-      dailySalary: DailySalaryData.fromJson(json['daily_salary'] ?? {}),
+      dailySalary: json['daily_salary'] == null
+          ? null
+          : DailySalaryData.fromJson(json['daily_salary']),
     );
   }
 }
@@ -179,10 +183,10 @@ class DailySalaryData {
 
   factory DailySalaryData.fromJson(Map<String, dynamic> json) {
     return DailySalaryData(
-      baseDailySalary: json['base_daily_salary'] ?? 0,
-      bonus: json['bonus'] ?? 0,
-      deduction: json['deduction'] ?? 0,
-      netAmount: json['net_amount'] ?? 0,
+      baseDailySalary: apiNumber(json['base_daily_salary']).round(),
+      bonus: apiNumber(json['bonus']).round(),
+      deduction: apiNumber(json['deduction']).round(),
+      netAmount: apiNumber(json['net_amount']).round(),
     );
   }
 }

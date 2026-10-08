@@ -62,14 +62,14 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
   Future<Result<DailyReportResponseModel>> submitDailyReport(
     DailyReportRequestModel request,
   ) async {
-    // إرسال التقرير اليومي في body كـ form data
+    // إرسال التقرير اليومي في body كـ JSON
     final result = await _apiConsumer.post<DailyReportResponseModel>(
       path: HomeEndpoints.dailyReport,
       body: request.toFormMap(),
-      isFormData: true,
+
       headers: const {
-        'Accept': 'application/vnd.api+json',
-        'Content-Type': 'application/vnd.api+json',
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
       },
       parser: (json) => DailyReportResponseModel.fromJson(json),
     );

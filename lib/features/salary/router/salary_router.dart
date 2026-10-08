@@ -1,3 +1,6 @@
+import '../logic/personal_reports_cubit.dart';
+import '../data/repository/salary_repository.dart';
+import '../presentation/views/personal_reports_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hr_app/core/locator/service_locator.dart';
@@ -10,6 +13,13 @@ import 'salary_names.dart';
 
 class SalaryRouter {
   static List<GoRoute> get routes => [
+    GoRoute(
+      path: SalaryRoutes.personalReports,
+      builder: (context, state) => BlocProvider(
+        create: (_) => PersonalReportsCubit(sl<SalaryRepository>()),
+        child: const PersonalReportsView(),
+      ),
+    ),
     // Salary Screen
     GoRoute(
       path: SalaryRoutes.salary,

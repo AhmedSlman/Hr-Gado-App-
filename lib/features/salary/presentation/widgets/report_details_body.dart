@@ -1,3 +1,5 @@
+import '../../data/models/response/report_metrics.dart';
+import 'report_metric_labels.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -45,17 +47,15 @@ class ReportDetailsBody extends StatelessWidget {
           // textAlign: TextAlign.right,
         ),
         SizedBox(height: 12.h),
-        _buildMetricCard(
-          label: "عدد الاجهزة",
-          value: metricsData['devices'] ?? '0',
-        ),
-
-        SizedBox(height: 12.h),
-
-        _buildMetricCard(
-          label: "عدد الامتار",
-          value: metricsData['meters'] ?? '0',
-        ),
+        for (final entry in displayReportMetrics(
+          reportData.metrics,
+        ).entries) ...[
+          _buildMetricCard(
+            label: reportMetricLabels[entry.key] ?? entry.key,
+            value: entry.value,
+          ),
+          SizedBox(height: 12.h),
+        ],
       ],
     );
   }

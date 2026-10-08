@@ -1,4 +1,7 @@
+import 'report_metrics.dart';
+
 class ReportData {
+  final Map<String, num?> metrics;
   final int id;
   final String date;
   final String content;
@@ -6,6 +9,7 @@ class ReportData {
   final String additionTarget;
 
   const ReportData({
+    this.metrics = const {},
     required this.id,
     required this.date,
     required this.content,
@@ -15,6 +19,7 @@ class ReportData {
 
   factory ReportData.fromJson(Map<String, dynamic> json) {
     return ReportData(
+      metrics: readReportMetrics(json),
       id: json['id'] ?? 0,
       date: json['date'] ?? '',
       content: json['content'] ?? '',
@@ -25,6 +30,7 @@ class ReportData {
 
   Map<String, dynamic> toJson() {
     return {
+      ...metrics,
       'id': id,
       'date': date,
       'content': content,

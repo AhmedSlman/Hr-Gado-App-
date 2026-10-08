@@ -53,11 +53,13 @@ class EmployeeReportsListSection extends StatelessWidget {
 
                 return EmployeeReportCardWidget(
                   report: report,
-                  onTap: () {
-                    context.push(
+                  onTap: () async {
+                    final cubit = context.read<AccountCubit>();
+                    await context.push(
                       AccountRoutes.employeeReportDetails,
                       extra: EmployeeReportDetailsExtra(reportId: report.id),
                     );
+                    if (!cubit.isClosed) await cubit.loadEmployeeReports();
                   },
                 );
               },
@@ -75,5 +77,3 @@ class EmployeeReportsListSection extends StatelessWidget {
     );
   }
 }
-
-

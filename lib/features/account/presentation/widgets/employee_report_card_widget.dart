@@ -1,3 +1,5 @@
+import '../../../salary/presentation/widgets/report_metric_labels.dart';
+import '../../../salary/data/models/response/report_metrics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hr_app/core/theme/app_colors.dart';
@@ -71,91 +73,17 @@ class EmployeeReportCardWidget extends StatelessWidget {
   }
 
   Widget _buildReportContent() {
-    // Type 3: devices + meters
-    if (report.isType3) {
-      return Row(
-        children: [
-          Expanded(
-            child: _buildStatColumn(
-              label: 'عدد الاجهزة',
-              value: report.displayDevices ?? '0',
-            ),
+    final metrics = displayReportMetrics(report.metrics);
+    return Wrap(
+      spacing: 24,
+      runSpacing: 12,
+      children: [
+        for (final entry in metrics.entries)
+          _buildStatColumn(
+            label: reportMetricLabels[entry.key] ?? entry.key,
+            value: entry.value,
           ),
-          Container(width: 1.w, height: 40.h, color: AppColors.lightBlue),
-          SizedBox(width: 16.w),
-          Expanded(
-            child: _buildStatColumn(
-              label: 'عدد الامتار',
-              value: report.displayMeters ?? '0',
-            ),
-          ),
-        ],
-      );
-    }
-
-    // Type 1: devices + overtime
-    if (report.isType1) {
-      return Row(
-        children: [
-          Expanded(
-            child: _buildStatColumn(
-              label: 'عدد الاجهزة',
-              value: report.displayDevices ?? '0',
-            ),
-          ),
-          Container(width: 1.w, height: 40.h, color: AppColors.lightBlue),
-          SizedBox(width: 16.w),
-          Expanded(
-            child: _buildStatColumn(
-              label: 'ساعات اضافية',
-              value: report.overtimeHours?.toString() ?? '0',
-            ),
-          ),
-        ],
-      );
-    }
-
-    // Type 2: sold + bought + commercial devices
-    if (report.isType2) {
-      return Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: _buildStatColumn(
-                  label: 'مباع',
-                  value: report.soldDevices?.toString() ?? '0',
-                ),
-              ),
-              Container(width: 1.w, height: 40.h, color: AppColors.lightBlue),
-              SizedBox(width: 16.w),
-              Expanded(
-                child: _buildStatColumn(
-                  label: 'مشترى',
-                  value: report.boughtDevices?.toString() ?? '0',
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 12.h),
-          Row(
-            children: [
-              Expanded(
-                child: _buildStatColumn(
-                  label: 'تجاري',
-                  value: report.commercialDevices?.toString() ?? '0',
-                ),
-              ),
-            ],
-          ),
-        ],
-      );
-    }
-
-    // Fallback: show basic info
-    return Text(
-      'تقرير عمل',
-      style: AppStyles.s14.copyWith(color: AppColors.grayText),
+      ],
     );
   }
 

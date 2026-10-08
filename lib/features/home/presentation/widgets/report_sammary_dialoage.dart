@@ -165,50 +165,21 @@ class _ReportSummaryDialogState extends State<ReportSummaryDialog> {
 
     switch (_userJobType) {
       case UserJobType.driver:
-        // Driver: عدد الأجهزة، ساعات عمل إضافية، تقرير عمل اليوم
-        fields.addAll([
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        fields.add(
+          Wrap(
+            spacing: 16,
+            runSpacing: 12,
             children: [
-              RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: "عدد الأجهزة: ",
-                      style: AppStyles.s14Medium.copyWith(
-                        color: AppColors.black,
-                      ),
-                    ),
-                    TextSpan(
-                      text: widget.workReport.devices ?? '-',
-                      style: AppStyles.s14Medium.copyWith(
-                        color: AppColors.primary,
-                      ),
-                    ),
-                  ],
-                ),
+              Text(
+                'أجهزة التركيب: ${widget.workReport.installationDevices ?? '0'}',
               ),
-              RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: "ساعات عمل إضافية: ",
-                      style: AppStyles.s14Medium.copyWith(
-                        color: AppColors.black,
-                      ),
-                    ),
-                    TextSpan(
-                      text: widget.workReport.overtimeHours ?? '-',
-                      style: AppStyles.s14Medium.copyWith(
-                        color: AppColors.primary,
-                      ),
-                    ),
-                  ],
-                ),
+              Text('أجهزة التوريد: ${widget.workReport.supplyDevices ?? '0'}'),
+              Text(
+                'ساعات عمل إضافية: ${widget.workReport.overtimeHours ?? '0'}',
               ),
             ],
           ),
-        ]);
+        );
         break;
 
       case UserJobType.sales:

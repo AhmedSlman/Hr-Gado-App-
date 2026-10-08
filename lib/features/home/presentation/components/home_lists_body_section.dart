@@ -17,8 +17,18 @@ class HomeListsBodySection extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<HomeCubit, HomeStates>(
       builder: (context, state) {
-        // Loading or Error state - show shimmer
-        if (state is HomeScreenLoading || state is HomeScreenError) {
+        if (state is HomeScreenError) {
+          return Column(
+            children: [
+              Text(state.message),
+              TextButton(
+                onPressed: () => context.read<HomeCubit>().getHomeScreen(),
+                child: const Text('إعادة المحاولة'),
+              ),
+            ],
+          );
+        }
+        if (state is HomeScreenLoading) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -92,14 +102,16 @@ class HomeListsBodySection extends StatelessWidget {
                 SizedBox(height: 24.h),
               ],
 
-              // Daily Salary Section
-              _buildSectionTitle('راتب اليوم'),
-              SizedBox(height: 12.h),
-              DailySalaryCard(
-                dailySalary: homeData.dailySalary,
-                date: homeData.today,
-              ),
-              SizedBox(height: 24.h),
+              if (homeData.dailySalary != null) ...[
+                // Daily Salary Section
+                _buildSectionTitle('راتب اليوم'),
+                SizedBox(height: 12.h),
+                DailySalaryCard(
+                  dailySalary: homeData.dailySalary!,
+                  date: homeData.today,
+                ),
+                SizedBox(height: 24.h),
+              ],
             ],
           );
         }

@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:hr_app/core/common/widgets/custom_app_bar.dart';
 import 'package:hr_app/core/common/widgets/custom_snackbar.dart';
 import 'package:hr_app/core/common/widgets/success_dialog_widget.dart';
-import 'package:hr_app/core/locator/service_locator.dart';
 import 'package:hr_app/features/account/data/models/response/employee_report_details_model.dart';
 import 'package:hr_app/features/account/logic/account_cubit.dart';
 import 'package:hr_app/features/account/logic/account_states.dart';
@@ -27,7 +26,7 @@ class EmployeeReportDetailsView extends StatelessWidget {
             builder: (_) =>
                 SuccessDialogWidget(title: 'تم بنجاح', message: state.message),
           ).then((_) {
-            context.pop();
+            if (context.mounted) context.pop();
           });
         }
         if (state is ConfirmReportError) {
@@ -51,15 +50,16 @@ class EmployeeReportDetailsView extends StatelessWidget {
                 Expanded(
                   child: EmployeeReportDetailsSection(
                     reportId: reportId,
-                    onEditPressed: () {
-                      _showEditReportModal(
-                        context,
-                        editType: EditReportType.devicesAndMeters,
-                        reportData: reportData,
-                      );
-                    },
+                    onEditPressed: reportData == null
+                        ? null
+                        : () {
+                            _showEditReportModal(
+                              context,
+                              reportData: reportData!,
+                            );
+                          },
                     onConfirmPressed: () {
-                      sl<AccountCubit>().confirmReport(reportId);
+                      context.read<AccountCubit>().confirmReport(reportId);
                     },
                   ),
                 ),
@@ -71,21 +71,19 @@ class EmployeeReportDetailsView extends StatelessWidget {
     );
   }
 
-  void _showEditReportModal(
+  Future<void> _showEditReportModal(
     BuildContext context, {
-    required EditReportType editType,
-    EmployeeReportDetailsModel? reportData,
-  }) {
-    showDialog(
+    required EmployeeReportDetailsModel reportData,
+  }) async {
+    final cubit = context.read<AccountCubit>();
+    final saved = await showDialog<bool>(
       context: context,
-      builder: (context) => BlocProvider<AccountCubit>.value(
-        value: sl<AccountCubit>(),
-        child: EditReportModal(
-          editType: editType,
-          reportId: reportId,
-          reportData: reportData,
-        ),
+      builder: (_) => BlocProvider.value(
+        value: cubit,
+        child: EditReportModal(reportId: reportId, reportData: reportData),
       ),
     );
+    if (!cubit.isClosed && saved == true)
+      await cubit.loadEmployeeReportDetails(reportId);
   }
 }

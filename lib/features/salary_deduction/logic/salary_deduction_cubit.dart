@@ -1,3 +1,4 @@
+import '../../../core/common/salary_updates.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../data/models/request/create_deduction_request.dart';
@@ -46,6 +47,7 @@ class SalaryDeductionCubit extends Cubit<SalaryDeductionStates> {
           ? response.msg
           : 'تم إنشاء الخصم بنجاح';
       // getManagerDeductions(); // بعد الإضافة، نحدث قائمة المدير
+      if (response.key == 'success') SalaryUpdates.notify();
       emit(CreateDeductionSuccess(msg));
     });
   }

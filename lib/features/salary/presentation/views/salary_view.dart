@@ -1,3 +1,6 @@
+import 'package:go_router/go_router.dart';
+import '../../router/salary_names.dart';
+import '../../logic/salary_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:hr_app/core/common/widgets/custom_app_bar.dart';
 import 'package:hr_app/features/salary/presentation/components/salary_body_section.dart';
@@ -10,9 +13,17 @@ class SalaryView extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Column(
-          children: const [
+          children: [
             CustomAppBar(title: "رصيدك من الراتب"),
-            Expanded(child: SalaryBodySection()),
+            TextButton(
+              onPressed: () async {
+                final cubit = SalaryCubit.get(context);
+                await context.push(SalaryRoutes.personalReports);
+                if (!cubit.isClosed) await cubit.getMySalarySummary();
+              },
+              child: const Text('تقاريري المؤكدة'),
+            ),
+            const Expanded(child: SalaryBodySection()),
           ],
         ),
       ),

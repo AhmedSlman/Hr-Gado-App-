@@ -4,7 +4,10 @@ class WorkReportModel {
   // Common fields
   final String report; // تقرير عمل اليوم - موجود في جميع الأنواع
 
-  // Driver & Technician fields
+  final String? installationDevices;
+  final String? supplyDevices;
+
+  // Technician fields
   final String? devices; // عدد الأجهزة - driver, technician
 
   // Driver & Other fields
@@ -21,6 +24,8 @@ class WorkReportModel {
   const WorkReportModel({
     required this.report,
     this.devices,
+    this.installationDevices,
+    this.supplyDevices,
     this.meters,
     this.overtimeHours,
     this.soldDevices,

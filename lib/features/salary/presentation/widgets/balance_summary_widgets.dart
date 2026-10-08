@@ -1,3 +1,4 @@
+import '../../data/models/response/api_values.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hr_app/core/theme/app_colors.dart';
@@ -39,7 +40,10 @@ class BalanceSummaryWidgets extends StatelessWidget {
               textAlign: TextAlign.right,
             ),
             Text(
-              salaryData.dailySalary.toString(),
+              formatSalaryNumber(
+                salaryData.dailySalary,
+                cents: salaryData.employeeType == EmployeeType.manager,
+              ),
               style: AppStyles.s16Medium.copyWith(color: AppColors.secondary),
             ),
           ],
@@ -56,7 +60,7 @@ class BalanceSummaryWidgets extends StatelessWidget {
               textAlign: TextAlign.right,
             ),
             Text(
-              salaryData.baseSalary.toString(),
+              formatSalaryNumber(salaryData.baseSalary),
               style: AppStyles.s16Medium.copyWith(color: AppColors.secondary),
             ),
           ],

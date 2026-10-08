@@ -1,4 +1,6 @@
 class UpdateReportRequest {
+  final String? installationDevices;
+  final String? supplyDevices;
   final String? content;
   final String? numOfDevices;
   final String? numOfMeters;
@@ -9,6 +11,8 @@ class UpdateReportRequest {
 
   const UpdateReportRequest({
     this.content,
+    this.installationDevices,
+    this.supplyDevices,
     this.numOfDevices,
     this.numOfMeters,
     this.overtimeHours,
@@ -19,6 +23,10 @@ class UpdateReportRequest {
 
   Map<String, dynamic> toFormMap() {
     final map = <String, dynamic>{};
+    if (installationDevices != null)
+      map['installation_devices'] = int.parse(installationDevices!);
+    if (supplyDevices != null)
+      map['supply_devices'] = int.parse(supplyDevices!);
 
     if (content != null && content!.isNotEmpty) {
       map['content'] = content!;
@@ -45,4 +53,3 @@ class UpdateReportRequest {
     return map;
   }
 }
-

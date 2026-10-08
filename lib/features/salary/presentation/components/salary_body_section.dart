@@ -42,33 +42,37 @@ class SalaryBodySection extends StatelessWidget {
         }
 
         if (state is SalarySuccess) {
-          return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 16),
+          return RefreshIndicator(
+            onRefresh: () => SalaryCubit.get(context).getMySalarySummary(),
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 16),
 
-                  // Balance Summary Widget (includes date and salary info)
-                  BalanceSummaryWidgets(salaryData: state.salarySummary.data),
+                    // Balance Summary Widget (includes date and salary info)
+                    BalanceSummaryWidgets(salaryData: state.salarySummary.data),
 
-                  const SizedBox(height: 24),
-                  Divider(color: AppColors.primary),
+                    const SizedBox(height: 24),
+                    Divider(color: AppColors.primary),
 
-                  // Main Balance Card
-                  NetMonthlySalary(salaryData: state.salarySummary.data),
+                    // Main Balance Card
+                    NetMonthlySalary(salaryData: state.salarySummary.data),
 
-                  const SizedBox(height: 24),
+                    const SizedBox(height: 24),
 
-                  // Transactions List
-                  DailySummaryList(
-                    salaryHistory: state.salarySummary.data.salaryHistory,
-                    employeeType: state.salarySummary.data.employeeType,
-                  ),
+                    // Transactions List
+                    DailySummaryList(
+                      salaryHistory: state.salarySummary.data.salaryHistory,
+                      employeeType: state.salarySummary.data.employeeType,
+                    ),
 
-                  const SizedBox(height: 24),
-                ],
+                    const SizedBox(height: 24),
+                  ],
+                ),
               ),
             ),
           );

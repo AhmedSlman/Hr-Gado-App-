@@ -1,3 +1,4 @@
+import '../../../../core/utils/user_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hr_app/core/theme/app_colors.dart';
@@ -55,7 +56,7 @@ class DailySalaryCard extends StatelessWidget {
                   ),
 
                   Text(
-                    'حافز (${dailySalary.bonus})',
+                    '${UserHelper.isManager ? 'بدلات' : 'حافز'} (${dailySalary.bonus})',
                     style: AppStyles.s14Medium.copyWith(color: Colors.green),
                   ),
                   Text(

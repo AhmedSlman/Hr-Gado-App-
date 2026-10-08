@@ -15,11 +15,11 @@ class AccountEndpoints {
       '/employee/approve-leave/$requestId';
   static String rejectLeave(int requestId) =>
       '/employee/reject-leave/$requestId';
-  static const String employeeReports = '/employee/employees-reports';
+  static const String employeeReports = '/employee/v2/employees-reports';
   static String employeeReportDetails(int reportId) =>
-      '/employee/employees-reports/$reportId';
+      '/employee/v2/employees-reports/$reportId';
   static String updateReport(int reportId) =>
-      '/employee/daily-reports/$reportId';
+      '/employee/v2/daily-reports/$reportId';
   static String confirmReport(int reportId) =>
       '/employee/confirm-report/$reportId';
   static const String profile = '/employee/profile';

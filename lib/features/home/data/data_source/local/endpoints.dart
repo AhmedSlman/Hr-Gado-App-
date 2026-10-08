@@ -3,8 +3,8 @@ class HomeEndpoints {
   static const String attendance = "/employee/attendance";
 
   // Daily report endpoint
-  static const String dailyReport = "/employee/daily-report";
+  static const String dailyReport = "/employee/v2/daily-report";
 
   // Home screen endpoints
-  static const String homeScreen = "/employee/home-screen";
+  static const String homeScreen = "/employee/v2/home-screen";
 }

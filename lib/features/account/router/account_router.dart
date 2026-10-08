@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import '../../../core/utils/user_helper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hr_app/core/locator/service_locator.dart';
@@ -61,9 +63,13 @@ class AccountRouter {
     GoRoute(
       path: AccountRoutes.employeeReports,
       builder: (context, state) {
+        if (!UserHelper.isManager)
+          return const Scaffold(
+            body: Center(child: Text('هذه الصفحة للمدير فقط')),
+          );
         final cubit = sl<AccountCubit>()..loadEmployeeReports();
-        return BlocProvider<AccountCubit>.value(
-          value: cubit,
+        return BlocProvider<AccountCubit>(
+          create: (_) => cubit,
           child: const EmployeeReportsView(),
         );
       },
@@ -72,11 +78,15 @@ class AccountRouter {
     GoRoute(
       path: AccountRoutes.employeeReportDetails,
       builder: (context, state) {
+        if (!UserHelper.isManager)
+          return const Scaffold(
+            body: Center(child: Text('هذه الصفحة للمدير فقط')),
+          );
         final extra = state.extra as EmployeeReportDetailsExtra?;
         final reportId = extra?.reportId ?? 0;
         final cubit = sl<AccountCubit>()..loadEmployeeReportDetails(reportId);
-        return BlocProvider<AccountCubit>.value(
-          value: cubit,
+        return BlocProvider<AccountCubit>(
+          create: (_) => cubit,
           child: EmployeeReportDetailsView(reportId: reportId),
         );
       },

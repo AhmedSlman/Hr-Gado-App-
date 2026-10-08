@@ -1,3 +1,4 @@
+import '../../../core/common/salary_updates.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../data/repository/time_sheet_repository.dart';
 import '../data/models/request/time_sheet_request.dart';
@@ -26,7 +27,7 @@ class TimeSheetCubit extends Cubit<TimeSheetStates> {
     String durationText,
   ) async {
     emit(PermissionRequestProcessing());
-    
+
     final request = PermissionRequest(
       date: PermissionRequest.getCurrentDate(),
       type: PermissionRequest.convertPermissionType(permissionType),
@@ -35,9 +36,11 @@ class TimeSheetCubit extends Cubit<TimeSheetStates> {
 
     final result = await repository.submitPermissionRequest(request);
 
-    result.fold(
-      (failure) => emit(PermissionRequestError(failure.message)),
-      (message) => emit(PermissionRequestSuccess(message)),
-    );
+    result.fold((failure) => emit(PermissionRequestError(failure.message)), (
+      message,
+    ) {
+      SalaryUpdates.notify();
+      emit(PermissionRequestSuccess(message));
+    });
   }
 }

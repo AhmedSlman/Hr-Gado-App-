@@ -1,73 +1,48 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hr_app/core/theme/app_colors.dart';
-import 'package:hr_app/core/theme/app_typography.dart';
-import 'package:hr_app/features/salary/data/models/response/salary_model.dart';
+import '../../data/models/response/salary_model.dart';
+import '../../data/models/response/api_values.dart';
 
 class NetMonthlySalary extends StatelessWidget {
   final SalarySummaryData salaryData;
-
   const NetMonthlySalary({super.key, required this.salaryData});
-
   @override
   Widget build(BuildContext context) {
+    final manager = salaryData.employeeType == EmployeeType.manager;
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SizedBox(height: 24.h),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Text(
+          'صافي الراتب الشهري: ${formatSalaryNumber(salaryData.netMonthlySalary)}',
+          style: Theme.of(context).textTheme.headlineSmall,
+        ),
+        const SizedBox(height: 16),
+        Wrap(
+          spacing: 20,
+          runSpacing: 12,
           children: [
+            if (manager)
+              Text(
+                'إجمالي البدلات: ${formatSalaryNumber(salaryData.totalAllowances, cents: true)}',
+              )
+            else
+              Text(
+                'إجمالي الحوافز: ${formatSalaryNumber(salaryData.totalBonuses)}',
+              ),
             Text(
-              "صافي الراتب الشهري",
-              style: AppStyles.s16Light.copyWith(color: AppColors.primary),
+              'إجمالي الحسومات: ${formatSalaryNumber(salaryData.totalDeductions)}',
             ),
-
             Text(
-              salaryData.netMonthlySalary.toString(),
-              style: AppStyles.s32Medium.copyWith(color: AppColors.primary),
+              'خصم التأمين: ${formatSalaryNumber(salaryData.insuranceDeduction)}',
             ),
           ],
         ),
-
-        SizedBox(height: 20.h),
-
-        // Bottom Indicators Row
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Left: Total Bonuses (Green)
-            Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(
-                    text: " إجمالي الحوافز:  ",
-                    style: AppStyles.s12Medium.copyWith(color: Colors.black),
-                  ),
-                  TextSpan(
-                    text: salaryData.totalBonuses.toString(),
-                    style: AppStyles.s14Medium.copyWith(color: Colors.green),
-                  ),
-                ],
-              ),
+        if (manager)
+          const Padding(
+            padding: EdgeInsets.only(top: 12),
+            child: Text(
+              'يشمل الراتب الشهر الحالي كاملاً. قد يختلف الراتب الأساسي اليومي بمقدار قرش بين الأيام.',
             ),
-
-            // Right: Total Deductions (Red)
-            Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(
-                    text: "إجمالي الحسومات:  ",
-                    style: AppStyles.s12Medium.copyWith(color: Colors.black),
-                  ),
-                  TextSpan(
-                    text: salaryData.totalDeductions.toString(),
-                    style: AppStyles.s14Medium.copyWith(color: Colors.red),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
       ],
     );
   }
