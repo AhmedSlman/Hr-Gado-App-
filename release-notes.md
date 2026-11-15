@@ -1,5 +1,27 @@
 # Active v2 update
 
+## Manager report form fix — 20 October 2026
+
+Manager editing now selects the driver's installation/supply/overtime fields,
+the technician's devices/meters fields, the sales sold/bought/commercial fields,
+or the other employee's overtime field. All variants require report text.
+Nested or flat `job_type` takes precedence over the job label; older responses
+without a type or job label fall back to their non-null report metrics.
+Unrelated API metrics are hidden, missing fields start at zero, and only changed
+values are submitted.
+
+Validation: all 10 focused report tests passed; analysis of the three changed
+Dart files passed with no issues. Project-wide analysis reports 340 existing
+warnings/style notices. Authenticated manager editing has not been device-tested.
+
+Release APK built and signature verified: version 1.0.0+7, application ID
+`com.gadohr.app`, 62,272,966 bytes. Uses the existing Android Debug signing
+fallback; store distribution requires release signing.
+
+Artifact: `build/app/outputs/flutter-apk/app-release.apk`
+
+SHA-256: `4E449D743B1D1BC19ECA36031987D493CECCEA5D6FF3C8801DEB9308E46C9A08`
+
 Implemented locally on `development` using `handoff.md`.
 
 All eight v2 endpoints are integrated: salary summary, own report list/detail, daily report submission, manager review list/detail/editing, and home. Confirmation retains the specified legacy endpoint.

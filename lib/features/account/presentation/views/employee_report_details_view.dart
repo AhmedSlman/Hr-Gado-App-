@@ -13,8 +13,13 @@ import 'package:hr_app/features/account/presentation/widgets/edit_report_modal.d
 
 class EmployeeReportDetailsView extends StatelessWidget {
   final int reportId;
+  final bool isConfirmed;
 
-  const EmployeeReportDetailsView({super.key, required this.reportId});
+  const EmployeeReportDetailsView({
+    super.key,
+    required this.reportId,
+    this.isConfirmed = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +55,7 @@ class EmployeeReportDetailsView extends StatelessWidget {
                 Expanded(
                   child: EmployeeReportDetailsSection(
                     reportId: reportId,
+                    canApprove: !isConfirmed,
                     onEditPressed: reportData == null
                         ? null
                         : () {
@@ -58,8 +64,33 @@ class EmployeeReportDetailsView extends StatelessWidget {
                               reportData: reportData!,
                             );
                           },
-                    onConfirmPressed: () {
-                      context.read<AccountCubit>().confirmReport(reportId);
+                    onConfirmPressed: () async {
+                      final approved = await showDialog<bool>(
+                        context: context,
+                        builder: (dialogContext) => AlertDialog(
+                          title: const Text('تأكيد التقرير؟'),
+                          content: const Text(
+                            'تأكد من مراجعة بيانات التقرير قبل تأكيده.',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () =>
+                                  Navigator.pop(dialogContext, false),
+                              child: const Text('إلغاء'),
+                            ),
+                            FilledButton(
+                              onPressed: () =>
+                                  Navigator.pop(dialogContext, true),
+                              child: const Text('تأكيد'),
+                            ),
+                          ],
+                        ),
+                      );
+                      if (approved == true && context.mounted) {
+                        await context.read<AccountCubit>().confirmReport(
+                          reportId,
+                        );
+                      }
                     },
                   ),
                 ),
@@ -78,12 +109,19 @@ class EmployeeReportDetailsView extends StatelessWidget {
     final cubit = context.read<AccountCubit>();
     final saved = await showDialog<bool>(
       context: context,
+      barrierDismissible: false,
       builder: (_) => BlocProvider.value(
         value: cubit,
-        child: EditReportModal(reportId: reportId, reportData: reportData),
+        child: BlocBuilder<AccountCubit, AccountStates>(
+          builder: (context, state) => PopScope(
+            canPop: state is! UpdateReportProcessing,
+            child: EditReportModal(reportId: reportId, reportData: reportData),
+          ),
+        ),
       ),
     );
-    if (!cubit.isClosed && saved == true)
+    if (!cubit.isClosed && saved == true) {
       await cubit.loadEmployeeReportDetails(reportId);
+    }
   }
 }

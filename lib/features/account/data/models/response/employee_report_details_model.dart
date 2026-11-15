@@ -31,6 +31,7 @@ class EmployeeReportDetailsModel {
   final String? name;
   final String? image;
   final String? job;
+  final String? jobType;
 
   const EmployeeReportDetailsModel({
     this.metrics = const {},
@@ -51,6 +52,7 @@ class EmployeeReportDetailsModel {
     this.name,
     this.image,
     this.job,
+    this.jobType,
   });
 
   factory EmployeeReportDetailsModel.fromJson(Map<String, dynamic> json) {
@@ -104,6 +106,11 @@ class EmployeeReportDetailsModel {
       name: employeeName,
       image: employeeImage,
       job: employeeJob,
+      jobType:
+          (json['employee'] is Map
+                  ? json['employee']['job_type'] ?? json['job_type']
+                  : json['job_type'])
+              ?.toString(),
     );
   }
 
@@ -115,6 +122,47 @@ class EmployeeReportDetailsModel {
 
   /// Get employee job (from nested or flat)
   String get employeeJob => employee?.job ?? job ?? '';
+
+  /// Match the fields in the employee's daily report form.
+  List<String> get editableMetricKeys {
+    final type = (jobType ?? employeeJob).trim().toLowerCase();
+    switch (type) {
+      case 'driver':
+      case 'سائق':
+        return ['installation_devices', 'supply_devices', 'overtime_hours'];
+      case 'technician':
+      case 'فني':
+        return ['num_of_devices', 'num_of_meters'];
+      case 'sales':
+      case 'مبيعات':
+        return ['sold_devices', 'bought_devices', 'commercial_devices'];
+      default:
+        // Older responses may omit the employee type. Ignore unrelated null
+        // metrics when recovering the report variant from its saved values.
+        if (type.isEmpty) {
+          if ([
+            'installation_devices',
+            'supply_devices',
+          ].any((key) => metrics[key] != null)) {
+            return ['installation_devices', 'supply_devices', 'overtime_hours'];
+          }
+          if ([
+            'sold_devices',
+            'bought_devices',
+            'commercial_devices',
+          ].any((key) => metrics[key] != null)) {
+            return ['sold_devices', 'bought_devices', 'commercial_devices'];
+          }
+          if ([
+            'num_of_devices',
+            'num_of_meters',
+          ].any((key) => metrics[key] != null)) {
+            return ['num_of_devices', 'num_of_meters'];
+          }
+        }
+        return ['overtime_hours'];
+    }
+  }
 
   /// Get display value for devices
   String? get displayDevices => numOfDevices?.toString();

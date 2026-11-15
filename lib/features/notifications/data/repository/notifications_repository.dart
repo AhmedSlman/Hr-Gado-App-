@@ -5,5 +5,5 @@ abstract class NotificationsRepository {
   Future<Result<NotificationsResponse>> getNotifications();
   Future<Result<void>> markAsRead(String notificationId);
   Future<Result<void>> markAllAsRead();
+  Future<Result<void>> deleteNotification([String? id]);
 }
-

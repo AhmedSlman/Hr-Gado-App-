@@ -8,6 +8,7 @@ import '../error/error_handler.dart';
 import '../error/failures.dart';
 import '../utils/utils.dart';
 import '../utils/user_helper.dart';
+import '../notifications/push_service.dart';
 
 /// Comprehensive Dio implementation of ApiConsumer
 class DioConsumer implements ApiConsumer {
@@ -37,9 +38,9 @@ class DioConsumer implements ApiConsumer {
     if (config.enableLogging && kDebugMode) {
       _dio.interceptors.add(
         PrettyDioLogger(
-          requestHeader: true,
-          requestBody: true,
-          responseBody: true,
+          requestHeader: false,
+          requestBody: false,
+          responseBody: false,
           error: true,
           compact: true,
           maxWidth: 90,
@@ -61,12 +62,6 @@ class DioConsumer implements ApiConsumer {
     final defaultHeaders = _getDefaultHeaders();
     final token = UserHelper.currentToken ?? '';
 
-    // Debug print for token
-    if (kDebugMode) {
-      print('🔑 Current Token: $token');
-      print('🔑 Token Length: ${token.length}');
-    }
-
     _dio.options.headers = {
       ...defaultHeaders,
       if (token.isNotEmpty) "Authorization": 'Bearer $token',
@@ -87,6 +82,7 @@ class DioConsumer implements ApiConsumer {
     T Function(Map<String, dynamic>)? parser,
     bool showLoading = false,
   }) async {
+    final requestSession = UserHelper.currentToken;
     try {
       final response = await request();
 
@@ -96,6 +92,9 @@ class DioConsumer implements ApiConsumer {
       return ApiResult.success(response.data as T);
     } catch (e) {
       if (e is DioException) {
+        if (e.response?.statusCode == 401 && requestSession != null) {
+          unawaited(PushService.instance.expireSession(requestSession));
+        }
         return ApiResult.failure(ErrorHandler.handleDioException(e));
       }
       return ApiResult.failure(

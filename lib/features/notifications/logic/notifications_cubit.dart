@@ -1,79 +1,84 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../data/models/response/notifications_response.dart';
+import '../../../core/utils/user_helper.dart';
 import '../data/repository/notifications_repository.dart';
 import 'notifications_states.dart';
 
 class NotificationsCubit extends Cubit<NotificationsStates> {
   final NotificationsRepository repository;
-  final Set<String> _readNotificationIds = <String>{};
-
+  int _generation = 0;
+  bool _loading = false;
   NotificationsCubit(this.repository) : super(NotificationsInitial());
-
   static NotificationsCubit get(context) => BlocProvider.of(context);
 
+  void resetSession() {
+    _generation++;
+    _loading = false;
+    emit(NotificationsInitial());
+  }
+
   Future<void> getNotifications() async {
-    emit(NotificationsLoading());
-
-    final result = await repository.getNotifications();
-
-    result.fold(
-      (failure) => emit(NotificationsLoadError(failure.message)),
-      (response) {
-        // Update notifications with read status from local tracking
-        final updatedNotifications = response.notifications.map((notification) {
-          return notification.copyWith(
-            isRead: _readNotificationIds.contains(notification.id),
-          );
-        }).toList();
-
-        final updatedResponse = NotificationsResponse(
-          key: response.key,
-          msg: response.msg,
-          notifications: updatedNotifications,
-        );
-
-        emit(NotificationsLoadSuccess(updatedResponse));
-      },
-    );
+    if (_loading || !UserHelper.isLoggedIn) return;
+    final generation = _generation, session = UserHelper.currentToken;
+    _loading = true;
+    if (state is! NotificationsLoadSuccess) emit(NotificationsLoading());
+    try {
+      final result = await repository.getNotifications();
+      if (isClosed ||
+          generation != _generation ||
+          session != UserHelper.currentToken) {
+        return;
+      }
+      result.fold(
+        (failure) => emit(NotificationsLoadError(failure.message)),
+        (response) => emit(NotificationsLoadSuccess(response)),
+      );
+    } finally {
+      if (generation == _generation) _loading = false;
+    }
   }
 
   Future<void> markAsRead(String notificationId) async {
-    emit(MarkAsReadLoading());
-
+    final generation = _generation, session = UserHelper.currentToken;
     final result = await repository.markAsRead(notificationId);
-
+    if (isClosed ||
+        generation != _generation ||
+        session != UserHelper.currentToken) {
+      return;
+    }
     result.fold(
       (failure) => emit(MarkAsReadError(failure.message)),
-      (_) {
-        // Mark as read locally
-        _readNotificationIds.add(notificationId);
-        emit(MarkAsReadSuccess(notificationId));
-        // Reload notifications after marking as read
-        getNotifications();
-      },
+      (_) => emit(MarkAsReadSuccess(notificationId)),
     );
+    await getNotifications();
   }
 
   Future<void> markAllAsRead() async {
-    emit(MarkAllAsReadLoading());
-
+    final generation = _generation, session = UserHelper.currentToken;
     final result = await repository.markAllAsRead();
-
+    if (isClosed ||
+        generation != _generation ||
+        session != UserHelper.currentToken) {
+      return;
+    }
     result.fold(
       (failure) => emit(MarkAllAsReadError(failure.message)),
-      (_) {
-        // Mark all as read locally
-        if (state is NotificationsLoadSuccess) {
-          final currentState = state as NotificationsLoadSuccess;
-          _readNotificationIds.addAll(
-            currentState.response.notifications.map((n) => n.id),
-          );
-        }
-        emit(MarkAllAsReadSuccess());
-        // Reload notifications after marking all as read
-        getNotifications();
-      },
+      (_) => emit(MarkAllAsReadSuccess()),
     );
+    await getNotifications();
+  }
+
+  Future<void> deleteNotification([String? id]) async {
+    final generation = _generation, session = UserHelper.currentToken;
+    final result = await repository.deleteNotification(id);
+    if (isClosed ||
+        generation != _generation ||
+        session != UserHelper.currentToken) {
+      return;
+    }
+    result.fold(
+      (failure) => emit(NotificationsLoadError(failure.message)),
+      (_) {},
+    );
+    await getNotifications();
   }
 }
-

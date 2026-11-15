@@ -18,6 +18,10 @@ class PersonalDataExtra {
 
 class EmployeeReportDetailsExtra {
   final int reportId;
+  final bool isConfirmed;
 
-  const EmployeeReportDetailsExtra({required this.reportId});
+  const EmployeeReportDetailsExtra({
+    required this.reportId,
+    this.isConfirmed = false,
+  });
 }

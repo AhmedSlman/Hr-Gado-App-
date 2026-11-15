@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import '../../../../../core/notifications/push_service.dart';
 import 'package:hr_app/core/error/failures.dart';
 import 'package:hr_app/core/network/api_consumer.dart';
 
@@ -72,6 +73,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final result = await _apiConsumer.post<void>(
         path: '/employee/logout',
+        body: {'device_id': await PushService.instance.installationId()},
         headers: {
           'Accept': 'application/vnd.api+json',
           'Content-Type': 'application/vnd.api+json',

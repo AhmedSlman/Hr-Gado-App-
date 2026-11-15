@@ -4,6 +4,8 @@ class NotificationModel {
   final String date;
   final bool isRead;
   final String type;
+  final String title;
+  final Map<String, dynamic> data;
 
   const NotificationModel({
     required this.id,
@@ -11,6 +13,8 @@ class NotificationModel {
     required this.date,
     this.isRead = false,
     required this.type,
+    this.title = '',
+    this.data = const {},
   });
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
@@ -20,6 +24,8 @@ class NotificationModel {
       date: json['created_at'] ?? '',
       isRead: false, // Backend doesn't return is_read status
       type: json['type'] ?? '',
+      title: json['title']?.toString() ?? '',
+      data: Map<String, dynamic>.from(json['data'] as Map? ?? {}),
     );
   }
 
@@ -36,6 +42,8 @@ class NotificationModel {
       date: date ?? this.date,
       isRead: isRead ?? this.isRead,
       type: type ?? this.type,
+      title: title,
+      data: data,
     );
   }
 
@@ -46,7 +54,8 @@ class NotificationModel {
       'created_at': date,
       'is_read': isRead,
       'type': type,
+      'title': title,
+      'data': data,
     };
   }
 }
-

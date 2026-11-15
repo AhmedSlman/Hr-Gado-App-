@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
+import '../../../../core/notifications/push_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hr_app/core/theme/app_colors.dart';
@@ -10,8 +12,21 @@ import 'package:hr_app/features/home/presentation/components/categories_list_vie
 import 'package:hr_app/features/home/presentation/components/home_header_section.dart';
 import 'package:hr_app/features/home/presentation/components/home_lists_body_section.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({super.key});
+
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) unawaited(PushService.instance.authenticatedHome());
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

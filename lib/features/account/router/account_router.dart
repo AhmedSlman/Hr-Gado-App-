@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../history/manager_history_view.dart';
 import '../../../core/utils/user_helper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -19,6 +20,14 @@ import '../presentation/views/profile_view.dart';
 
 class AccountRouter {
   static List<GoRoute> get routes => [
+    GoRoute(
+      path: '/account/report-history',
+      builder: (context, state) => const ManagerHistoryView(daily: false),
+    ),
+    GoRoute(
+      path: '/account/attendance-history',
+      builder: (context, state) => const ManagerHistoryView(daily: true),
+    ),
     // Account Screen
     GoRoute(
       path: AccountRoutes.account,
@@ -87,7 +96,10 @@ class AccountRouter {
         final cubit = sl<AccountCubit>()..loadEmployeeReportDetails(reportId);
         return BlocProvider<AccountCubit>(
           create: (_) => cubit,
-          child: EmployeeReportDetailsView(reportId: reportId),
+          child: EmployeeReportDetailsView(
+            reportId: reportId,
+            isConfirmed: extra?.isConfirmed ?? false,
+          ),
         );
       },
     ),

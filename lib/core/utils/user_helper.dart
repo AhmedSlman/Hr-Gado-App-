@@ -1,5 +1,6 @@
 import 'package:hr_app/core/cache/user_cache.dart';
 import 'package:hr_app/features/auth/data/models/response/user_model.dart';
+import '../error/exceptions.dart';
 
 /// Helper class for easy access to user data throughout the app
 class UserHelper {
@@ -13,8 +14,20 @@ class UserHelper {
   // Initialize user data
   static Future<void> initialize() async {
     _currentUser = await UserCache.getUser();
-    _currentToken = await UserCache.getToken();
-    _isLoggedIn = await UserCache.isLoggedIn();
+    try {
+      _currentToken = await UserCache.getToken().timeout(
+        const Duration(seconds: 5),
+        onTimeout: () => null,
+      );
+    } on CacheException {
+      // An unreadable Android keystore session must not prevent runApp.
+      // Keep local records intact and require a fresh login.
+      _currentToken = null;
+    }
+    _isLoggedIn =
+        await UserCache.isLoggedIn() &&
+        _currentUser != null &&
+        (_currentToken?.isNotEmpty ?? false);
   }
 
   // Get current user
@@ -55,7 +68,6 @@ class UserHelper {
     print('User ID: ${user.id}');
     print('User Role: ${user.role}');
     print('User Job: ${user.job}');
-    print('User Token: ${user.token}');
 
     _currentUser = user;
     _currentToken = user.token;
@@ -65,7 +77,6 @@ class UserHelper {
 
     print('UserHelper: User data saved successfully');
     print('Current user: $_currentUser');
-    print('Current token: $_currentToken');
     print('Is logged in: $_isLoggedIn');
   }
 
@@ -79,9 +90,7 @@ class UserHelper {
 
   // Refresh user data from cache
   static Future<void> refreshUser() async {
-    _currentUser = await UserCache.getUser();
-    _currentToken = await UserCache.getToken();
-    _isLoggedIn = await UserCache.isLoggedIn();
+    await initialize();
   }
 
   // Check if user has specific role

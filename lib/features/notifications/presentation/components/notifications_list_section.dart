@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../../core/notifications/push_service.dart';
+import '../../../../core/utils/user_helper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hr_app/core/common/widgets/custom_snackbar.dart';
@@ -14,6 +16,7 @@ class NotificationsListSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<NotificationsCubit, NotificationsStates>(
       buildWhen: (previous, current) =>
+          current is NotificationsInitial ||
           current is NotificationsLoading ||
           current is NotificationsLoadSuccess ||
           current is NotificationsLoadError,
@@ -59,15 +62,37 @@ class NotificationsListSection extends StatelessWidget {
               itemBuilder: (context, index) {
                 final notification = notifications[index];
 
-                return NotificationCardWidget(
-                  notification: notification,
-                  onTap: () {
-                    // Mark as read when tapped (if not already read)
-                    if (!notification.isRead) {
-                      NotificationsCubit.get(context)
-                          .markAsRead(notification.id);
-                    }
-                  },
+                return Row(
+                  children: [
+                    Expanded(
+                      child: NotificationCardWidget(
+                        notification: notification,
+                        onTap: () {
+                          PushService.instance.open(
+                            {
+                              ...notification.data,
+                              'type':
+                                  notification.data['type'] ??
+                                  notification.type,
+                              'notification_id': notification.id,
+                              // The authenticated inbox already authorizes ownership.
+                              'recipient_id': UserHelper.userId.toString(),
+                            },
+                            title: notification.title,
+                            body: notification.message,
+                            deduplicate: false,
+                          );
+                        },
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: 'حذف الإشعار',
+                      icon: const Icon(Icons.delete_outline),
+                      onPressed: () => NotificationsCubit.get(
+                        context,
+                      ).deleteNotification(notification.id),
+                    ),
+                  ],
                 );
               },
             ),
@@ -84,4 +109,3 @@ class NotificationsListSection extends StatelessWidget {
     );
   }
 }
-

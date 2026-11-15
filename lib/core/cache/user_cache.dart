@@ -11,7 +11,6 @@ class UserCache {
   // Save user data
   static Future<void> saveUser(UserModel user) async {
     print('UserCache: Saving user data...');
-    print('User JSON: ${jsonEncode(user.toJson())}');
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_userKey, jsonEncode(user.toJson()));

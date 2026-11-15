@@ -28,10 +28,10 @@ class _EditReportModalState extends State<EditReportModal> {
     super.initState();
     _content = TextEditingController(text: widget.reportData.content);
     _values = {
-      for (final entry in widget.reportData.metrics.entries)
-        entry.key: entry.value == null
-            ? ''
-            : formatSalaryNumber(entry.value!.toDouble()),
+      for (final key in widget.reportData.editableMetricKeys)
+        key: formatSalaryNumber(
+          (widget.reportData.metrics[key] ?? 0).toDouble(),
+        ),
     };
   }
 
@@ -44,12 +44,13 @@ class _EditReportModalState extends State<EditReportModal> {
   void _submit() {
     if (!_form.currentState!.validate()) return;
     final changes = <String, dynamic>{};
-    if (_content.text != widget.reportData.content)
+    if (_content.text != widget.reportData.content) {
       changes['content'] = _content.text;
+    }
     for (final entry in _values.entries) {
       if (entry.value.isEmpty) continue;
       final value = apiNumber(entry.value);
-      if (value != widget.reportData.metrics[entry.key]) {
+      if (value != (widget.reportData.metrics[entry.key] ?? 0)) {
         changes[entry.key] = entry.key.contains('devices')
             ? apiCount(entry.value)
             : value;
@@ -103,19 +104,24 @@ class _EditReportModalState extends State<EditReportModal> {
                             onChanged: busy
                                 ? null
                                 : (value) => _values[entry.key] = value ?? '',
+                            validator: (value) => value == null
+                                ? 'يجب اختيار ساعات العمل الإضافية'
+                                : null,
                           )
                         : ReportNumberField(
                             label: reportMetricLabels[entry.key] ?? entry.key,
                             initialValue: entry.value,
                             decimal: entry.key == 'num_of_meters',
                             onChanged: (value) => _values[entry.key] = value,
-                            optional: true,
                           ),
                   ),
                 TextFormField(
                   controller: _content,
                   maxLines: 4,
                   decoration: const InputDecoration(labelText: 'تقرير العمل'),
+                  validator: (value) => value == null || value.trim().isEmpty
+                      ? 'يجب إدخال تقرير عمل اليوم'
+                      : null,
                 ),
                 if (state is UpdateReportError)
                   Padding(

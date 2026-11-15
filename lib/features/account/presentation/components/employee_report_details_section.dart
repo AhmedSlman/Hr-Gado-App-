@@ -17,12 +17,14 @@ class EmployeeReportDetailsSection extends StatelessWidget {
   final int reportId;
   final VoidCallback? onEditPressed;
   final VoidCallback? onConfirmPressed;
+  final bool canApprove;
 
   const EmployeeReportDetailsSection({
     super.key,
     required this.reportId,
     this.onEditPressed,
     this.onConfirmPressed,
+    this.canApprove = true,
   });
 
   @override
@@ -47,6 +49,27 @@ class EmployeeReportDetailsSection extends StatelessWidget {
           return _buildContent(context, data);
         }
 
+        if (state is EmployeeReportDetailsLoadError) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(state.message, textAlign: TextAlign.center),
+                  const SizedBox(height: 12),
+                  TextButton.icon(
+                    onPressed: () => context
+                        .read<AccountCubit>()
+                        .loadEmployeeReportDetails(reportId),
+                    icon: const Icon(Icons.refresh),
+                    label: const Text('إعادة المحاولة'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
         return const Center(child: Text('لا توجد بيانات'));
       },
     );
@@ -86,6 +109,7 @@ class EmployeeReportDetailsSection extends StatelessWidget {
               ReportDetailsWidget(report: data.content),
               SizedBox(height: 32.h),
               ReportActionsWidget(
+                showConfirm: canApprove,
                 onEditPressed: isUpdatingState || isConfirmingState
                     ? null
                     : onEditPressed,

@@ -44,6 +44,16 @@ class AccountView extends StatelessWidget {
                   // الخيارات الخاصة بالمدير فقط
                   if (isManager) ...[
                     AccountMenuItemWidget(
+                      icon: Icons.history,
+                      title: 'سجل تقارير الموظفين',
+                      onTap: () => context.push('/account/report-history'),
+                    ),
+                    AccountMenuItemWidget(
+                      icon: Icons.event_note,
+                      title: 'سجل الحضور والتقارير',
+                      onTap: () => context.push('/account/attendance-history'),
+                    ),
+                    AccountMenuItemWidget(
                       icon: Icons.people,
                       title: 'الموظفين',
                       onTap: () {

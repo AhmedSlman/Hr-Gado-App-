@@ -14,7 +14,8 @@ class NotificationsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<NotificationsCubit, NotificationsStates>(
       builder: (context, state) {
-        final hasUnread = state is NotificationsLoadSuccess &&
+        final hasUnread =
+            state is NotificationsLoadSuccess &&
             state.response.notifications.any((n) => !n.isRead);
 
         return Scaffold(
@@ -50,6 +51,40 @@ class NotificationsView extends StatelessWidget {
                   ],
                 ),
                 const NotificationsListSection(),
+                TextButton.icon(
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('تحديث الإشعارات'),
+                  onPressed: () =>
+                      NotificationsCubit.get(context).getNotifications(),
+                ),
+                if (hasUnread)
+                  TextButton.icon(
+                    icon: const Icon(Icons.delete_outline),
+                    label: const Text('حذف جميع الإشعارات'),
+                    onPressed: () async {
+                      final confirmed = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('حذف جميع الإشعارات؟'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, false),
+                              child: const Text('إلغاء'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, true),
+                              child: const Text('حذف'),
+                            ),
+                          ],
+                        ),
+                      );
+                      if (confirmed == true && context.mounted) {
+                        await NotificationsCubit.get(
+                          context,
+                        ).deleteNotification();
+                      }
+                    },
+                  ),
               ],
             ),
           ),

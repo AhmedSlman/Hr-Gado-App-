@@ -42,6 +42,7 @@ class NotificationCardWidget extends StatelessWidget {
         return 'إشعار';
     }
   }
+
   final NotificationModel notification;
   final VoidCallback? onTap;
 
@@ -99,10 +100,12 @@ class NotificationCardWidget extends StatelessWidget {
                 children: [
                   // Notification Type Badge
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8.w,
+                      vertical: 4.h,
+                    ),
                     decoration: BoxDecoration(
-                      color: _getTypeColor(notification.type)
-                          .withOpacity(0.1),
+                      color: _getTypeColor(notification.type).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
@@ -114,6 +117,13 @@ class NotificationCardWidget extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 8.h),
+                  if (notification.title.isNotEmpty)
+                    Text(
+                      notification.title,
+                      style: AppStyles.s14.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   Text(
                     notification.message,
                     style: AppStyles.s14.copyWith(
@@ -130,9 +140,7 @@ class NotificationCardWidget extends StatelessWidget {
                   SizedBox(height: 8.h),
                   Text(
                     notification.date,
-                    style: AppStyles.s12.copyWith(
-                      color: AppColors.greyIcon,
-                    ),
+                    style: AppStyles.s12.copyWith(color: AppColors.greyIcon),
                   ),
                 ],
               ),
@@ -153,4 +161,3 @@ class NotificationCardWidget extends StatelessWidget {
     );
   }
 }
-

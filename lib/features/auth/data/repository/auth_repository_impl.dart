@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import '../../../../core/notifications/push_service.dart';
 import 'package:hr_app/core/error/failures.dart';
 import 'package:hr_app/core/error/result_extensions.dart';
 import 'package:hr_app/core/utils/user_helper.dart';
@@ -70,6 +71,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Result<void>> logout() async {
     try {
+      await PushService.instance.endSession();
       // Call logout API first
       final result = await remoteDataSource.logout();
 

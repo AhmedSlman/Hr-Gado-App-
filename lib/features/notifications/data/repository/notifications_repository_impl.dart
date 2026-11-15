@@ -11,6 +11,10 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
   NotificationsRepositoryImpl({required this.remoteDataSource});
 
   @override
+  Future<Result<void>> deleteNotification([String? id]) =>
+      remoteDataSource.deleteNotification(id);
+
+  @override
   Future<Result<NotificationsResponse>> getNotifications() async {
     try {
       return await remoteDataSource.getNotifications();
@@ -52,4 +56,3 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
     }
   }
 }
-

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "199146733315",
+    "project_id": "gado-hr",
+    "storage_bucket": "gado-hr.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:199146733315:android:c03f88bcdb527d64f83336",
+        "android_client_info": {
+          "package_name": "com.gadohr.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdDaTXvTSS5zFInJ-i8pcs5umJvCTeYOY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -21,7 +21,7 @@ class ReportRowCardWidget extends StatelessWidget {
         color: AppColors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 14,
             offset: const Offset(0, 4),
@@ -31,9 +31,11 @@ class ReportRowCardWidget extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            title,
-            style: AppStyles.s16Medium.copyWith(color: AppColors.primary),
+          Expanded(
+            child: Text(
+              title,
+              style: AppStyles.s16Medium.copyWith(color: AppColors.primary),
+            ),
           ),
           Text(
             value,

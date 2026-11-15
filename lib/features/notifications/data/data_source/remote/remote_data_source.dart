@@ -9,6 +9,7 @@ abstract class NotificationsRemoteDataSource {
   Future<Result<NotificationsResponse>> getNotifications();
   Future<Result<void>> markAsRead(String notificationId);
   Future<Result<void>> markAllAsRead();
+  Future<Result<void>> deleteNotification([String? id]);
 }
 
 class NotificationsRemoteDataSourceImpl
@@ -16,6 +17,19 @@ class NotificationsRemoteDataSourceImpl
   final ApiConsumer _apiConsumer;
 
   NotificationsRemoteDataSourceImpl(this._apiConsumer);
+
+  @override
+  Future<Result<void>> deleteNotification([String? id]) async {
+    final result = await _apiConsumer.delete<Map<String, dynamic>>(
+      path:
+          '${NotificationsEndpoints.notifications}${id == null ? '' : '/${Uri.encodeComponent(id)}'}',
+      parser: (json) => json,
+    );
+    return result.fold(
+      onSuccess: (_) => const Right(null),
+      onFailure: (failure) => Left(failure),
+    );
+  }
 
   @override
   Future<Result<NotificationsResponse>> getNotifications() async {
@@ -96,4 +110,3 @@ class NotificationsRemoteDataSourceImpl
     }
   }
 }
-
