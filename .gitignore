@@ -71,3 +71,5 @@ ios/Flutter/Generated.xcconfig
 ios/Flutter/ephemeral/
 ios/ServiceDefinitions.json
 ios/Runner/GeneratedPluginRegistrant.*
+
+/docs/
