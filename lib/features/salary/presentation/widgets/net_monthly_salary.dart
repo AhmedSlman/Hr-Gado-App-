@@ -29,7 +29,7 @@ class NetMonthlySalary extends StatelessWidget {
                 'إجمالي الحوافز: ${formatSalaryNumber(salaryData.totalBonuses)}',
               ),
             Text(
-              'إجمالي الحسومات: ${formatSalaryNumber(salaryData.totalDeductions)}',
+              'إجمالي الخصومات: ${formatSalaryNumber(salaryData.totalDeductions)}',
             ),
             Text(
               'خصم التأمين: ${formatSalaryNumber(salaryData.insuranceDeduction)}',
