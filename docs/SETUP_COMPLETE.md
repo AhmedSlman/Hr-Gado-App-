@@ -7,7 +7,7 @@
 1. **Keystore تم إنشاؤه بنجاح**
 
    - الملف: `android/app/upload-keystore.jks`
-   - كلمة المرور: `gadohr2024`
+   - كلمة المرور: `<your-signing-password>`
    - Alias: `upload`
    - صالح لمدة: 10000 يوم
 
@@ -91,8 +91,8 @@ flutter build ios --release
 **⚠️ مهم جداً - احفظ هذه المعلومات:**
 
 - **Keystore File**: `android/app/upload-keystore.jks`
-- **Keystore Password**: `gadohr2024`
-- **Key Password**: `gadohr2024`
+- **Keystore Password**: `<your-signing-password>`
+- **Key Password**: `<your-signing-password>`
 - **Key Alias**: `upload`
 
 **بدون Keystore لن تتمكن من تحديث التطبيق!**
@@ -113,7 +113,6 @@ flutter build ios --release
 - `RELEASE_CHECKLIST.md` - قائمة تحقق شاملة
 - `BUILD_INSTRUCTIONS.md` - إرشادات البناء
 - `DEPLOYMENT_README.md` - نظرة عامة
-- `KEYSTORE_INFO.md` - معلومات Keystore
 
 ---
 

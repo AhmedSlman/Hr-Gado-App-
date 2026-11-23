@@ -48,7 +48,7 @@ flutter build ios --release
 ## 🔐 معلومات Keystore (Android)
 
 **الملف**: `android/app/upload-keystore.jks`
-**كلمة المرور**: `gadohr2024`
+**كلمة المرور**: `<your-signing-password>`
 **Alias**: `upload`
 
 ⚠️ **احفظ Keystore في مكان آمن!**
@@ -79,7 +79,6 @@ flutter build ios --release
 - `SETUP_COMPLETE.md` - ملخص ما تم إنجازه
 - `RELEASE_CHECKLIST.md` - قائمة تحقق شاملة
 - `BUILD_INSTRUCTIONS.md` - إرشادات مفصلة
-- `KEYSTORE_INFO.md` - معلومات Keystore
 
 ---
 

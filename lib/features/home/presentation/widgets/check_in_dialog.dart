@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hr_app/core/common/widgets/custom_button.dart';
+import 'attendance_location_notice.dart';
 import 'package:hr_app/core/theme/app_colors.dart';
 import 'package:hr_app/core/theme/app_typography.dart';
 import 'package:hr_app/core/utils/app_assets.dart';
@@ -54,50 +54,72 @@ class _CheckInDialogState extends State<CheckInDialog> {
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Align(
-              alignment: AlignmentGeometry.centerLeft,
-              child: GestureDetector(
-                onTap: () {
-                  context.pop();
-                },
-                child: Icon(Icons.close, color: AppColors.grayText, size: 24),
-              ),
-            ),
-
-            // العنوان
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                AppAssets.image(IconsAssets.cat1, height: 30),
-                SizedBox(width: 10.w),
-                Text(
-                  'تسجيل الحضور',
-                  style: AppStyles.s20Medium.copyWith(color: AppColors.primary),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Align(
+                alignment: AlignmentGeometry.centerLeft,
+                child: GestureDetector(
+                  onTap: () {
+                    context.pop();
+                  },
+                  child: Icon(Icons.close, color: AppColors.grayText, size: 24),
                 ),
-              ],
-            ),
-
-            // الوقت المحدث
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Text(
-                _currentTime, // الوقت المحدث كل ثانية
-                style: AppStyles.s20Medium,
               ),
-            ),
 
-            CustomButton(
-              text: 'تأكيد تسجيل الحضور',
-              onPressed: widget.onConfirm,
-            ),
-            SizedBox(height: 16.h),
-          ],
+              // العنوان
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  AppAssets.image(IconsAssets.cat1, height: 30),
+                  SizedBox(width: 10.w),
+                  Flexible(
+                    child: Text(
+                      'تسجيل الحضور',
+                      style: AppStyles.s20Medium.copyWith(
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              // الوقت المحدث
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                child: Text(
+                  _currentTime, // الوقت المحدث كل ثانية
+                  style: AppStyles.s20Medium,
+                ),
+              ),
+
+              const AttendanceLocationNotice(),
+              FilledButton(
+                onPressed: widget.onConfirm,
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size.fromHeight(48),
+                  padding: const EdgeInsets.all(12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                child: const Text(
+                  'تأكيد تسجيل الحضور',
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              SizedBox(height: 16.h),
+            ],
+          ),
         ),
       ),
     );

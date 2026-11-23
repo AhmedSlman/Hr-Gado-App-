@@ -12,8 +12,8 @@
 ### ⚠️ معلومات Keystore (احفظها في مكان آمن!)
 
 ```
-storePassword: gadohr2024
-keyPassword: gadohr2024
+storePassword: <your-signing-password>
+keyPassword: <your-signing-password>
 keyAlias: upload
 ```
 

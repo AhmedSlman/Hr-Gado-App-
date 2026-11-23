@@ -59,12 +59,7 @@ android {
     buildTypes {
         release {
             // استخدام signing config للإنتاج
-            val keystorePropertiesFile = rootProject.file("key.properties")
-            signingConfig = if (keystorePropertiesFile.exists() && file("upload-keystore.jks").exists()) {
-                signingConfigs.getByName("release")
-            } else {
-                signingConfigs.getByName("debug")
-            }
+            signingConfig = signingConfigs.getByName("release")
             
             // تفعيل ProGuard/R8 لتقليل حجم التطبيق
             isMinifyEnabled = true

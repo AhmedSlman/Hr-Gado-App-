@@ -54,7 +54,15 @@ android/app/upload-keystore.jks
 *.jks
 *.keystore
 
+# Local Google Play release files
+/play-release/
+
 # iOS
+*.ipa
+*.p12
+*.p8
+*.mobileprovision
+*.xcarchive/
 ios/Pods/
 ios/.symlinks/
 ios/Flutter/Flutter.framework

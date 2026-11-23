@@ -95,8 +95,8 @@ flutter build apk --release
    - احفظه في مكان آمن (Google Drive مشفر، USB، إلخ)
 
 3. **احفظ كلمات المرور**
-   - Keystore Password: `gadohr2024`
-   - Key Password: `gadohr2024`
+   - Keystore Password: `<your-signing-password>`
+   - Key Password: `<your-signing-password>`
    - Key Alias: `upload`
 
 ### 📝 ملاحظات
