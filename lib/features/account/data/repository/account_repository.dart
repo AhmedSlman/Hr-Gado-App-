@@ -1,5 +1,6 @@
 import '../../../../../core/error/result_extensions.dart';
 import '../../../../../features/vacation/data/models/response/api_message_response.dart';
+import '../models/response/attendance_request_details.dart';
 import '../models/response/employee_requests_response.dart';
 import '../models/response/employees_response.dart';
 import '../models/response/personal_data_model.dart';
@@ -10,6 +11,13 @@ import '../models/response/employee_report_details_model.dart';
 
 abstract class AccountRepository {
   Future<Result<EmployeeRequestsResponse>> fetchEmployeeRequests();
+  Future<Result<AttendanceRequestDetails>> fetchAttendanceDetails(
+    int requestId,
+  );
+  Future<Result<ApiMessageResponse>> reviewAttendance(
+    int requestId, {
+    required bool approve,
+  });
   Future<Result<EmployeesResponse>> fetchEmployees();
   Future<Result<PersonalDataModel>> fetchPersonalData(int employeeId);
   Future<Result<PersonalDataModel>> fetchProfile();

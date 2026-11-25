@@ -7,8 +7,10 @@ import 'package:hr_app/core/locator/service_locator.dart';
 import 'account_names.dart';
 import 'account_route_extra.dart';
 import '../data/models/employee_request_type.dart';
+import '../data/repository/account_repository.dart';
 import '../logic/account_cubit.dart';
 import '../presentation/views/account_view.dart';
+import '../presentation/views/attendance_request_details_view.dart';
 import '../presentation/views/complaints_suggestions_view.dart';
 import '../presentation/views/employee_report_details_view.dart';
 import '../presentation/views/employee_reports_view.dart';
@@ -129,13 +131,25 @@ class AccountRouter {
         );
       },
     ),
+    GoRoute(
+      path: AccountRoutes.attendanceRequestDetails,
+      builder: (context, state) {
+        final requestId = int.tryParse(state.pathParameters['id'] ?? '');
+        if (!UserHelper.isManager || requestId == null || requestId <= 0) {
+          return const Scaffold(body: Center(child: Text('لا يمكن عرض الطلب')));
+        }
+        return AttendanceRequestDetailsView(
+          requestId: requestId,
+          repository: sl<AccountRepository>(),
+        );
+      },
+    ),
     // Employee Requests Screen (list of requests)
     GoRoute(
       path: AccountRoutes.employeeRequests,
       builder: (context, state) {
-        final cubit = sl<AccountCubit>()..loadEmployeeRequests();
-        return BlocProvider<AccountCubit>.value(
-          value: cubit,
+        return BlocProvider<AccountCubit>(
+          create: (_) => sl<AccountCubit>()..loadEmployeeRequests(),
           child: const EmployeeRequestsView(),
         );
       },

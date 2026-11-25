@@ -57,21 +57,37 @@ class EmployeeRequsetsListViewSection extends StatelessWidget {
               itemCount: requests.length,
               itemBuilder: (context, index) {
                 final request = requests[index];
-                final requestType = _parseRequestType(request.type);
+                final isAttendance = request.type == 'attendance';
 
                 return EmployeeRequestCardWidget(
                   employeeName: request.employeeName,
                   date: request.date,
-                  requestType: request.typeName,
+                  requestType: isAttendance
+                      ? request.attendanceTypeName ?? request.typeName
+                      : request.typeName,
                   details: request.details,
-                  onTap: () {
-                    context.push(
+                  onTap: () async {
+                    final cubit = context.read<AccountCubit>();
+                    if (isAttendance) {
+                      final reviewed = await context.push<bool>(
+                        AccountRoutes.attendanceRequestDetailsPath(request.id),
+                      );
+                      if (reviewed == true && context.mounted) {
+                        await cubit.loadEmployeeRequests();
+                      }
+                      return;
+                    }
+
+                    await context.push(
                       AccountRoutes.employeeRequestDetails,
                       extra: EmployeeRequestDetailsExtra(
-                        requestType: requestType,
+                        requestType: _parseRequestType(request.type),
                         requestId: request.id,
                       ),
                     );
+                    if (context.mounted) {
+                      await cubit.loadEmployeeRequests();
+                    }
                   },
                 );
               },

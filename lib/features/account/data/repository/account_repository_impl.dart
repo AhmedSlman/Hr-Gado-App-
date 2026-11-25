@@ -1,5 +1,6 @@
 import 'account_repository.dart';
 import '../data_source/remote/remote_data_source.dart';
+import '../models/response/attendance_request_details.dart';
 import '../models/response/employee_requests_response.dart';
 import '../models/response/employees_response.dart';
 import '../models/response/personal_data_model.dart';
@@ -20,6 +21,17 @@ class AccountRepositoryImpl implements AccountRepository {
     final result = await remoteDataSource.fetchEmployeeRequests();
     return result;
   }
+
+  @override
+  Future<Result<AttendanceRequestDetails>> fetchAttendanceDetails(
+    int requestId,
+  ) => remoteDataSource.fetchAttendanceDetails(requestId);
+
+  @override
+  Future<Result<ApiMessageResponse>> reviewAttendance(
+    int requestId, {
+    required bool approve,
+  }) => remoteDataSource.reviewAttendance(requestId, approve: approve);
 
   @override
   Future<Result<EmployeesResponse>> fetchEmployees() async {

@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 
 import '../../../../../core/network/api_consumer.dart';
 import '../../../../../core/error/result_extensions.dart';
+import '../../models/response/attendance_request_details.dart';
 import '../../models/response/employee_requests_response.dart';
 import '../../models/response/employees_response.dart';
 import '../../models/response/personal_data_model.dart';
@@ -14,6 +15,13 @@ import '../../repository/endpoints.dart';
 
 abstract class AccountRemoteDataSource {
   Future<Result<EmployeeRequestsResponse>> fetchEmployeeRequests();
+  Future<Result<AttendanceRequestDetails>> fetchAttendanceDetails(
+    int requestId,
+  );
+  Future<Result<ApiMessageResponse>> reviewAttendance(
+    int requestId, {
+    required bool approve,
+  });
   Future<Result<EmployeesResponse>> fetchEmployees();
   Future<Result<PersonalDataModel>> fetchPersonalData(int employeeId);
   Future<Result<PersonalDataModel>> fetchProfile();
@@ -51,6 +59,33 @@ class AccountRemoteDataSourceImpl implements AccountRemoteDataSource {
       onSuccess: (data) => Right(data),
       onFailure: (failure) => Left(failure),
     );
+  }
+
+  @override
+  Future<Result<AttendanceRequestDetails>> fetchAttendanceDetails(
+    int requestId,
+  ) async {
+    final result = await _apiConsumer.get<AttendanceRequestDetails>(
+      path: AccountEndpoints.attendanceDetails(requestId),
+      headers: const {'Accept': 'application/vnd.api+json'},
+      parser: (json) => AttendanceRequestDetails.fromJson(
+        json['data'] as Map<String, dynamic>,
+      ),
+    );
+    return result.fold(onSuccess: Right.new, onFailure: Left.new);
+  }
+
+  @override
+  Future<Result<ApiMessageResponse>> reviewAttendance(
+    int requestId, {
+    required bool approve,
+  }) async {
+    final result = await _apiConsumer.put<ApiMessageResponse>(
+      path: AccountEndpoints.reviewAttendance(requestId, approve: approve),
+      headers: const {'Accept': 'application/vnd.api+json'},
+      parser: ApiMessageResponse.fromJson,
+    );
+    return result.fold(onSuccess: Right.new, onFailure: Left.new);
   }
 
   @override

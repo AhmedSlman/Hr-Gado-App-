@@ -7,6 +7,10 @@ class AccountEndpoints {
       '/employee/advance-details/$requestId';
   static String vacationDetails(int requestId) =>
       '/employee/leave-details/$requestId';
+  static String attendanceDetails(int requestId) =>
+      '/employee/attendance-request-details/$requestId';
+  static String reviewAttendance(int requestId, {required bool approve}) =>
+      '/employee/${approve ? 'approve' : 'reject'}-attendance-request/$requestId';
   static String approveAdvance(int requestId) =>
       '/employee/approve-advance/$requestId';
   static String rejectAdvance(int requestId) =>

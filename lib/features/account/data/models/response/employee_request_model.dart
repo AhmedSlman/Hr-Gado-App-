@@ -2,7 +2,9 @@ class EmployeeRequestModel {
   final int id;
   final String date;
   final String employeeName;
-  final String type; // 'leave' or 'advance'
+  final String type;
+  final String? attendanceTypeName;
+  final int? durationMinutes;
   final String typeName; // 'طلب إجازة' or 'طلب سلفة'
   final int? numOfDays; // for leave requests
   final int? amount; // for advance requests
@@ -13,6 +15,8 @@ class EmployeeRequestModel {
     required this.employeeName,
     required this.type,
     required this.typeName,
+    this.attendanceTypeName,
+    this.durationMinutes,
     this.numOfDays,
     this.amount,
   });
@@ -24,6 +28,8 @@ class EmployeeRequestModel {
       employeeName: (json['employee_name'] ?? '').toString(),
       type: (json['type'] ?? '').toString(),
       typeName: (json['type_name'] ?? '').toString(),
+      attendanceTypeName: json['request_type_name']?.toString(),
+      durationMinutes: int.tryParse(json['duration_minutes'].toString()),
       numOfDays: json['num_of_days'] as int?,
       amount: json['amount'] as int?,
     );
@@ -35,6 +41,9 @@ class EmployeeRequestModel {
       return '$numOfDays ايام';
     } else if (type == 'advance' && amount != null) {
       return '$amount ج';
+    }
+    if (type == 'attendance' && durationMinutes != null) {
+      return '$durationMinutes دقيقة';
     }
     return '';
   }
@@ -51,4 +60,3 @@ class EmployeeRequestModel {
     return 'vacation';
   }
 }
-
